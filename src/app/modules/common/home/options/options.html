@@ -1,0 +1,13 @@
+<div class="w-full flex flex-col items-center justify-center gap-4 p-2">
+    <div class="w-full flex flex-col items-center gap-2 p-2 overflow-sections">
+        @for (opt of options; track $index) {
+            <app-card-nav class="w-full"
+                [icon]="opt.icon"
+                [link]="opt.link"
+                [color]="opt.color"
+                [title]="opt.title"
+                [description]="opt.description">
+            </app-card-nav>
+        }
+    </div>
+</div>
