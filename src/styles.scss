@@ -1,13 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
 .overflow-sections {
-    overflow-y: auto;
+  overflow-y: auto;
 }
 
 .overflow-sections::-webkit-scrollbar {
-    width: 3px;
-    display: hidden;
+  width: 3px;
+  display: hidden;
 }
 
 .overflow-sections::-webkit-scrollbar-track {
-    background: #fff;
+  background: transparent;
 }
