@@ -3,6 +3,7 @@ import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 
 @Directive({
     selector: '[appCurrencyInput]',
+    standalone: true,
     providers: [
         {
             provide: NG_VALUE_ACCESSOR,

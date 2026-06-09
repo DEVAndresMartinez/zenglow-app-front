@@ -1,15 +1,20 @@
-import { Directive, ElementRef, HostListener } from '@angular/core';
+import { Directive, HostListener, Optional, Self } from '@angular/core';
+import { NgControl } from '@angular/forms';
 
 @Directive({
-  selector: '[appCapitalizeFirst]'
+  selector: '[appCapitalizeFirst]',
+  standalone: true
 })
 export class CapitalizeFirst {
 
-  constructor(private el: ElementRef) {}
+  constructor(@Optional() @Self() private ngControl: NgControl) { }
 
   @HostListener('input', ['$event']) onInput(event: Event): void {
-    const input = this.el.nativeElement as HTMLInputElement;
-    input.value = this.capitalizeFirstLetter(input.value);
+    const input = event.target as HTMLInputElement;
+    const capitalized = this.capitalizeFirstLetter(input.value);
+    if (input.value === capitalized) return;
+    input.value = capitalized;
+    this.ngControl?.control?.setValue(capitalized, { emitEvent: false });
   }
 
   private capitalizeFirstLetter(value: string): string {

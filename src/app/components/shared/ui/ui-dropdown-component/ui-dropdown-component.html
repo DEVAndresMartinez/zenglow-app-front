@@ -5,7 +5,7 @@
     </label>
   }
   <div class="relative">
-    <button type="button"
+    <button #triggerBtn type="button"
       class="w-full flex items-center justify-between px-4 py-2 border-2 rounded-md text-sm transition-all duration-300 roboto focus:outline-none focus:shadow-blue-300 cursor-pointer"
       [class.border-slate-300]="!error()" [class.focus:border-blue-600]="!error()" [class.border-red-400]="error()"
       [class.text-slate-500]="!displayValue()" [class.text-slate-700]="displayValue()" [class.opacity-60]="isDisabled()"
@@ -27,7 +27,7 @@
 
     <!-- Panel -->
     @if (isOpen()) {
-    <div class="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-md shadow-lg">
+    <div [style]="panelStyle()" class="bg-white border border-slate-200 rounded-md shadow-lg">
 
       <!-- Search -->
       <div class="p-2 border-b border-slate-100">

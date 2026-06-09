@@ -1,4 +1,4 @@
-import { Component, forwardRef, input, signal, computed, HostListener, ElementRef } from '@angular/core';
+import { Component, forwardRef, input, signal, computed, HostListener, ElementRef, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 export interface DropdownOption {
@@ -31,8 +31,10 @@ export class UIDropdownComponent implements ControlValueAccessor {
   isOpen = signal(false);
   search = signal('');
   isDisabled = signal(false);
+  panelStyle = signal<Record<string, string>>({});
 
-  // single → string | number | null ; multiple → array
+  @ViewChild('triggerBtn') triggerBtn!: ElementRef<HTMLButtonElement>;
+
   private _value = signal<string | number | (string | number)[] | null>(null);
 
   private onChange: (v: any) => void = () => { };
@@ -43,6 +45,15 @@ export class UIDropdownComponent implements ControlValueAccessor {
   @HostListener('document:click', ['$event'])
   onDocClick(e: MouseEvent) {
     if (!this.el.nativeElement.contains(e.target)) {
+      this.isOpen.set(false);
+      this.search.set('');
+    }
+  }
+
+  @HostListener('window:scroll')
+  @HostListener('window:resize')
+  onViewportChange() {
+    if (this.isOpen()) {
       this.isOpen.set(false);
       this.search.set('');
     }
@@ -93,8 +104,36 @@ export class UIDropdownComponent implements ControlValueAccessor {
 
   toggle() {
     if (this.isDisabled()) return;
+    if (!this.isOpen()) {
+      this.calculatePanelStyle();
+    }
     this.isOpen.update(v => !v);
     if (!this.isOpen()) this.search.set('');
+  }
+
+  private calculatePanelStyle() {
+    const rect = this.triggerBtn.nativeElement.getBoundingClientRect();
+    const panelHeight = 280;
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const openUpward = spaceBelow < panelHeight && rect.top > panelHeight;
+
+    if (openUpward) {
+      this.panelStyle.set({
+        position: 'fixed',
+        bottom: `${window.innerHeight - rect.top + 4}px`,
+        left: `${rect.left}px`,
+        width: `${rect.width}px`,
+        zIndex: '9999',
+      });
+    } else {
+      this.panelStyle.set({
+        position: 'fixed',
+        top: `${rect.bottom + 4}px`,
+        left: `${rect.left}px`,
+        width: `${rect.width}px`,
+        zIndex: '9999',
+      });
+    }
   }
 
   clear(e: MouseEvent) {

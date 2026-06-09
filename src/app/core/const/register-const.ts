@@ -9,11 +9,11 @@ export const COMMERCE_TYPES = [
 ];
 
 export const DOCUMENT_TYPES = [
-  { abv: 'NIT', name: 'Número de Identificación Tributaria' },
+  { abv: 'NIT', name: '(NIT) Número de Identificación Tributaria' },
   { abv: 'CC', name: 'Cédula de Ciudadanía' },
   { abv: 'CE', name: 'Cédula de Extranjería' },
   { abv: 'TI', name: 'Tarjeta de Identidad' },
-  { abv: 'PP', name: 'Pasaporte' },
+  { abv: 'PASPORT', name: 'Pasaporte' },
 ];
 export const STATUS_AVAILABLE = [
   'active',

@@ -1,11 +1,21 @@
-<div class="w-full p-10 bg-slate-100">
+<div class="w-full h-full px-10 py-8 bg-slate-100">
   <h2 class="text-slate-800 font-bold text-2xl tracking-tight">Paso 1</h2>
-  <p class="text-slate-600 mt-2 text-md">Completa la información de tu comercio para comenzar.</p>
+  <p class="text-slate-600 text-md">Completa la información de tu comercio para comenzar.</p>
 
-  <div class="w-full grid grid-cols-2 gap-4 mt-4 p-8 bg-white rounded-lg shadow">
-    <ui-dropdown-component id="commercetype" name="commercetype" [options]="commerceTypes" value="commercetype()" (input)="commercetype.set($any($event.target).value)" label="Tipo de Comercio" placeholder="ej. Peluquería, Restaurante, etc." [required]="true"/>
-    <ui-input-component type="text" id="commercename" name="commercename" value="commercename()" (input)="commercename.set($any($event.target).value); commerceSlugify()" label="Nombre del Comercio" placeholder="ej. Barbería" [required]="true"/>
-    <ui-input-component type="email" id="commerceemail" name="commerceemail" value="commerceemail()" (input)="onEmailInput($any($event.target).value)" label="Correo Electrónico" placeholder="ej. info@comercio.com" [required]="true" [error]="setEmailError()"/>
-    <ui-phone-input-component id="commercephone" name="commercephone" countryCode="+57" value="commercephone()" (input)="commercephone.set($any($event.target).value)" label="Número de Teléfono" placeholder="ej. 300 000 0000" [required]="true"/>
-  </div>
+  <form [formGroup]="commerceForm" class="w-full max-h-[90%] overflow-sections grid grid-cols-1 gap-4 mt-4 p-8 bg-white rounded-lg shadow z-49" (submit)="submit()">
+    <ui-dropdown-component id="commercetype" name="commercetype" [options]="commerceTypes" formControlName="commercetype" label="Tipo de Comercio" placeholder="ej. Peluquería, Restaurante, etc." [required]="true"/>
+    <div class="flex w-full items-end gap-2">
+      <ui-input-component type="text" id="commercename" name="commercename" formControlName="commercename" (input)="commerceSlugify()" label="Nombre del Comercio" placeholder="ej. Barbería" [required]="true" [minlength]="4" [maxlength]="150" appUppercase class="w-1/2"/>
+      <ui-input-component type="text" id="commerceslug" name="commerceslug" formControlName="commerceslug" label="Slug del Comercio" placeholder="ej. Barbería" [required]="true" [minlength]="4" [maxlength]="150" [readonly]="true" class="w-1/2"/>
+    </div>
+    <ui-input-component type="email" id="commerceemail" name="commerceemail" formControlName="commerceemail" label="Correo Electrónico" placeholder="ej. info@comercio.com" [required]="true" [error]="setEmailError()" [minlength]="4" [maxlength]="150" appLowercase/>
+    <ui-phone-input-component id="commercephone" name="commercephone" countryCode="+57" formControlName="commercephone" label="Número de Teléfono" placeholder="ej. 300 000 0000" [required]="true"/>
+    <div class="flex w-full items-end gap-2">
+      <ui-dropdown-component id="commercedocumenttype" name="commercedocumenttype" [options]="documenttypes" formControlName="commercedocumenttype" label="Tipo de Documento" placeholder="ej. Nit, Cedula, etc." [required]="true" class="w-1/2"/>
+      <div class="flex w-1/2 items-end gap-2">
+        <ui-input-component type="text" id="commercedocumentnumber" name="commercedocumentnumber" formControlName="commercedocumentnumber" (input)="calcDV()" label="Número de Documento" placeholder="0" [required]="true" [minlength]="6" [maxlength]="20" appNumbersOnly class="w-4/5"/>
+        <ui-input-component type="text" id="commercedigitverification" name="commercedigitverification" formControlName="commercedigitverification" (input)="calcDV()" placeholder="0" appNumbersOnly class="w-1/5"/>
+      </div>
+    </div>
+  </form>
 </div>

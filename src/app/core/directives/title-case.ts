@@ -1,15 +1,20 @@
-import { Directive, ElementRef, HostListener } from '@angular/core';
+import { Directive, HostListener, Optional, Self } from '@angular/core';
+import { NgControl } from '@angular/forms';
 
 @Directive({
-  selector: '[appTitleCase]'
+  selector: '[appTitleCase]',
+  standalone: true
 })
 export class TitleCase {
 
-  constructor(private el: ElementRef) { }
+  constructor(@Optional() @Self() private ngControl: NgControl) { }
 
   @HostListener('input', ['$event']) onInput(event: Event): void {
-    const target = this.el.nativeElement as HTMLInputElement;
-    target.value = this.toTitleCase(target.value);
+    const input = event.target as HTMLInputElement;
+    const titled = this.toTitleCase(input.value);
+    if (input.value === titled) return;
+    input.value = titled;
+    this.ngControl?.control?.setValue(titled, { emitEvent: false });
   }
 
   private toTitleCase(value: string): string {
