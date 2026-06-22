@@ -22,3 +22,18 @@ export const STATUS_AVAILABLE = [
   'banned',
   'deleted'
 ];
+
+export const STATUS_BRANCH_AVAILABLE = [
+  'active',
+  'inactive',
+  'maintenance',
+  'deleted'
+];
+
+export const STATUS_USER_AVAILABLE = [
+  'active',
+  'inactive',
+  'blocked',
+  'pending',
+  'deleted'
+];

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, DestroyRef, effect, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { COMMERCE_TYPES, DOCUMENT_TYPES, STATUS_AVAILABLE } from '../../../../core/const/register-const';
 import { UIInputComponent } from '../../../../components/shared/ui/ui-input-component/ui-input-component';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -9,6 +10,7 @@ import { CalcularDigitoVerificacion } from '../../../../core/functions/calculate
 import { NumbersOnlyCase } from '../../../../core/directives/numbers-onlit-case';
 import { UpperCase } from '../../../../core/directives/upper-case';
 import { Lowercase } from '../../../../core/directives/lower-case';
+import { CommerceService } from '../../../../core/services/modules/commerces/commerce.service';
 
 const COMPONENTS = [UIInputComponent, UIDropdownComponent, UIPhoneInputComponent];
 const DIRECTIVES = [NumbersOnlyCase, UpperCase, Lowercase];
@@ -20,12 +22,14 @@ const DIRECTIVES = [NumbersOnlyCase, UpperCase, Lowercase];
   templateUrl: './step-one-form.html',
   styleUrl: './step-one-form.scss',
 })
-export class StepOneForm {
+export class StepOneForm implements OnInit {
+
+  private commerceService = inject(CommerceService);
+  private destroyRef = inject(DestroyRef);
 
   commerceTypes = COMMERCE_TYPES;
   documenttypes = DOCUMENT_TYPES;
   statusavailable = STATUS_AVAILABLE;
-
 
   commerceForm = new FormGroup({
     commercetype: new FormControl<typeof this.commerceTypes[number]['abv']>(this.commerceTypes[0].abv, { validators: [Validators.required] }),
@@ -39,10 +43,24 @@ export class StepOneForm {
     commercestatus: new FormControl<typeof this.statusavailable[number]>(this.statusavailable[0], { validators: [Validators.required] }),
   });
 
-  constructor() { }
+  constructor() {
+    effect(() => {
+      if (this.commerceService.triggerValidation() > 0) {
+        this.commerceForm.markAllAsTouched();
+      }
+    });
+  }
 
-  ngOnInit(): void {
+  ngOnInit() {
+    const saved = this.commerceService.commerceData();
+    if (saved) this.commerceForm.patchValue(saved);
 
+    this.commerceService.stepOneValid.set(this.commerceForm.valid);
+
+    this.commerceForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.commerceService.commerceData.set(this.commerceForm.value as any);
+      this.commerceService.stepOneValid.set(this.commerceForm.valid);
+    });
   }
 
   submit() {

@@ -44,7 +44,7 @@ export class UIDropdownComponent implements ControlValueAccessor {
 
   @HostListener('document:click', ['$event'])
   onDocClick(e: MouseEvent) {
-    if (!this.el.nativeElement.contains(e.target)) {
+    if (!this.el?.nativeElement?.contains(e.target)) {
       this.isOpen.set(false);
       this.search.set('');
     }

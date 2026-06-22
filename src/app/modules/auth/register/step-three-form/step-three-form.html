@@ -1,0 +1,15 @@
+<div class="w-full h-full px-10 py-8 bg-slate-100">
+  <h2 class="text-slate-800 font-bold text-2xl tracking-tight">Paso 3</h2>
+  <p class="text-slate-600 text-md">Registra un usuario administrador.</p>
+
+  <form [formGroup]="userForm" class="w-full max-h-[90%] overflow-sections grid grid-cols-1 gap-4 mt-4 p-8 bg-white rounded-lg shadow z-49" (submit)="submit()">
+    <ui-input-component type="text" id="userfirstname" name="userfirstname" formControlName="userfirstname" (input)="generatePassword()" label="Nombre del Usuario" placeholder="ej. Juan" [required]="true" [minlength]="4" [maxlength]="150"/>
+    <ui-input-component type="text" id="userlastname" name="userlastname" formControlName="userlastname" (input)="generatePassword()" label="Apellidos del Usuario" placeholder="ej. Peréz" [required]="true" [minlength]="4" [maxlength]="150"/>
+    <ui-phone-input-component id="userphone" name="userphone" countryCode="+57" (input)="generatePassword()"formControlName="userphone" label="Número de Contacto" placeholder="ej. 300 000 0000" [required]="true"/>
+    <div class="w-full flex gap-2">
+      <ui-input-component type="email" id="useremail" name="useremail" formControlName="useremail" label="Correo Electrónico" placeholder="ej. usuario@examplo.com" [required]="true" [error]="setEmailError()" [minlength]="4" [maxlength]="150" appLowercase class="w-1/2"/>
+      <ui-input-component type="text" id="username" name="username" formControlName="username" label="Usuario" placeholder="ej. JUANPEREZ" (input)="userForm.value.username?.trim()" [required]="true" [minlength]="4" [maxlength]="150" appLowercase class="w-1/2"/>
+    </div>
+    <ui-input-component type="password" id="userpassword" name="userpassword" formControlName="userpassword" label="Contraseña inicial" placeholder="ej. JUAPER300000"  [readonly]="true" />
+  </form>
+</div>

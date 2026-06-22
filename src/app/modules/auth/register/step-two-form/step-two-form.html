@@ -1,1 +1,13 @@
-<p>step-two-form works!</p>
+<div class="w-full h-full px-10 py-8 bg-slate-100">
+  <h2 class="text-slate-800 font-bold text-2xl tracking-tight">Paso 2</h2>
+  <p class="text-slate-600 text-md">Registra tu sucursal principal.</p>
+
+  <form [formGroup]="branchForm" class="w-full max-h-[90%] overflow-sections grid grid-cols-1 gap-4 mt-4 p-8 bg-white rounded-lg shadow z-49" (submit)="submit()">
+    <ui-input-component type="text" id="branchname" name="branchname" formControlName="branchname" label="Nombre de la Sucursal" placeholder="ej. Sucursal Norte" [required]="true" [minlength]="4" [maxlength]="150" appUppercase/>
+    <div class="w-full flex flex-col md:flex-row gap-2">
+      <ui-dropdown-component id="city" name="city" [options]="citiesOptions" formControlName="branchcity" label="Seleccione una Ciudad" placeholder="ej. Bogotá" [required]="true" class="w-1/2"/>
+      <ui-input-component type="text" id="branchaddress" name="branchaddress" formControlName="branchaddress" label="Dirección de la Sucursal" placeholder="ej. Sucursal Norte" [required]="true" [minlength]="4" [maxlength]="150" appUppercase class="w-1/2"/>
+    </div>
+    <ui-phone-input-component id="branchphone" name="branchphone" countryCode="+57" formControlName="branchphone" label="Número de Teléfono" placeholder="ej. 300 000 0000" [required]="true"/>
+  </form>
+</div>

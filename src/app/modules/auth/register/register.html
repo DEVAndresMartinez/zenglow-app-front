@@ -16,14 +16,15 @@
         <div class="flex justify-between text-sm text-blue-100">
           @if (step() === 1) {
             <span>Registrando tu comercio</span>
-            <span>1 de 4 pasos</span>
+            <span>1 de 3 pasos</span>
           }@else if (step() === 2) {
             <span>Registrando tu primera sucursal</span>
             <span>2 de 4 pasos</span>
-          }@else if (step() === 3) {
+          }
+          <!-- @else if (step() === 3) {
             <span>Registrando tu primer usuario</span>
             <span>3 de 4 pasos</span>
-          }
+          } -->
         </div>
         <div class="h-1 bg-white/20 rounded-full overflow-hidden">
           @if (step() === 1) {
@@ -55,20 +56,28 @@
             <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-bold"> 3 </div>
             <span class="text-white"> Crea tu primer usuario </span>
           </div>
-          <div class="flex items-center gap-4">
+          <!-- <div class="flex items-center gap-4">
             <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-bold"> 4 </div>
             <span class="text-white"> Mejora tu productividad </span>
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="w-full flex justify-between gap-2">
-        <button class="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-all duration-300 cursor-pointer" (click)="prevStep()">
+        <button class="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-all duration-300 cursor-pointer" (click)="prevStep()" [disabled]="step() === 1">
           <fa-icon [icon]="['fas', 'arrow-left']" class="text-white/60 text-xs"> </fa-icon>
           Volver
         </button>
-        <button class="bg-green-400 hover:bg-green-500 transition-all duration-300 cursor-pointer text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2" (click)="nextStep()">
-          Siguiente
-          <fa-icon [icon]="['fas', 'arrow-right']" class="text-white text-xs"> </fa-icon>
+        <button class="bg-green-400 hover:bg-green-500 transition-all duration-300 cursor-pointer text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed" (click)="nextStep()" [disabled]="loading()">
+          @if (loading()) {
+            Procesando...
+          } @else if (step() === 3) {
+            Crear comercio
+          } @else {
+            Siguiente
+          }
+          @if (!loading()) {
+            <fa-icon [icon]="['fas', step() === 3 ? 'check' : 'arrow-right']" class="text-white text-xs"> </fa-icon>
+          }
         </button>
       </div>
     </div>
@@ -78,6 +87,8 @@
       <app-step-one-form />
     }@else if (step() === 2) {
       <app-step-two-form />
+    }@else if (step() === 3) {
+      <app-step-three-form />
     }
   </div>
 </section>
