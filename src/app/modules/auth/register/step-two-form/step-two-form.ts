@@ -9,6 +9,7 @@ import { STATUS_BRANCH_AVAILABLE } from '../../../../core/const/register-const';
 import { UIInputComponent } from '../../../../components/shared/ui/ui-input-component/ui-input-component';
 import { UIPhoneInputComponent } from '../../../../components/shared/ui/ui-phone-input-component/ui-phone-input-component';
 import { CommerceService } from '../../../../core/services/modules/commerces/commerce.service';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 const COMPONENTS = [UIDropdownComponent, UIInputComponent, UIPhoneInputComponent];
 const DIRECTIVES = [UpperCase];
@@ -16,7 +17,7 @@ const DIRECTIVES = [UpperCase];
 @Component({
   selector: 'app-step-two-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, ...COMPONENTS, ...DIRECTIVES],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, FontAwesomeModule, ...COMPONENTS, ...DIRECTIVES],
   templateUrl: './step-two-form.html',
   styleUrl: './step-two-form.scss',
 })
@@ -56,10 +57,11 @@ export class StepTwoForm implements OnInit {
     });
   }
 
-  submit() {
-    if (this.branchForm.valid) {
-      alert('Formulario válido. Enviando datos...')
-    }
+  useSame() {
+    const number = this.commerceService.commerceData()?.commercephone;
+    this.branchForm.patchValue({
+      branchphone: number
+    });
   }
 
 }

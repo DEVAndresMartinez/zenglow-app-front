@@ -1,8 +1,8 @@
 <div class="w-full flex flex-col gap-1">
 
   @if (label()) {
-  <label class="text-slate-600 font-medium text-sm w-full">
-    <p>{{ label() }} @if (required()) { <span class="text-red-500"> * </span> }</p>
+  <label class="text-body font-medium text-sm w-full">
+    <p>{{ label() }} @if (required()) { <span class="text-error"> * </span> }</p>
   </label>
   }
 
@@ -10,15 +10,15 @@
 
     @if (isTextarea()) {
     <textarea
-      class="w-full px-4 py-2 border-2 rounded-md text-sm text-slate-500 focus:text-slate-700 focus:outline-none transition-all duration-300 roboto resize-none"
-      [class.border-slate-300]="!error()" [class.focus:border-blue-600]="!error()" [class.border-red-400]="error()"
+      class="w-full px-4 py-2 border-2 rounded-md text-sm text-muted focus:text-input focus:outline-none transition-all duration-300 roboto resize-none"
+      [class.border-stroke]="!error()" [class.focus:border-stroke-focus]="!error()" [class.border-stroke-error]="error()"
       [placeholder]="placeholder()" [disabled]="isDisabled()" [readOnly]="readonly()" [required]="required()"
       [attr.maxlength]="maxlength()" [attr.minlength]="minlength()" [value]="value()" (input)="onInput($event)"
       (blur)="onBlur()"></textarea>
     } @else {
     <input
-      class="w-full px-4 py-2 border-2 rounded-md text-sm text-slate-500 focus:text-slate-700 focus:outline-none focus:shadow-blue-300 transition-all duration-300 roboto"
-      [class.border-slate-300]="!error()" [class.focus:border-blue-600]="!error()" [class.border-red-400]="error()"
+      class="w-full px-4 py-2 border-2 rounded-md text-sm text-muted focus:text-input focus:outline-none transition-all duration-300 roboto"
+      [class.border-stroke]="!error()" [class.focus:border-stroke-focus]="!error()" [class.border-stroke-error]="error()"
       [class.pr-10]="isPassword()" [type]="visibleType()" [placeholder]="placeholder()" [disabled]="isDisabled()"
       [readOnly]="readonly()" [required]="required()" [attr.maxlength]="maxlength()" [attr.minlength]="minlength()"
       [min]="min() ?? ''" [max]="max() ?? ''" [step]="step() ?? ''" [value]="value()" (input)="onInput($event)"
@@ -26,7 +26,7 @@
     }
 
     @if (isPassword()) {
-    <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs"
+    <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-body text-xs cursor-pointer"
       (click)="togglePassword()">
       {{ showPassword() ? 'Ocultar' : 'Mostrar' }}
     </button>
@@ -35,9 +35,9 @@
   </div>
 
   @if (error()) {
-  <span class="text-red-500 text-xs">{{ error() }}</span>
+  <span class="text-error text-xs">{{ error() }}</span>
   } @else if (hint()) {
-  <span class="text-slate-400 text-xs">{{ hint() }}</span>
+  <span class="text-muted text-xs">{{ hint() }}</span>
   }
 
   @if (isPassword() && value()) {

@@ -1,94 +1,104 @@
-<section class="w-full min-h-dvh flex justify-center items-center p-8 bg-slate-100">
-  <div class="relative overflow-sections w-1/3 h-[90vh] rounded-4xl bg-linear-to-br from-blue-600 via-blue-700 to-indigo-800 shadow-2xl shadow-blue-900/40 border border-white/10 p-8 flex flex-col">
-    <div class="h-full flex flex-col justify-between">
-      <div class="flex flex-col">
-        <div class="flex gap-4 items-center">
-          <div class="w-12 h-12 rounded-full bg-white border border-white flex items-center justify-center">
-              <img src="/images/favicon.png" class="w-full h-full object-contain" alt="Logo de Zenglow" />
-          </div>
-          <div>
-            <h2 class="text-white font-bold text-2xl tracking-tight"> Zenglow</h2>
-            <p class="text-blue-100 mt-2 text-md"> Configura tu negocio en pocos minutos. </p>
-          </div>
-        </div>
+<section class="w-full min-h-dvh flex flex-col lg:flex-row items-stretch p-4 lg:p-8 gap-4 bg-surface-page">
+
+  <!-- Panel izquierdo: marca + progreso + navegación -->
+  <div class="w-full lg:w-1/3 lg:h-[90vh] rounded-3xl bg-linear-to-br from-brand-start via-brand-mid to-brand-end shadow-2xl shadow-blue-900/40 border border-white/10 p-6 lg:p-8 flex flex-col gap-5 lg:gap-0 lg:justify-between">
+
+    <!-- Marca -->
+    <div class="flex gap-3 items-center">
+      <div class="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-white border border-white flex items-center justify-center shrink-0">
+        <img src="/images/favicon.png" class="w-full h-full object-contain" alt="Logo Zenglow"/>
       </div>
-      <div class="flex flex-col gap-2">
-        <div class="flex justify-between text-sm text-blue-100">
-          @if (step() === 1) {
-            <span>Registrando tu comercio</span>
-            <span>1 de 3 pasos</span>
-          }@else if (step() === 2) {
-            <span>Registrando tu primera sucursal</span>
-            <span>2 de 4 pasos</span>
-          }
-          <!-- @else if (step() === 3) {
-            <span>Registrando tu primer usuario</span>
-            <span>3 de 4 pasos</span>
-          } -->
-        </div>
-        <div class="h-1 bg-white/20 rounded-full overflow-hidden">
-          @if (step() === 1) {
-            <div class="h-full w-1/4 rounded-full bg-linear-to-r from-green-300 to-green-400"></div>
-          }@else if (step() === 2) {
-            <div class="h-full w-2/4 rounded-full bg-linear-to-r from-green-300 to-green-400"></div>
-          }@else if (step() === 3) {
-            <div class="h-full w-3/4 rounded-full bg-linear-to-r from-green-300 to-green-400"></div>
-          }
-        </div>
-      </div>
-      <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-5 flex flex-col gap-5">
-        <div>
-          <h3 class="text-white text-2xl font-bold"> Inicia con Zenglow </h3>
-          <p class="text-blue-100 mt-1"> Sigue estos pasos para comenzar. </p>
-        </div>
-        <div class="flex flex-col gap-2">
-          <div class="flex items-center gap-4">
-            <div class="w-8 h-8 rounded-full bg-green-400 flex items-center justify-center text-blue-900 font-bold"> 1 </div>
-            <span class="text-white">
-              Registra tu comercio
-            </span>
-          </div>
-          <div class="flex items-center gap-4">
-            <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-bold"> 2 </div>
-            <span class="text-white"> Vincula tu sucursal principal </span>
-          </div>
-          <div class="flex items-center gap-4">
-            <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-bold"> 3 </div>
-            <span class="text-white"> Crea tu primer usuario </span>
-          </div>
-          <!-- <div class="flex items-center gap-4">
-            <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-bold"> 4 </div>
-            <span class="text-white"> Mejora tu productividad </span>
-          </div> -->
-        </div>
-      </div>
-      <div class="w-full flex justify-between gap-2">
-        <button class="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-all duration-300 cursor-pointer" (click)="prevStep()" [disabled]="step() === 1">
-          <fa-icon [icon]="['fas', 'arrow-left']" class="text-white/60 text-xs"> </fa-icon>
-          Volver
-        </button>
-        <button class="bg-green-400 hover:bg-green-500 transition-all duration-300 cursor-pointer text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed" (click)="nextStep()" [disabled]="loading()">
-          @if (loading()) {
-            Procesando...
-          } @else if (step() === 3) {
-            Crear comercio
-          } @else {
-            Siguiente
-          }
-          @if (!loading()) {
-            <fa-icon [icon]="['fas', step() === 3 ? 'check' : 'arrow-right']" class="text-white text-xs"> </fa-icon>
-          }
-        </button>
+      <div>
+        <h2 class="text-white font-bold text-xl tracking-tight">Zenglow</h2>
+        <p class="text-on-brand-muted text-sm">Configura tu negocio en pocos minutos.</p>
       </div>
     </div>
+
+    <!-- Progreso -->
+    <div class="flex flex-col gap-2">
+      <div class="flex justify-between text-sm text-on-brand-muted">
+        @if (step() === 1) {
+          <span>Registrando tu comercio</span>
+        } @else if (step() === 2) {
+          <span>Registrando tu primera sucursal</span>
+        } @else if (step() === 3) {
+          <span>Registrando tu primer usuario</span>
+        }
+        <span>{{ step() }} de 3</span>
+      </div>
+      <div class="h-1.5 bg-white/20 rounded-full overflow-hidden">
+        <div class="h-full rounded-full bg-linear-to-r from-accent-soft to-accent transition-all duration-500"
+          [style.width.%]="(step() / 3) * 100"></div>
+      </div>
+    </div>
+
+    <!-- Pasos detalle — solo desktop -->
+    <div class="hidden lg:flex bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-5 flex-col gap-5">
+      <div>
+        <h3 class="text-white text-xl font-bold">Inicia con Zenglow</h3>
+        <p class="text-on-brand-muted text-sm mt-1">Sigue estos pasos para comenzar.</p>
+      </div>
+      <div class="flex flex-col gap-3">
+        <div class="flex items-center gap-4">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0 transition-all duration-300"
+            [class.bg-accent]="step() >= 1" [class.text-blue-900]="step() >= 1"
+            [class.bg-white/20]="step() < 1" [class.text-white]="step() < 1">1</div>
+          <span class="text-white text-sm">Registra tu comercio</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0 transition-all duration-300"
+            [class.bg-accent]="step() >= 2" [class.text-blue-900]="step() >= 2"
+            [class.bg-white/20]="step() < 2" [class.text-white]="step() < 2">2</div>
+          <span class="text-white text-sm">Vincula tu sucursal principal</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0 transition-all duration-300"
+            [class.bg-accent]="step() >= 3" [class.text-blue-900]="step() >= 3"
+            [class.bg-white/20]="step() < 3" [class.text-white]="step() < 3">3</div>
+          <span class="text-white text-sm">Crea tu primer usuario</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-bold shrink-0">4</div>
+          <span class="text-white text-sm">Mejora tu productividad</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navegación -->
+    <div class="w-full flex justify-between gap-2">
+      <button
+        class="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-all duration-300 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+        (click)="prevStep()" [disabled]="step() === 1">
+        <fa-icon [icon]="['fas', 'arrow-left']" class="text-xs"/>
+        Volver
+      </button>
+      <button
+        class="bg-accent hover:bg-accent-hover transition-all duration-300 cursor-pointer text-white font-bold py-2 px-5 rounded-xl flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+        (click)="nextStep()" [disabled]="loading()">
+        @if (loading()) {
+          <fa-icon [icon]="['fas', 'circle-notch']" class="text-xs animate-spin"/>
+          Procesando...
+        } @else if (step() === 3) {
+          Crear comercio
+          <fa-icon [icon]="['fas', 'check']" class="text-xs"/>
+        } @else {
+          Siguiente
+          <fa-icon [icon]="['fas', 'arrow-right']" class="text-xs"/>
+        }
+      </button>
+    </div>
+
   </div>
-  <div class="w-2/3 h-[90vh]">
+
+  <!-- Panel derecho: formularios -->
+  <div class="w-full lg:w-2/3 lg:h-[90vh] rounded-3xl overflow-hidden">
     @if (step() === 1) {
       <app-step-one-form />
-    }@else if (step() === 2) {
+    } @else if (step() === 2) {
       <app-step-two-form />
-    }@else if (step() === 3) {
+    } @else if (step() === 3) {
       <app-step-three-form />
     }
   </div>
+
 </section>
