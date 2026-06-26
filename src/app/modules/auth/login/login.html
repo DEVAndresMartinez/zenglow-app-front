@@ -14,7 +14,7 @@
       <p class="text-muted text-sm mt-1">Ingresa tus credenciales para continuar.</p>
     </div>
     <form [formGroup]="loginForm" class="flex flex-col gap-4" (submit)="submit()">
-      <ui-input-component type="text" id="credential" name="credential" formControlName="credential" label="Correo o usuario" placeholder="ej. usuario@comercio.com" [required]="true" [minlength]="4" [maxlength]="150"/>
+      <ui-input-component type="text" id="identifier" name="identifier" formControlName="identifier" label="Correo o usuario" placeholder="ej. usuario@comercio.com" [required]="true" [minlength]="4" [maxlength]="150"/>
 
       <div class="flex flex-col gap-1">
         <ui-input-component type="password" id="password" name="password" formControlName="password" label="Contraseña" placeholder="••••••••" [required]="true" [minlength]="6" [maxlength]="150"/>

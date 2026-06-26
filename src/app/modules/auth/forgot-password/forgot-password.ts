@@ -1,8 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UIInputComponent } from '../../../components/shared/ui/ui-input-component/ui-input-component';
+import { AuthService } from '../../../core/services/auth/auth.service';
+import { RecoverRequest, RecoverResponse } from '../../../core/interfaces/auth.interface';
 
 const COMPONENTS = [UIInputComponent];
 
@@ -19,18 +21,22 @@ export class ForgotPassword {
   loading = signal<boolean>(false);
 
   forgotForm = new FormGroup({
-    email: new FormControl<string>('', {
-      validators: [Validators.required, Validators.email, Validators.maxLength(150)]
-    })
+    useremail: new FormControl<string>('', { validators: [Validators.required, Validators.email, Validators.maxLength(150)] }),
+    username: new FormControl<string>('', { validators: [Validators.required, Validators.maxLength(150)] })
   });
+
+  private auth = inject(AuthService);
 
   submit() {
     if (this.forgotForm.invalid) return;
     this.loading.set(true);
-    // TODO: conectar con el servicio de recuperación
-    setTimeout(() => {
-      this.loading.set(false);
-      this.sent.set(true);
-    }, 1200);
+    this.auth.recoverPassword(this.forgotForm.value as RecoverRequest).subscribe({
+      next: () => {
+        this.sent.set(true);
+        this.loading.set(false);
+      }, error: () => { }
+    });
+    this.loading.set(false);
+
   }
 }

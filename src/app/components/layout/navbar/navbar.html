@@ -2,14 +2,14 @@
     <div class="flex items-center gap-2">
         <fa-icon [icon]="['fas', 'cubes']" class="text-2xl text-blue-600"></fa-icon>
         <div class="flex flex-col">
-            <span class="text-sm font-semibold text-gray-500">{{ companyName() }}</span>
-            <span class="text-xs text-gray-400">App Frontend</span>
+            <span class="text-sm font-semibold text-gray-500">{{ commerceService.me()?.commerce?.commercename }} | {{ commerceService.me()?.user?.username }} </span>
+            <span class="text-xs text-gray-400">{{ commerceService.me()?.commerce?.commercetype === 'barber' ? 'Barbería' : 'Salón' }} | {{ lastLogin() | date: 'short'}}</span>
         </div>
     </div>
     <div class="flex items-center gap-4">
-        <a routerLink="/modules/auth/login">
+        <button type="button" (click)="logout()" class="p-1 border-b border-transparent hover:border-b-body/20 rounded cursor-pointer">
             <fa-icon [icon]="['fas', 'arrow-right-from-bracket']" class="text-gray-400" title="Cerrar sesión"></fa-icon>
-        </a>
+        </button>
         <!-- <a routerLink="/" class="text-gray-600 hover:text-gray-800 transition-colors duration-200">Home</a>
         <a routerLink="/about" class="text-gray-600 hover:text-gray-800 transition-colors duration-200">About</a>
         <a routerLink="/contact" class="text-gray-600 hover:text-gray-800 transition-colors duration-200">Contact</a> -->
