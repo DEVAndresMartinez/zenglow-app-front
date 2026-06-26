@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AuthService } from '../../../core/services/auth/auth.service';
-import { CommerceService } from '../../../core/services/modules/commerces/commerce.service';
+import { CommerceService } from '../../../core/services/modules/commerce.service';
 
 
 @Component({

@@ -8,7 +8,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { LoginRequest, LoginResponse } from '../../../core/interfaces/auth.interface';
 import { ErrorAuthException } from '../../../core/exceptions/auth.interface';
-import { CommerceService } from '../../../core/services/modules/commerces/commerce.service';
+import { CommerceService } from '../../../core/services/modules/commerce.service';
 
 const COMPONENTS = [UIInputComponent];
 

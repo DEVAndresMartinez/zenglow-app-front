@@ -1,0 +1,19 @@
+@reference "../../../../../tailwind.css";
+
+.tabs-scroll {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.tab-item {
+  @apply flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-muted border-b-2 border-transparent -mb-px
+         whitespace-nowrap cursor-pointer transition-colors duration-200
+         hover:text-heading hover:border-stroke;
+}
+
+.tab-active {
+  @apply text-primary border-primary;
+}

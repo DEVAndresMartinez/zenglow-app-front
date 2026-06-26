@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AuthService } from '../../../../core/services/auth/auth.service';
-import { CommerceService } from '../../../../core/services/modules/commerces/commerce.service';
+import { CommerceService } from '../../../../core/services/modules/commerce.service';
 import { UIInputComponent } from '../ui-input-component/ui-input-component';
 import { ChangePasswordRequest } from '../../../../core/interfaces/auth.interface';
 

@@ -6,7 +6,7 @@ import { UIInputComponent } from '../../../../components/shared/ui/ui-input-comp
 import { UIPhoneInputComponent } from '../../../../components/shared/ui/ui-phone-input-component/ui-phone-input-component';
 import { STATUS_USER_AVAILABLE } from '../../../../core/const/register-const';
 import { Lowercase } from '../../../../core/directives/lower-case';
-import { CommerceService } from '../../../../core/services/modules/commerces/commerce.service';
+import { CommerceService } from '../../../../core/services/modules/commerce.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 const COMPONENTS = [UIInputComponent, UIPhoneInputComponent];

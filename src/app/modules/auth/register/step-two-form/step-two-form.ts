@@ -8,7 +8,7 @@ import { UIDropdownComponent, DropdownOption } from '../../../../components/shar
 import { STATUS_BRANCH_AVAILABLE } from '../../../../core/const/register-const';
 import { UIInputComponent } from '../../../../components/shared/ui/ui-input-component/ui-input-component';
 import { UIPhoneInputComponent } from '../../../../components/shared/ui/ui-phone-input-component/ui-phone-input-component';
-import { CommerceService } from '../../../../core/services/modules/commerces/commerce.service';
+import { CommerceService } from '../../../../core/services/modules/commerce.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 const COMPONENTS = [UIDropdownComponent, UIInputComponent, UIPhoneInputComponent];

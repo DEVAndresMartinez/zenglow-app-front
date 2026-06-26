@@ -10,7 +10,7 @@ import { CalcularDigitoVerificacion } from '../../../../core/functions/calculate
 import { NumbersOnlyCase } from '../../../../core/directives/numbers-onlit-case';
 import { UpperCase } from '../../../../core/directives/upper-case';
 import { Lowercase } from '../../../../core/directives/lower-case';
-import { CommerceService } from '../../../../core/services/modules/commerces/commerce.service';
+import { CommerceService } from '../../../../core/services/modules/commerce.service';
 
 const COMPONENTS = [UIInputComponent, UIDropdownComponent, UIPhoneInputComponent];
 const DIRECTIVES = [NumbersOnlyCase, UpperCase, Lowercase];

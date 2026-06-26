@@ -17,14 +17,14 @@ export class Options {
       icon: ['fas', 'house'],
       title: 'Inicio',
       description: 'Visión general de tu cuenta y actividad reciente.',
-      link: '/home',
+      link: '/modules/common/home',
       color: 'text-blue-700'
     },
     {
       icon: ['fas', 'building'],
       title: 'Negocio',
       description: 'Gestiona tu negocio: sucursales, usuarios, roles, permisos',
-      link: '/business',
+      link: '/modules/common/business',
       color: 'text-yellow-700'
     },
     {

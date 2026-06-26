@@ -1,0 +1,81 @@
+<div class="flex flex-col gap-4">
+
+  <app-tabs mode="route" [tabs]="tabs"></app-tabs>
+
+  @switch (type()) {
+
+    @case ('branches') {
+      @if (loading()) {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          @for (_ of [1,2,3]; track $index) {
+            <div class="bg-surface rounded-2xl border border-stroke p-4 flex flex-col gap-3 animate-pulse">
+              <div class="flex items-center justify-between">
+                <div class="h-4 w-32 bg-stroke rounded-lg"></div>
+                <div class="h-5 w-16 bg-stroke rounded-full"></div>
+              </div>
+              <div class="flex flex-col gap-2 pt-2 border-t border-stroke/60">
+                <div class="h-3 w-full bg-stroke rounded"></div>
+                <div class="h-3 w-3/4 bg-stroke rounded"></div>
+                <div class="h-3 w-1/2 bg-stroke rounded"></div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else if (branches().length === 0) {
+        <div class="flex flex-col items-center justify-center gap-3 py-16 text-center">
+          <div class="flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-subtle">
+            <fa-icon [icon]="['fas', 'store']" class="text-2xl text-on-brand-muted"></fa-icon>
+          </div>
+          <p class="text-sm font-medium text-heading">Sin sucursales</p>
+          <p class="text-xs text-muted">No hay sucursales registradas aún.</p>
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          @for (branch of branches(); track branch.branchuuid) {
+            <div class="bg-surface rounded-2xl border border-stroke shadow-sm p-4 flex flex-col gap-3 hover:shadow-md hover:border-primary/30 transition-all duration-200">
+
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-primary-subtle shrink-0">
+                    <fa-icon [icon]="['fas', 'store']" class="text-sm text-primary"></fa-icon>
+                  </div>
+                  <span class="text-sm font-semibold text-heading truncate">{{ branch.branchname }}</span>
+                </div>
+                <span class="px-2 py-0.5 text-[10px] font-medium rounded-full border shrink-0"
+                      [class]="statusConfig(branch.branchstatus).classes">
+                  {{ statusConfig(branch.branchstatus).label }}
+                </span>
+              </div>
+
+              <div class="flex flex-col gap-1.5 pt-3 border-t border-stroke/60">
+                <div class="flex items-center gap-2 text-xs text-muted">
+                  <fa-icon [icon]="['fas', 'location-dot']" class="w-3 shrink-0"></fa-icon>
+                  <span class="truncate">{{ branch.branchcity }}</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-muted">
+                  <fa-icon [icon]="['fas', 'map-pin']" class="w-3 shrink-0"></fa-icon>
+                  <span class="truncate">{{ branch.branchaddress }}</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-muted">
+                  <fa-icon [icon]="['fas', 'phone']" class="w-3 shrink-0"></fa-icon>
+                  <span>{{ branch.branchphone }}</span>
+                </div>
+              </div>
+
+            </div>
+          }
+        </div>
+      }
+    }
+
+    @case ('users') {
+      <p class="text-sm text-muted">Contenido de Usuarios</p>
+    }
+
+    @case ('roles') {
+      <p class="text-sm text-muted">Contenido de Roles</p>
+    }
+
+  }
+
+</div>

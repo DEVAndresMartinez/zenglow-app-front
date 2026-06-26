@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
 import { AuthService } from '../services/auth/auth.service';
-import { CommerceService } from '../services/modules/commerces/commerce.service';
+import { CommerceService } from '../services/modules/commerce.service';
 
 export const authGuard: CanActivateFn = () => {
   const auth            = inject(AuthService);

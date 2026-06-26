@@ -126,5 +126,19 @@ export interface CommerceMeResponse {
     userphone: string,
     mustchangepassword: boolean,
     userlastlogin: Date
-  }
+  },
+  branches: DetailDto;
+  roles: DetailDto;
+  users: DetailDto;
+}
+
+export interface DetailDto {
+  total: number;
+  active: number;
+  inactive: number;
+}
+
+
+export interface LogoResponse {
+  commercelogo: string;
 }

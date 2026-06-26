@@ -1,0 +1,27 @@
+<div class="tabs-scroll overflow-x-auto">
+  <div class="flex min-w-max border-b border-stroke">
+    @for (tab of tabs; track $index) {
+      @if (mode === 'route') {
+        <a [routerLink]="tab.link"
+           routerLinkActive="tab-active"
+           [routerLinkActiveOptions]="{ exact: true }"
+           class="tab-item">
+          @if (tab.icon) {
+            <fa-icon [icon]="tab.icon" class="text-sm"></fa-icon>
+          }
+          <span>{{ tab.label }}</span>
+        </a>
+      } @else {
+        <button
+          (click)="selectTab(tab)"
+          [class.tab-active]="tab.key === activeKey"
+          class="tab-item">
+          @if (tab.icon) {
+            <fa-icon [icon]="tab.icon" class="text-sm"></fa-icon>
+          }
+          <span>{{ tab.label }}</span>
+        </button>
+      }
+    }
+  </div>
+</div>

@@ -6,7 +6,7 @@ import { fab } from '@fortawesome/free-brands-svg-icons';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { filter, map, mergeMap } from 'rxjs';
-import { CommerceService } from './core/services/modules/commerces/commerce.service';
+import { CommerceService } from './core/services/modules/commerce.service';
 import { ChangePasswordModalComponent } from './components/shared/ui/change-password-modal/change-password-modal';
 
 @Component({
