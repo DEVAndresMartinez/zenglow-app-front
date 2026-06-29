@@ -1,7 +1,7 @@
 <div class="flex flex-col gap-4">
 
   <!-- Header: logo + nombre + badges -->
-  <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-5 bg-surface rounded-2xl border border-stroke shadow-sm">
+  <div class="flex items-start sm:items-center gap-4 p-5 bg-surface rounded-2xl border border-stroke shadow-sm">
     <div class="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden cursor-pointer group shrink-0" (click)="fileInput.click()">
       @if (commerceService.me()?.commerce?.commercelogo) {
         <img [src]="commerceService.me()?.commerce?.commercelogo" class="w-full h-full object-cover" alt="Logo del negocio">

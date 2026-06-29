@@ -7,7 +7,7 @@ import { RefreshResponse } from '../interfaces/auth.interface';
 let isRefreshing = false;
 const refreshSubject = new BehaviorSubject<string | null>(null);
 
-const AUTH_PATHS = ['/auth/login', '/auth/refresh'];
+const AUTH_PATHS = ['/auth/login', '/auth/refresh', '/auth/logout'];
 
 function isAuthEndpoint(url: string): boolean {
   return AUTH_PATHS.some(path => url.includes(path));
@@ -46,16 +46,16 @@ export const authTokenInterceptor: HttpInterceptorFn = (req, next) => {
         }
 
         return auth.refresh(refreshToken).pipe(
-          switchMap((res: RefreshResponse) => {
-            isRefreshing = false;
-            auth.saveTokens(res.access_token, refreshToken);
-            refreshSubject.next(res.access_token);
-            return next(cloneWithToken(req, res.access_token));
-          }),
           catchError(refreshErr => {
             isRefreshing = false;
             auth.logout();
             return throwError(() => refreshErr);
+          }),
+          switchMap((res: RefreshResponse) => {
+            isRefreshing = false;
+            auth.saveTokens(res.access_token, res.refresh_token ?? refreshToken);
+            refreshSubject.next(res.access_token);
+            return next(cloneWithToken(req, res.access_token));
           })
         );
       }
