@@ -4,11 +4,13 @@
       <fa-icon [icon]="['fas', 'arrow-left']" class="text-xs"/>
       <span class="hidden sm:inline font-medium">Volver</span>
     </button>
-    <ui-search-component [placeholder]="type() === 'users' ? 'Buscar usuario...' : 'Buscar sucursal...'" (search)="onGlobalFilter($event)" class="flex-1"/>
-    <button type="button" (click)="openCreateBranch()" class="shrink-0 flex items-center gap-1.5 px-4 py-2 bg-primary text-white rounded-xl text-sm font-medium shadow-sm hover:bg-primary-dark active:scale-95 transition-all duration-200 cursor-pointer">
-      <fa-icon [icon]="['fas', 'plus']" class="text-xs"/>
-      <span class="hidden sm:inline">{{ type() === 'users' ? 'Registrar usuario' : 'Registrar sucursal' }}</span>
-    </button>
+    <ui-search-component [placeholder]="type() === 'users' ? 'Buscar usuario...' : type() === 'roles' ? 'Buscar rol...' : 'Buscar sucursal...'" (search)="onGlobalFilter($event)" class="flex-1"/>
+    @if (type() !== 'roles') {
+      <button type="button" (click)="type() === 'users' ? openCreateUser() : openCreateBranch()" class="shrink-0 flex items-center gap-1.5 px-4 py-2 bg-primary text-white rounded-xl text-sm font-medium shadow-sm hover:bg-primary-dark active:scale-95 transition-all duration-200 cursor-pointer">
+        <fa-icon [icon]="['fas', 'plus']" class="text-xs"/>
+        <span class="hidden sm:inline">{{ type() === 'users' ? 'Registrar usuario' : 'Registrar sucursal' }}</span>
+      </button>
+    }
   </div>
   <app-tabs mode="route" [tabs]="tabs"></app-tabs>
   @switch (type()) {
@@ -75,8 +77,11 @@
                   <fa-icon [icon]="['fas', 'pen']" class="text-[10px]"/>
                   Editar
                 </button>
+                <button type="button" (click)="openDeleteBranch(branch)" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-muted hover:bg-error/10 hover:text-error transition-all duration-200 cursor-pointer">
+                  <fa-icon [icon]="['fas', 'trash']" class="text-[10px]"/>
+                  Eliminar
+                </button>
               </div>
-
             </div>
           }
         </div>
@@ -130,13 +135,16 @@
                     <span class="text-sm font-semibold text-heading truncate block">
                       {{ user.userfirstname }} {{ user.userlastname }}
                     </span>
-                    <span class="text-xs text-muted truncate block">&#64;{{ user.username }}</span>
+                    <span class="text-xs text-muted truncate block">&#64;{{ user.username }} | {{ user.roles.map(role => role.rolename).join(', ') }}</span>
                   </div>
                 </div>
-                <span class="px-2 py-0.5 text-[10px] font-medium rounded-full border shrink-0"
-                      [class]="userStatusConfig(user.userstatus).classes">
-                  {{ userStatusConfig(user.userstatus).label }}
-                </span>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <span class="px-2 py-0.5 text-[10px] font-medium rounded-full border"
+                        [class]="userStatusConfig(user.userstatus).classes">
+                    {{ userStatusConfig(user.userstatus).label }}
+                  </span>
+                  <ui-action-menu [items]="userActionItems" (action)="onUserAction($event, user)"/>
+                </div>
               </div>
 
               <div class="flex flex-col gap-1.5 pt-3 border-t border-stroke/60">
@@ -161,7 +169,56 @@
     }
 
     @case ('roles') {
-      <p class="text-sm text-muted">Contenido de Roles</p>
+      @if (loading()) {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          @for (_ of [1,2,3]; track $index) {
+            <div class="bg-surface rounded-2xl border border-stroke p-4 flex flex-col gap-3 animate-pulse">
+              <div class="flex items-center justify-between">
+                <div class="h-4 w-32 bg-stroke rounded-lg"></div>
+                <div class="h-5 w-16 bg-stroke rounded-full"></div>
+              </div>
+              <div class="flex flex-col gap-2 pt-2 border-t border-stroke/60">
+                <div class="h-3 w-full bg-stroke rounded"></div>
+                <div class="h-3 w-3/4 bg-stroke rounded"></div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else if (rolesCopy().length === 0) {
+        <div class="flex flex-col items-center justify-center gap-3 py-16 text-center">
+          <div class="flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-subtle">
+            <fa-icon [icon]="['fas', 'user-tag']" class="text-2xl text-on-brand-muted"></fa-icon>
+          </div>
+          <p class="text-sm font-medium text-heading">Sin roles</p>
+          <p class="text-xs text-muted">No hay roles registrados aún.</p>
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          @for (role of rolesCopy(); track role.roleuuid) {
+            <div class="bg-surface rounded-2xl border border-stroke shadow-sm p-4 flex flex-col gap-3 hover:shadow-md hover:border-primary/30 transition-all duration-200">
+
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-primary-subtle shrink-0">
+                    <fa-icon [icon]="['fas', 'user-tag']" class="text-sm text-primary"></fa-icon>
+                  </div>
+                  <span class="text-sm font-semibold text-heading truncate">{{ role.rolename }}</span>
+                </div>
+                @if (role.isOwnerRole) {
+                  <span class="px-2 py-0.5 text-[10px] font-medium rounded-full border shrink-0 bg-primary/10 text-primary border-on-brand-muted">
+                    Propietario
+                  </span>
+                }
+              </div>
+
+              <div class="flex flex-col gap-1.5 pt-3 border-t border-stroke/60">
+                <p class="text-xs text-muted">{{ role.roledesc || 'Sin descripción.' }}</p>
+              </div>
+
+            </div>
+          }
+        </div>
+      }
     }
 
   }
@@ -169,11 +226,51 @@
 </div>
 
 @if (showBranchForm()) {
-  <app-branch-form
-    [isEdit]="editBranch() !== null"
-    [branchuuid]="editBranch()?.branchuuid ?? ''"
-    [branch]="editBranch()"
-    (saved)="onBranchSaved($event)"
-    (closed)="onFormClosed()"
+  <app-branch-form [isEdit]="editBranch() !== null" [branchuuid]="editBranch()?.branchuuid ?? ''" [branch]="editBranch()" (saved)="onBranchSaved($event)" (closed)="onFormClosed()"/>
+}
+
+@if (showUserForm()) {
+  <app-user-form [isEdit]="editUser() !== null" [useruuid]="editUser()?.useruuid ?? ''" [user]="editUser()" (saved)="onUserSaved($event)" (closed)="onUserFormClosed()"/>
+}
+
+@if (showChangePasswordForm()) {
+  <app-change-password-form [useruuid]="changePasswordUser()?.useruuid ?? ''" [user]="changePasswordUser()" (closed)="onChangePasswordFormClosed()"/>
+}
+
+@if (showAssignBranchForm()) {
+  <app-assign-branch-form [useruuid]="assignBranchUser()?.useruuid ?? ''" [user]="assignBranchUser()" (saved)="onAssignBranchSaved($event)" (closed)="onAssignBranchFormClosed()"/>
+}
+
+@if (showAssignRolesForm()) {
+  <app-assign-roles-form [useruuid]="assignRolesUser()?.useruuid ?? ''" [user]="assignRolesUser()" (saved)="onAssignRolesSaved($event)" (closed)="onAssignRolesFormClosed()"/>
+}
+
+@if (showDeleteBranchForm()) {
+  <ui-confirm-modal
+    title="Eliminar sucursal"
+    [message]="'¿Seguro que deseas eliminar ' + (deleteBranch()?.branchname ?? 'esta sucursal') + '? Esta acción no se puede deshacer.'"
+    confirmText="Eliminar"
+    cancelText="Cancelar"
+    variant="danger"
+    icon="trash"
+    [loading]="deletingBranch()"
+    [error]="deleteBranchError()"
+    (confirmed)="onDeleteBranchConfirmed()"
+    (cancelled)="onDeleteBranchCancelled()"
+  />
+}
+
+@if (showDeleteUserForm()) {
+  <ui-confirm-modal
+    title="Eliminar usuario"
+    [message]="'¿Seguro que deseas eliminar a ' + (deleteUser()?.userfirstname ?? '') + ' ' + (deleteUser()?.userlastname ?? '') + '? Esta acción no se puede deshacer.'"
+    confirmText="Eliminar"
+    cancelText="Cancelar"
+    variant="danger"
+    icon="trash"
+    [loading]="deletingUser()"
+    [error]="deleteUserError()"
+    (confirmed)="onDeleteUserConfirmed()"
+    (cancelled)="onDeleteUserCancelled()"
   />
 }

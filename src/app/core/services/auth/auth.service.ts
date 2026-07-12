@@ -5,13 +5,13 @@ import { Observable, finalize } from 'rxjs';
 import { BACK_URL } from '../../../../../env';
 import { ChangePasswordRequest, LoginRequest, LoginResponse, RecoverRequest, RecoverResponse, RefreshResponse } from '../../interfaces/auth.interface';
 
-const ACCESS_KEY  = 'access_token';
+const ACCESS_KEY = 'access_token';
 const REFRESH_KEY = 'refresh_token';
 
 @Service()
 export class AuthService {
 
-  private http   = inject(HttpClient);
+  private http = inject(HttpClient);
   private router = inject(Router);
 
   // ── Endpoints ─────────────────────────────────────────────────
@@ -21,7 +21,8 @@ export class AuthService {
   }
 
   refresh(refreshToken: string): Observable<RefreshResponse> {
-    return this.http.post<RefreshResponse>(`${BACK_URL}/auth/refresh`, { refresh_token: refreshToken });
+    const headers = { Authorization: `Bearer ${refreshToken}` };
+    return this.http.post<RefreshResponse>(`${BACK_URL}/auth/refresh`, {}, { headers });
   }
 
   // ── Tokens ────────────────────────────────────────────────────

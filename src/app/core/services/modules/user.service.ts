@@ -2,7 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { BACK_URL } from '../../../../../env';
 import { Observable } from 'rxjs';
-import { UsersInterface } from '../../interfaces/user.interface';
+import { CreateUserInterface, UpdateUserInterface, UsersInterface } from '../../interfaces/user.interface';
+import { ChangeStatusResponseDto } from '../../interfaces/branch.interface';
 
 @Service()
 export class UserService {
@@ -15,4 +16,25 @@ export class UserService {
   getUsers(): Observable<UsersInterface[]> {
     return this.http.get<UsersInterface[]>(`${this.URL}/users/v1`)
   }
+
+  create(req: CreateUserInterface): Observable<UsersInterface> {
+    return this.http.post<UsersInterface>(`${this.URL}/users/v1`, req);
+  }
+
+  update(useruuid: string, req: UpdateUserInterface): Observable<UsersInterface> {
+    return this.http.patch<UsersInterface>(`${this.URL}/users/v1/${useruuid}`, req)
+  }
+
+  remove(useruuid: string): Observable<ChangeStatusResponseDto> {
+    return this.http.delete<ChangeStatusResponseDto>(`${this.URL}/users/v1/${useruuid}`);
+  }
+
+  assignBranch(useruuid: string, { branchuuid }: { branchuuid: string }): Observable<UsersInterface> {
+    return this.http.patch<UsersInterface>(`${this.URL}/users/v1/${useruuid}/branch`, { branchuuid });
+  }
+
+  assignRoles(useruuid: string, { roleuuids }: { roleuuids: string[] }): Observable<UsersInterface> {
+    return this.http.put<UsersInterface>(`${this.URL}/users/v1/${useruuid}/roles`, { roleuuids });
+  }
+
 }

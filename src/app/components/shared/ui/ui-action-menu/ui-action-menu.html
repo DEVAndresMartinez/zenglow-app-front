@@ -1,0 +1,31 @@
+<div class="relative">
+  <button #triggerBtn type="button" (click)="toggle()"
+    class="flex items-center justify-center w-8 h-8 rounded-lg text-muted hover:bg-stroke/50 hover:text-heading transition-all duration-200 cursor-pointer">
+    <fa-icon [icon]="['fas', 'ellipsis-vertical']" class="text-sm"/>
+  </button>
+
+  @if (isOpen()) {
+    <ul [style]="panelStyle()" class="bg-surface border border-stroke rounded-xl shadow-lg py-1 overflow-hidden">
+      @for (item of items(); track item.key) {
+        <li (click)="select(item)"
+          class="flex items-center justify-between gap-2 px-3 py-2 text-sm transition-colors duration-150"
+          [class.cursor-pointer]="!item.disabled"
+          [class.cursor-not-allowed]="item.disabled"
+          [class.opacity-50]="item.disabled"
+          [class.text-error]="item.variant === 'danger' && !item.disabled"
+          [class.text-heading]="item.variant !== 'danger' && !item.disabled"
+          [class.text-muted]="item.disabled"
+          [class.hover:bg-error/10]="item.variant === 'danger' && !item.disabled"
+          [class.hover:bg-stroke/40]="item.variant !== 'danger' && !item.disabled">
+          <span class="flex items-center gap-2">
+            <fa-icon [icon]="['fas', item.icon]" class="text-xs w-3.5 shrink-0"/>
+            {{ item.label }}
+          </span>
+          @if (item.hint) {
+            <span class="text-[10px] text-muted shrink-0">{{ item.hint }}</span>
+          }
+        </li>
+      }
+    </ul>
+  }
+</div>

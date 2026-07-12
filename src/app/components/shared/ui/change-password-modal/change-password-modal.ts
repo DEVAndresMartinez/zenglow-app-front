@@ -26,7 +26,7 @@ export class ChangePasswordModalComponent {
   showModal = computed(() => !!this.commerceService.me()?.user.mustchangepassword);
 
   loading = signal(false);
-  error   = signal('');
+  error = signal('');
   success = signal(false);
 
   form = new FormGroup({
@@ -68,6 +68,7 @@ export class ChangePasswordModalComponent {
   }
 
   logout(): void {
+    this.commerceService.me.set(null);
     this.auth.logout();
   }
 }

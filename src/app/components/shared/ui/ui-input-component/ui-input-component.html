@@ -9,25 +9,13 @@
   <div class="relative">
 
     @if (isTextarea()) {
-    <textarea
-      class="w-full px-4 py-2 border-2 rounded-md text-sm text-muted focus:text-input focus:outline-none transition-all duration-300 roboto resize-none"
-      [class.border-stroke]="!error()" [class.focus:border-stroke-focus]="!error()" [class.border-stroke-error]="error()"
-      [placeholder]="placeholder()" [disabled]="isDisabled()" [readOnly]="readonly()" [required]="required()"
-      [attr.maxlength]="maxlength()" [attr.minlength]="minlength()" [value]="value()" (input)="onInput($event)"
-      (blur)="onBlur()"></textarea>
+    <textarea class="w-full px-4 py-2 border-2 rounded-md text-sm text-muted focus:text-input focus:outline-none transition-all duration-300 roboto resize-none" [class.border-stroke]="!error()" [class.focus:border-stroke-focus]="!error()" [class.border-stroke-error]="error()" [placeholder]="placeholder()" [disabled]="isDisabled()" [readOnly]="readonly()" [required]="required()" [attr.maxlength]="maxlength()" [attr.minlength]="minlength()" [value]="value()" (input)="onInput($event)" (blur)="onBlur()"></textarea>
     } @else {
-    <input
-      class="w-full px-4 py-2 border-2 rounded-md text-sm text-muted focus:text-input focus:outline-none transition-all duration-300 roboto"
-      [class.border-stroke]="!error()" [class.focus:border-stroke-focus]="!error()" [class.border-stroke-error]="error()"
-      [class.pr-10]="isPassword()" [type]="visibleType()" [placeholder]="placeholder()" [disabled]="isDisabled()"
-      [readOnly]="readonly()" [required]="required()" [attr.maxlength]="maxlength()" [attr.minlength]="minlength()"
-      [min]="min() ?? ''" [max]="max() ?? ''" [step]="step() ?? ''" [value]="value()" (input)="onInput($event)"
-      (blur)="onBlur()" />
+    <input class="w-full px-4 py-2 border-2 rounded-md text-sm text-muted focus:text-input focus:outline-none transition-all duration-300 roboto" [class.border-stroke]="!error()" [class.focus:border-stroke-focus]="!error()" [class.border-stroke-error]="error()" [class.pr-10]="isPassword()" [type]="visibleType()" [placeholder]="placeholder()" [disabled]="isDisabled()" [readOnly]="readonly()" [required]="required()" [attr.maxlength]="maxlength()" [attr.minlength]="minlength()" [min]="min() ?? ''" [max]="max() ?? ''" [step]="step() ?? ''" [value]="value()" (input)="onInput($event)" (blur)="onBlur()" />
     }
 
     @if (isPassword()) {
-    <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-body text-xs cursor-pointer"
-      (click)="togglePassword()">
+    <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-body text-xs cursor-pointer" (click)="togglePassword()">
       {{ showPassword() ? 'Ocultar' : 'Mostrar' }}
     </button>
     }

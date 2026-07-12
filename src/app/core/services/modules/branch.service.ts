@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { BACK_URL } from '../../../../../env';
 import { Observable, retry } from 'rxjs';
-import { BranchesInterface, CreateBranchInterface } from '../../interfaces/branch.interface';
+import { BranchesInterface, ChangeStatusResponseDto, CreateBranchInterface } from '../../interfaces/branch.interface';
 
 @Service()
 export class BranchService {
@@ -22,6 +22,10 @@ export class BranchService {
 
   update(branchuuid: string, req: CreateBranchInterface): Observable<BranchesInterface> {
     return this.http.patch<BranchesInterface>(`${this.URL}/branches/v1/${branchuuid}`, req)
+  }
+
+  remove(branchuuid: string): Observable<ChangeStatusResponseDto> {
+    return this.http.delete<ChangeStatusResponseDto>(`${this.URL}/branches/v1/${branchuuid}`);
   }
 
 }

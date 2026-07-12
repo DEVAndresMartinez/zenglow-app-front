@@ -126,6 +126,11 @@ export interface CommerceMeResponse {
     userphone: string,
     mustchangepassword: boolean,
     userlastlogin: Date
+    roles: {
+      roleuuid: string;
+      rolename: string;
+      roleIsOwner: boolean;
+    }[];
   },
   branches: DetailDto;
   roles: DetailDto;

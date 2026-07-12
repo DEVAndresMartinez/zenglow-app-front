@@ -19,3 +19,10 @@ export interface CreateBranchInterface {
   branchphone: string;
   branchstatus: string;
 }
+
+
+export interface ChangeStatusResponseDto {
+  branchuuid: string;
+  code: string;
+  message: string;
+}

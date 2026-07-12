@@ -10,7 +10,7 @@
       @if (sidebarOpen()) {
         <div class="absolute inset-0 bg-black/30 z-10 lg:hidden" (click)="sidebarOpen.set(false)"></div>
       }
-      <div class="w-100" [class]="sidebarOpen()
+      <div class="w-90" [class]="sidebarOpen()
         ? 'absolute lg:relative h-full flex shrink-0 overflow-auto z-20 shadow-xl bg-surface'
         : 'hidden lg:flex shrink-0 overflow-auto'">
         <app-options></app-options>

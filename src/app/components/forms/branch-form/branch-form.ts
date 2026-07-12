@@ -16,7 +16,6 @@ const STATUS_LABELS: Record<string, string> = {
   active: 'Activa',
   inactive: 'Inactiva',
   maintenance: 'Mantenimiento',
-  deleted: 'Eliminada',
 };
 
 @Component({
@@ -41,7 +40,7 @@ export class BranchForm {
   loading = signal<boolean>(false);
 
   citiesOptions: DropdownOption[] = CITIES.map(city => ({ abv: city, name: city }));
-  statusOptions: DropdownOption[] = STATUS_BRANCH_AVAILABLE.map(s => ({ abv: s, name: STATUS_LABELS[s] ?? s }));
+  statusOptions: DropdownOption[] = STATUS_BRANCH_AVAILABLE.filter(v => v !== 'deleted').map(s => ({ abv: s, name: STATUS_LABELS[s] ?? s }));
 
   branchForm: FormGroup = new FormGroup({
     branchname: new FormControl<string>('', { validators: [Validators.required, Validators.minLength(3), Validators.maxLength(150)] }),
