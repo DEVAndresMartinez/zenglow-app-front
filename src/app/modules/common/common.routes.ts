@@ -26,6 +26,14 @@ export const commonRoutes: Routes = [
       title: 'Detalles de negocio'
     }
   },
+  {
+    path: 'customers',
+    loadComponent: () => import('./customers/customers').then(m => m.Customers),
+    canActivate: [],
+    data: {
+      title: 'Gestión de Clientes'
+    }
+  },
 
 
   { path: '', redirectTo: 'home', pathMatch: 'full' },

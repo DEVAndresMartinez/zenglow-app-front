@@ -1,0 +1,73 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+  <div class="w-full max-w-lg bg-surface rounded-2xl shadow-lg border border-stroke p-6 flex flex-col gap-6 max-h-[90vh] overflow-y-auto">
+    @if (responseCustomer()) {
+      <div class="flex flex-col items-center gap-4 py-4 text-center">
+        <div class="w-12 h-12 rounded-full bg-accent/15 flex items-center justify-center">
+          <fa-icon [icon]="['fas', 'check']" class="text-accent-hover text-lg"/>
+        </div>
+        <div>
+          <h2 class="text-heading font-semibold text-lg">{{ isEdit() ? '¡Cliente actualizado!' : '¡Cliente registrado!' }}</h2>
+          <p class="text-muted text-sm mt-1">
+            <strong>{{ responseCustomer()?.customerfirstname }} {{ responseCustomer()?.customerlastname }}</strong>
+            fue {{ isEdit() ? 'actualizado' : 'registrado' }} correctamente.
+          </p>
+        </div>
+        <button type="button" (click)="close()" class="flex items-center gap-2 px-5 py-2 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary-dark transition-all duration-200 cursor-pointer">
+          Aceptar
+        </button>
+      </div>
+    } @else {
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex flex-col gap-1">
+          <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-1">
+            <fa-icon [icon]="['fas', isEdit() ? 'pen' : 'user-plus']" class="text-primary text-sm"/>
+          </div>
+          <h2 class="text-heading font-semibold text-lg">{{ isEdit() ? 'Editar cliente' : 'Nuevo cliente' }}</h2>
+          <p class="text-muted text-sm">{{ isEdit() ? 'Actualiza los datos del cliente.' : 'Completa los datos para registrar un nuevo cliente.' }}</p>
+        </div>
+        <button type="button" (click)="close()" class="shrink-0 flex items-center justify-center w-8 h-8 rounded-xl text-muted hover:bg-stroke/50 hover:text-heading transition-all duration-200 cursor-pointer">
+          <fa-icon [icon]="['fas', 'xmark']"/>
+        </button>
+      </div>
+      <form [formGroup]="customerForm" (ngSubmit)="submit()" class="flex flex-col gap-4 overflow-sections">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <ui-input-component formControlName="customerfirstname" label="Nombre" placeholder="Ej. María" [maxlength]="150" [required]="true" [error]="firstnameError"/>
+          <ui-input-component formControlName="customerlastname" label="Apellido" placeholder="Ej. González" [maxlength]="150" [required]="true" [error]="lastnameError"/>
+        </div>
+        <ui-dropdown-component formControlName="customerdocumenttype" label="Tipo de documento" placeholder="Selecciona un tipo" [options]="documentTypeOptions" [required]="true" [error]="documentTypeError"/>
+        <div class="flex flex-col sm:flex-row items-end gap-3">
+          <div class="flex w-full items-end gap-2">
+            <ui-input-component formControlName="customerdocumentnumber" (input)="calcDV()" label="Número de documento" placeholder="Ej. 1234567890" [maxlength]="20" [required]="true" [error]="documentNumberError" appNumbersOnly class="flex-1"/>
+            <ui-input-component formControlName="customerdigitverification" (input)="calcDV()" label="DV" placeholder="0" appNumbersOnly class="w-16"/>
+          </div>
+        </div>
+        <ui-input-component formControlName="customeremail" type="email" label="Correo electrónico" placeholder="Ej. maria@email.com" [required]="true" [error]="emailError"/>
+        <ui-phone-input-component formControlName="customerphone" label="Teléfono" [required]="true" [error]="phoneError"/>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <ui-dropdown-component formControlName="customercity" label="Ciudad" placeholder="Selecciona una ciudad" [options]="citiesOptions"/>
+          <ui-input-component formControlName="customerbirthdate" type="date" label="Fecha de nacimiento"/>
+        </div>
+        @if (isEdit()) {
+          <ui-dropdown-component formControlName="customerstatus" label="Estado" placeholder="Selecciona un estado" [options]="statusOptions"/>
+        }
+        @if (error()) {
+          <p class="text-sm text-error px-1">{{ error() }}</p>
+        }
+        <div class="flex gap-3 pt-2">
+          <button type="button" (click)="close()" class="flex-1 px-4 py-2.5 rounded-xl border-2 border-stroke text-muted font-medium text-sm hover:border-primary/30 hover:text-heading transition-all duration-200 cursor-pointer">
+            Cancelar
+          </button>
+          <button type="submit" [disabled]="loading()" class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary-dark transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+            @if (loading()) {
+              <fa-icon [icon]="['fas', 'circle-notch']" class="text-sm animate-spin"/>
+              Guardando...
+            } @else {
+              <fa-icon [icon]="['fas', isEdit() ? 'pen' : 'user-plus']" class="text-xs"/>
+              {{ isEdit() ? 'Actualizar' : 'Registrar' }}
+            }
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</div>

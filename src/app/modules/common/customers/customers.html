@@ -1,0 +1,104 @@
+<div class="flex flex-col gap-4">
+  <div class="w-full flex items-center gap-2">
+    <ui-search-component placeholder="Buscar cliente..." (search)="onGlobalFilter($event)" class="flex-1"/>
+    <button type="button" (click)="openCreateCustomer()" class="shrink-0 flex items-center gap-1.5 px-4 py-2 bg-primary text-white rounded-xl text-sm font-medium shadow-sm hover:bg-primary-dark active:scale-95 transition-all duration-200 cursor-pointer">
+      <fa-icon [icon]="['fas', 'plus']" class="text-xs"/>
+      <span class="hidden sm:inline">Registrar cliente</span>
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      @for (_ of [1,2,3]; track $index) {
+        <div class="bg-surface rounded-2xl border border-stroke p-4 flex flex-col gap-3 animate-pulse">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <div class="w-9 h-9 bg-stroke rounded-xl shrink-0"></div>
+              <div class="flex flex-col gap-1.5">
+                <div class="h-3.5 w-28 bg-stroke rounded-lg"></div>
+                <div class="h-3 w-20 bg-stroke rounded"></div>
+              </div>
+            </div>
+            <div class="h-5 w-16 bg-stroke rounded-full"></div>
+          </div>
+          <div class="flex flex-col gap-2 pt-2 border-t border-stroke/60">
+            <div class="h-3 w-full bg-stroke rounded"></div>
+            <div class="h-3 w-3/4 bg-stroke rounded"></div>
+            <div class="h-3 w-1/2 bg-stroke rounded"></div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (customersCopy().length === 0) {
+    <div class="flex flex-col items-center justify-center gap-3 py-16 text-center">
+      <div class="flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-subtle">
+        <fa-icon [icon]="['fas', 'users']" class="text-2xl text-on-brand-muted"></fa-icon>
+      </div>
+      <p class="text-sm font-medium text-heading">Sin clientes</p>
+      <p class="text-xs text-muted">No hay clientes registrados aún.</p>
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      @for (customer of customersCopy(); track customer.customeruuid) {
+        <div class="bg-surface rounded-2xl border border-stroke shadow-sm p-4 flex flex-col gap-3 hover:shadow-md hover:border-primary/30 transition-all duration-200">
+
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex items-center gap-2 min-w-0">
+              <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-primary-subtle shrink-0">
+                <span class="text-xs font-bold text-primary uppercase">
+                  {{ customer.customerfirstname[0] }}{{ customer.customerlastname[0] }}
+                </span>
+              </div>
+              <div class="min-w-0">
+                <span class="text-sm font-semibold text-heading truncate block">
+                  {{ customer.customerfirstname }} {{ customer.customerlastname }}
+                </span>
+                <span class="text-xs text-muted truncate block">{{ customer.customerdocumenttype }} {{ customer.customerdocumentnumber }}</span>
+              </div>
+            </div>
+            <span class="px-2 py-0.5 text-[10px] font-medium rounded-full border shrink-0"
+                  [class]="customerStatusConfig(customer.customerstatus).classes">
+              {{ customerStatusConfig(customer.customerstatus).label }}
+            </span>
+          </div>
+
+          <div class="flex flex-col gap-1.5 pt-3 border-t border-stroke/60">
+            <div class="flex items-center gap-2 text-xs text-muted">
+              <fa-icon [icon]="['fas', 'envelope']" class="w-3 shrink-0"></fa-icon>
+              <span class="truncate">{{ customer.customeremail }}</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-muted">
+              <fa-icon [icon]="['fas', 'phone']" class="w-3 shrink-0"></fa-icon>
+              <span>{{ customer.customerphone }}</span>
+            </div>
+            @if (customer.customercity && customer.customercity !== '' && customer.customercity !== null) {
+              <div class="flex items-center gap-2 text-xs text-muted">
+                <fa-icon [icon]="['fas', 'location-dot']" class="w-3 shrink-0"></fa-icon>
+                <span class="truncate">{{ customer.customercity }}</span>
+              </div>
+            }
+            @if (customer.customerbirthdate && customer.customerbirthdate !== '' && customer.customercity !== null) {
+              <div class="flex items-center gap-2 text-xs text-muted">
+                <fa-icon [icon]="['fas', 'birthday-cake']" class="w-3 shrink-0"></fa-icon>
+                <span class="truncate">{{ customer.customerbirthdate }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="flex justify-end pt-2 border-t border-stroke/40">
+            <button type="button" (click)="openEditCustomer(customer)" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-muted hover:bg-primary/10 hover:text-primary transition-all duration-200 cursor-pointer">
+              <fa-icon [icon]="['fas', 'pen']" class="text-[10px]"/>
+              Editar
+            </button>
+          </div>
+
+        </div>
+      }
+    </div>
+  }
+
+</div>
+
+@if (showCustomerForm()) {
+  <app-customer-form [isEdit]="editCustomer() !== null" [customeruuid]="editCustomer()?.customeruuid ?? ''" [customer]="editCustomer()" (saved)="onCustomerSaved($event)" (closed)="onCustomerFormClosed()"/>
+}

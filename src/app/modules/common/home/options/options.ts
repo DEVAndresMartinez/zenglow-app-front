@@ -38,7 +38,7 @@ export class Options {
       icon: ['fas', 'users'],
       title: 'Clientes',
       description: 'Administra los clientes de tu negocio.',
-      link: '/users',
+      link: '/modules/common/customers',
       color: 'text-purple-700'
     },
     {
