@@ -21,6 +21,7 @@ import { AssignBranchForm } from '../../../../components/forms/assign-branch-for
 import { AssignRolesForm } from '../../../../components/forms/assign-roles-form/assign-roles-form';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorGlobalException } from '../../../../core/exceptions/error.interface';
+import { compressImage } from '../../../../core/functions/compress-image';
 
 const STATUS_MAP: Record<string, { label: string; classes: string }> = {
   active: { label: 'Activa', classes: 'bg-accent/10 text-accent-hover border-accent-soft' },
@@ -84,6 +85,8 @@ export class Details {
 
   showAssignRolesForm = signal(false);
   assignRolesUser = signal<UsersInterface | null>(null);
+
+  uploadingImageUuid = signal<string | null>(null);
 
   type = toSignal(
     this.route.paramMap.pipe(map(p => p.get('type') ?? '')),
@@ -164,6 +167,28 @@ export class Details {
   onUserFormClosed() {
     this.showUserForm.set(false);
     this.editUser.set(null);
+  }
+
+  onUserImageSelected(event: Event, user: UsersInterface) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    this.uploadingImageUuid.set(user.useruuid);
+    compressImage(file, 400, 0.8).then(compressed => {
+      this.userService.uploadImage(user.useruuid, compressed).subscribe({
+        next: (response) => {
+          this.users.update(us => us.map(u => u.useruuid === user.useruuid ? { ...u, userimage: response.userimage } : u));
+          this.usersCopy.update(us => us.map(u => u.useruuid === user.useruuid ? { ...u, userimage: response.userimage } : u));
+          this.uploadingImageUuid.set(null);
+          input.value = '';
+        },
+        error: () => {
+          this.uploadingImageUuid.set(null);
+          input.value = '';
+        },
+      });
+    });
   }
 
   openChangePassword(user: UsersInterface) {

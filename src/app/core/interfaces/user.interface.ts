@@ -6,6 +6,7 @@ export interface UsersInterface {
   useremail: string;
   userphone: string;
   userstatus: string;
+  userimage?: string;
   commerce: {
     commerceuuid: string;
     commercename: string;
@@ -38,4 +39,8 @@ export interface UpdateUserInterface {
   userlastname: string;
   userphone: string;
   useremail: string;
+}
+
+export interface ImageResponse {
+  userimage: string;
 }

@@ -143,7 +143,6 @@ export interface DetailDto {
   inactive: number;
 }
 
-
 export interface LogoResponse {
   commercelogo: string;
 }

@@ -126,10 +126,23 @@
 
               <div class="flex items-start justify-between gap-2">
                 <div class="flex items-center gap-2 min-w-0">
-                  <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-primary-subtle shrink-0">
-                    <span class="text-xs font-bold text-primary uppercase">
-                      {{ user.userfirstname[0] }}{{ user.userlastname[0] }}
-                    </span>
+                  <div class="relative w-9 h-9 rounded-xl overflow-hidden shrink-0 cursor-pointer group" (click)="userImageInput.click()">
+                    @if (user.userimage) {
+                      <img [src]="user.userimage" class="w-full h-full object-cover" [alt]="user.userfirstname">
+                    } @else {
+                      <div class="w-full h-full bg-primary-subtle flex items-center justify-center">
+                        <span class="text-xs font-bold text-primary uppercase">
+                          {{ user.userfirstname[0] }}{{ user.userlastname[0] }}
+                        </span>
+                      </div>
+                    }
+                    <div class="absolute inset-0 bg-black/60 flex items-center justify-center transition-opacity duration-200"
+                         [class]="uploadingImageUuid() === user.useruuid ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'">
+                      <fa-icon [icon]="['fas', uploadingImageUuid() === user.useruuid ? 'circle-notch' : 'camera']"
+                               class="text-surface text-xs"
+                               [class.animate-spin]="uploadingImageUuid() === user.useruuid"></fa-icon>
+                    </div>
+                    <input type="file" accept="image/png,image/jpeg" (change)="onUserImageSelected($event, user)" (click)="$event.stopPropagation()" #userImageInput hidden />
                   </div>
                   <div class="min-w-0">
                     <span class="text-sm font-semibold text-heading truncate block">

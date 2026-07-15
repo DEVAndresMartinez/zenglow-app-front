@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { BACK_URL } from '../../../../../env';
 import { Observable } from 'rxjs';
-import { CreateUserInterface, UpdateUserInterface, UsersInterface } from '../../interfaces/user.interface';
+import { CreateUserInterface, ImageResponse, UpdateUserInterface, UsersInterface } from '../../interfaces/user.interface';
 import { ChangeStatusResponseDto } from '../../interfaces/branch.interface';
 
 @Service()
@@ -35,6 +35,14 @@ export class UserService {
 
   assignRoles(useruuid: string, { roleuuids }: { roleuuids: string[] }): Observable<UsersInterface> {
     return this.http.put<UsersInterface>(`${this.URL}/users/v1/${useruuid}/roles`, { roleuuids });
+  }
+
+
+  uploadImage(useruuid: string, image: File): Observable<ImageResponse> {
+    const formData = new FormData();
+    formData.append('image', image, image.name);
+
+    return this.http.patch<ImageResponse>(`${this.URL}/users/v1/${useruuid}/image`, formData);
   }
 
 }
