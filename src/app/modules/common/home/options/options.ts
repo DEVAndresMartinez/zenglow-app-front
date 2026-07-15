@@ -31,7 +31,7 @@ export class Options {
       icon: ['fas', 'briefcase'],
       title: 'Servicios',
       description: 'Gestiona tus servicios.',
-      link: '/services',
+      link: '/modules/common/services',
       color: 'text-green-700'
     },
     {

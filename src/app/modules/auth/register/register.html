@@ -66,12 +66,19 @@
 
     <!-- Navegación -->
     <div class="w-full flex justify-between gap-2">
-      <button
-        class="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-all duration-300 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-        (click)="prevStep()" [disabled]="step() === 1">
-        <fa-icon [icon]="['fas', 'arrow-left']" class="text-xs"/>
-        Volver
-      </button>
+      @if (step() === 1) {
+        <a class="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-all duration-300 cursor-pointer" routerLink="/modules/auth/login">
+          <fa-icon [icon]="['fas', 'arrow-left']" class="text-xs"/>
+          Ya tengo una cuenta
+        </a>
+      } @else {
+        <button
+          class="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-all duration-300 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+          (click)="prevStep()" [disabled]="step() === 1">
+          <fa-icon [icon]="['fas', 'arrow-left']" class="text-xs"/>
+          Volver
+        </button>
+      }
       <button
         class="bg-accent hover:bg-accent-hover transition-all duration-300 cursor-pointer text-white font-bold py-2 px-5 rounded-xl flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
         (click)="nextStep()" [disabled]="loading()">

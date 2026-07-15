@@ -34,6 +34,14 @@ export const commonRoutes: Routes = [
       title: 'Gestión de Clientes'
     }
   },
+  {
+    path: 'services',
+    loadComponent: () => import('./services/services').then(m => m.Services),
+    canActivate: [],
+    data: {
+      title: 'Gestión de Servicios'
+    }
+  },
 
 
   { path: '', redirectTo: 'home', pathMatch: 'full' },

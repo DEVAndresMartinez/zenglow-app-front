@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { StepOneForm } from './step-one-form/step-one-form';
 import { StepTwoForm } from './step-two-form/step-two-form';
@@ -13,7 +13,7 @@ const COMPONENTS = [StepOneForm, StepTwoForm, StepThreeForm];
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FontAwesomeModule, ...COMPONENTS],
+  imports: [CommonModule, RouterLink, FontAwesomeModule, ...COMPONENTS],
   templateUrl: './register.html',
   styleUrl: './register.scss',
 })

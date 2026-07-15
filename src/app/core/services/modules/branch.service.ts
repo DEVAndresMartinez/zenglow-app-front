@@ -25,7 +25,7 @@ export class BranchService {
   }
 
   remove(branchuuid: string): Observable<ChangeStatusResponseDto> {
-    return this.http.delete<ChangeStatusResponseDto>(`${this.URL}/branches/v1/${branchuuid}`);
+    return this.http.delete<ChangeStatusResponseDto>(`${this.URL}/branches/v1/${branchuuid}/remove`);
   }
 
 }

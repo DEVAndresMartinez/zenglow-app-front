@@ -1,0 +1,103 @@
+<div class="flex flex-col gap-4">
+  <div class="w-full flex items-center gap-2">
+    <ui-search-component
+      [placeholder]="activeTab() === 'services' ? 'Buscar servicio...' : 'Buscar categoría...'"
+      (search)="onGlobalFilter($event)"
+      class="flex-1"/>
+    @if (activeTab() === 'categories') {
+      <button type="button" (click)="openCreateCategory()" class="shrink-0 flex items-center gap-1.5 px-4 py-2 bg-primary text-white rounded-xl text-sm font-medium shadow-sm hover:bg-primary-dark active:scale-95 transition-all duration-200 cursor-pointer">
+        <fa-icon [icon]="['fas', 'plus']" class="text-xs"/>
+        <span class="hidden sm:inline">Nueva categoría</span>
+      </button>
+    }
+  </div>
+
+  <app-tabs mode="variable" [tabs]="tabs" [activeKey]="activeTab()" (tabChange)="onTabChange($event)"></app-tabs>
+
+  @switch (activeTab()) {
+    @case ('categories') {
+      @if (loading()) {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          @for (_ of [1,2,3]; track $index) {
+            <div class="bg-surface rounded-2xl border border-stroke p-4 flex flex-col gap-3 animate-pulse">
+              <div class="flex items-center justify-between">
+                <div class="h-4 w-32 bg-stroke rounded-lg"></div>
+                <div class="h-5 w-16 bg-stroke rounded-full"></div>
+              </div>
+              <div class="flex flex-col gap-2 pt-2 border-t border-stroke/60">
+                <div class="h-3 w-full bg-stroke rounded"></div>
+                <div class="h-3 w-1/2 bg-stroke rounded"></div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else if (categoriesCopy().length === 0) {
+        <div class="flex flex-col items-center justify-center gap-3 py-16 text-center">
+          <div class="flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-subtle">
+            <fa-icon [icon]="['fas', 'tags']" class="text-2xl text-on-brand-muted"></fa-icon>
+          </div>
+          <p class="text-sm font-medium text-heading">Sin categorías</p>
+          <p class="text-xs text-muted">No hay categorías de servicios registradas aún.</p>
+          <button type="button" (click)="openCreateCategory()" class="mt-1 flex items-center gap-1.5 px-4 py-2 bg-primary text-white rounded-xl text-sm font-medium shadow-sm hover:bg-primary-dark active:scale-95 transition-all duration-200 cursor-pointer">
+            <fa-icon [icon]="['fas', 'plus']" class="text-xs"/>
+            Nueva categoría
+          </button>
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          @for (category of categoriesCopy(); track category.categoryuuid) {
+            <div class="bg-surface rounded-2xl border border-stroke shadow-sm p-4 flex flex-col gap-3 hover:shadow-md hover:border-primary/30 transition-all duration-200">
+
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-primary-subtle shrink-0">
+                    <fa-icon [icon]="['fas', 'tags']" class="text-sm text-primary"></fa-icon>
+                  </div>
+                  <span class="text-sm font-semibold text-heading truncate">{{ category.categoryname }}</span>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <span class="px-2 py-0.5 text-[10px] font-medium rounded-full border"
+                        [class]="statusConfig(category.categorystatus).classes">
+                    {{ statusConfig(category.categorystatus).label }}
+                  </span>
+                  <ui-action-menu [items]="categoryActionItems(category)" (action)="onCategoryAction($event, category)"/>
+                </div>
+              </div>
+
+            </div>
+          }
+        </div>
+      }
+    }
+
+    @case ('services') {
+      <div class="flex flex-col items-center justify-center gap-3 py-16 text-center">
+        <div class="flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-subtle">
+          <fa-icon [icon]="['fas', 'briefcase']" class="text-2xl text-on-brand-muted"></fa-icon>
+        </div>
+        <p class="text-sm font-medium text-heading">Próximamente</p>
+        <p class="text-xs text-muted max-w-xs">La gestión de servicios estará disponible aquí muy pronto.</p>
+      </div>
+    }
+  }
+
+</div>
+
+@if (showCategoryForm()) {
+  <app-category-form [isEdit]="editCategory() !== null" [categoryuuid]="editCategory()?.categoryuuid ?? ''" [category]="editCategory()" (saved)="onCategorySaved($event)" (closed)="onCategoryFormClosed()"/>
+}
+
+@if (showDeleteCategoryForm()) {
+  <ui-confirm-modal
+    title="Eliminar categoría"
+    [message]="'¿Seguro que deseas eliminar ' + (deleteCategory()?.categoryname ?? 'esta categoría') + '? Esta acción no se puede deshacer.'"
+    confirmText="Eliminar"
+    cancelText="Cancelar"
+    variant="danger"
+    icon="trash"
+    [loading]="deletingCategory()"
+    [error]="deleteCategoryError()"
+    (confirmed)="onDeleteCategoryConfirmed()"
+    (cancelled)="onDeleteCategoryCancelled()"
+  />
+}
