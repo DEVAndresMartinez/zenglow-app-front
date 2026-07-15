@@ -45,6 +45,13 @@ export const STATUS_CUSTOMER_AVAILABLE = [
   'deleted'
 ];
 
+export const STATUS_SERVICE_AVAILABLE = [
+  'active',
+  'inactive',
+  'soon',
+  'deleted'
+];
+
 export const CUSTOMER_DOCUMENT_TYPES = [
   { abv: 'CC', name: 'Cédula de Ciudadanía' },
   { abv: 'CE', name: 'Cédula de Extranjería' },

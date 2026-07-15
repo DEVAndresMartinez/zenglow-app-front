@@ -10,6 +10,9 @@ export const GENERIC_ERROR_MESSAGES: ErrorCodeMap = {
   AE_USEREMAIL_CONFLICT: 'Ese correo electrónico ya está en uso.',
   CREATE_ERROR: 'No se pudo completar el registro. Inténtalo nuevamente.',
   UPDATE_ERROR: 'No se pudo completar la actualización. Inténtalo nuevamente.',
+  // storage.service.ts es compartido por commerces/users/services (uploadLogo, uploadImage, addImages)
+  // y no vive bajo un segmento de URL propio, por eso va en el catálogo genérico.
+  STORAGE_UPLOAD_ERROR: 'No se pudo subir la imagen. Intenta nuevamente.',
 };
 
 /**
@@ -64,6 +67,16 @@ export const MODULE_ERROR_MESSAGES: Record<string, ErrorCodeMap> = {
     AE_USERNAME_CONFLICT: 'Ese nombre de usuario ya está en uso.',
     AE_USEREMAIL_CONFLICT: 'Ese correo electrónico ya está en uso.',
     CREATE_ERROR: 'No se pudo crear el comercio. Intenta nuevamente.',
+  },
+  services: {
+    NOT_FOUND_SERVICES: 'No hay servicios registrados.',
+    NOT_FOUND_SERVICE: 'El servicio no existe.',
+    AE_SERVICENAME_CONFLICT: 'Ya existe un servicio con ese nombre.',
+    CREATE_ERROR: 'No se pudo crear el servicio. Intenta nuevamente.',
+    UPDATE_ERROR: 'No se pudo actualizar el servicio. Intenta nuevamente.',
+    MAX_IMAGES_REACHED: 'Este servicio ya alcanzó el máximo de 5 imágenes.',
+    NO_IMAGES_PROVIDED: 'Selecciona al menos una imagen para subir.',
+    INVALID_PRIMARY_INDEX: 'Ocurrió un error al marcar la imagen principal. Intenta de nuevo.',
   },
 };
 
