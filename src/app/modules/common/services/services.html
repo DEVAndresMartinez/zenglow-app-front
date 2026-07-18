@@ -17,7 +17,12 @@
     }
   </div>
 
-  <app-tabs mode="variable" [tabs]="tabs" [activeKey]="activeTab()" (tabChange)="onTabChange($event)"></app-tabs>
+  <div class="flex items-center justify-between gap-2">
+    <app-tabs class="w-full" mode="variable" [tabs]="tabs" [activeKey]="activeTab()" (tabChange)="onTabChange($event)"></app-tabs>
+    @if (activeTab() === 'services') {
+      <ui-dropdown-component placeholder="Filtrar por categoría..." [options]="categoriesOptions()" class="flex-1" (selectionChange)="filterServicesByCategory($event)" class="min-w-50"/>
+    }
+  </div>
 
   @switch (activeTab()) {
     @case ('categories') {
@@ -105,14 +110,12 @@
           </button>
         </div>
       } @else {
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           @for (service of servicesCopy(); track service.serviceuuid) {
             <div class="bg-surface rounded-2xl border border-stroke shadow-sm p-4 flex flex-col gap-3 hover:shadow-md hover:border-primary/30 transition-all duration-200">
-
-              <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-primary-subtle shrink-0">
+              <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-primary-subtle shrink-0 h-40">
                 <app-service-image-carousel [images]="service.images" [alt]="service.servicename"/>
               </div>
-
               <div class="flex items-start justify-between gap-2">
                 <div class="min-w-0">
                   <span class="text-sm font-semibold text-heading truncate block">{{ service.servicename }}</span>
@@ -158,18 +161,7 @@
 }
 
 @if (showDeleteCategoryForm()) {
-  <ui-confirm-modal
-    title="Eliminar categoría"
-    [message]="'¿Seguro que deseas eliminar ' + (deleteCategory()?.categoryname ?? 'esta categoría') + '? Esta acción no se puede deshacer.'"
-    confirmText="Eliminar"
-    cancelText="Cancelar"
-    variant="danger"
-    icon="trash"
-    [loading]="deletingCategory()"
-    [error]="deleteCategoryError()"
-    (confirmed)="onDeleteCategoryConfirmed()"
-    (cancelled)="onDeleteCategoryCancelled()"
-  />
+  <ui-confirm-modal title="Eliminar categoría" [message]="'¿Seguro que deseas eliminar ' + (deleteCategory()?.categoryname ?? 'esta categoría') + '? Esta acción no se puede deshacer.'" confirmText="Eliminar" cancelText="Cancelar" variant="danger" icon="trash" [loading]="deletingCategory()" [error]="deleteCategoryError()" (confirmed)="onDeleteCategoryConfirmed()" (cancelled)="onDeleteCategoryCancelled()"/>
 }
 
 @if (showServiceForm()) {
@@ -181,16 +173,6 @@
 }
 
 @if (showDeleteServiceForm()) {
-  <ui-confirm-modal
-    title="Eliminar servicio"
-    [message]="'¿Seguro que deseas eliminar ' + (deleteService()?.servicename ?? 'este servicio') + '? Esta acción no se puede deshacer.'"
-    confirmText="Eliminar"
-    cancelText="Cancelar"
-    variant="danger"
-    icon="trash"
-    [loading]="deletingService()"
-    [error]="deleteServiceError()"
-    (confirmed)="onDeleteServiceConfirmed()"
-    (cancelled)="onDeleteServiceCancelled()"
+  <ui-confirm-modal title="Eliminar servicio" [message]="'¿Seguro que deseas eliminar ' + (deleteService()?.servicename ?? 'este servicio') + '? Esta acción no se puede deshacer.'" confirmText="Eliminar" cancelText="Cancelar" variant="danger" icon="trash" [loading]="deletingService()" [error]="deleteServiceError()" (confirmed)="onDeleteServiceConfirmed()" (cancelled)="onDeleteServiceCancelled()"
   />
 }

@@ -125,7 +125,11 @@ export interface CommerceMeResponse {
     useremail: string,
     userphone: string,
     mustchangepassword: boolean,
-    userlastlogin: Date
+    userlastlogin: Date,
+    branch: {
+      branchuuid: string;
+      branchname: string;
+    } | null;
     roles: {
       roleuuid: string;
       rolename: string;

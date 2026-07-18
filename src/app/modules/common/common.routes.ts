@@ -42,6 +42,14 @@ export const commonRoutes: Routes = [
       title: 'Gestión de Servicios'
     }
   },
+  {
+    path: 'sales',
+    loadComponent: () => import('./sales/sales').then(m => m.Sales),
+    canActivate: [],
+    data: {
+      title: 'Gestión de Ventas'
+    }
+  },
 
 
   { path: '', redirectTo: 'home', pathMatch: 'full' },

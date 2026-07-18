@@ -10,6 +10,7 @@ import { ServiceCategoriesService } from '../../../core/services/modules/service
 import { CreateServiceInterface, ServiceInterface } from '../../../core/interfaces/service.interface';
 import { STATUS_SERVICE_AVAILABLE } from '../../../core/const/register-const';
 import { ErrorGlobalException } from '../../../core/exceptions/error.interface';
+import { CategoryForm } from '../category-form/category-form';
 
 const STATUS_LABELS: Record<string, string> = {
   active: 'Activo',
@@ -20,7 +21,7 @@ const STATUS_LABELS: Record<string, string> = {
 @Component({
   selector: 'app-service-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, FontAwesomeModule, UIInputComponent, UIDropdownComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, FontAwesomeModule, UIInputComponent, UIDropdownComponent, CategoryForm],
   templateUrl: './service-form.html',
   styleUrl: './service-form.scss',
 })
@@ -40,6 +41,7 @@ export class ServiceForm {
 
   categoryOptions = signal<DropdownOption[]>([]);
   loadingCategories = signal<boolean>(false);
+  showCategoryForm = signal<boolean>(false);
 
   statusOptions: DropdownOption[] = STATUS_SERVICE_AVAILABLE.filter(v => v !== 'deleted').map(s => ({ abv: s, name: STATUS_LABELS[s] ?? s }));
 
@@ -144,6 +146,20 @@ export class ServiceForm {
     } else {
       this.loading.set(false);
     }
+  }
+
+  openCategoryModal() {
+    this.showCategoryForm.set(true);
+  }
+
+  onCategorySaved(category: { categoryuuid: string, categoryname: string }) {
+    this.showCategoryForm.set(false);
+    this.loadCategories();
+    this.serviceForm.patchValue({ categoryuuid: category.categoryuuid });
+  }
+
+  onCategoryFormClosed() {
+    this.showCategoryForm.set(false);
   }
 
 }

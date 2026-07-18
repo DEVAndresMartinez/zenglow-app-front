@@ -24,3 +24,13 @@ export interface CreateCustomerInterface {
   customerbirthdate: string;
   customerstatus: 'active' | 'inactive' | 'blocked' | 'deleted';
 }
+
+export interface SaleCustomerInterface {
+  customeruuid: string;
+  customerdocumentnumber: string;
+  customerfirstname: string;
+  customerlastname: string;
+  customerphone: string;
+  customeremail: string;
+  customerbirthdate: string;
+}

@@ -44,3 +44,13 @@ export interface UpdateUserInterface {
 export interface ImageResponse {
   userimage: string;
 }
+
+export interface SaleUserInterface {
+  useruuid: string;
+  userfirstname: string;
+  userlastname: string;
+  username: string;
+  useremail: string;
+  userphone: string;
+  userstatus: string;
+}

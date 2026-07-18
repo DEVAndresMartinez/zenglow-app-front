@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Tabs, TabItem } from '../../../components/shared/ui/tabs/tabs';
@@ -15,6 +15,7 @@ import { ServiceService } from '../../../core/services/modules/service.service';
 import { CategoryInterface } from '../../../core/interfaces/service-category.interface';
 import { ServiceImagesInterface, ServiceInterface } from '../../../core/interfaces/service.interface';
 import { ErrorGlobalException } from '../../../core/exceptions/error.interface';
+import { DropdownOption, UIDropdownComponent } from '../../../components/shared/ui/ui-dropdown-component/ui-dropdown-component';
 
 const STATUS_MAP: Record<string, { label: string; classes: string }> = {
   active: { label: 'Activa', classes: 'bg-accent/10 text-accent-hover border-accent-soft' },
@@ -34,7 +35,7 @@ type ServicesTab = 'categories' | 'services';
 @Component({
   selector: 'app-services',
   standalone: true,
-  imports: [CommonModule, FontAwesomeModule, Tabs, UISearchComponent, UIConfirmModalComponent, UIActionMenuComponent, CategoryForm, ServiceForm, ServiceImagesForm, ServiceImageCarousel],
+  imports: [CommonModule, FontAwesomeModule, Tabs, UISearchComponent, UIConfirmModalComponent, UIActionMenuComponent, CategoryForm, ServiceForm, ServiceImagesForm, ServiceImageCarousel, UIDropdownComponent],
   templateUrl: './services.html',
   styleUrl: './services.scss',
 })
@@ -81,6 +82,8 @@ export class Services {
     { key: 'categories', label: 'Categorías', icon: ['fas', 'tags'] },
     { key: 'services', label: 'Servicios', icon: ['fas', 'briefcase'] },
   ];
+
+  categoriesOptions = computed(() => this.categories().map(c => ({ name: c.categoryname, abv : c.categoryuuid })));
 
   categoryActionItems(category: CategoryInterface): ActionMenuItem[] {
     return [
@@ -325,6 +328,15 @@ export class Services {
         this.deletingService.set(false);
       },
     });
+  }
+
+  filterServicesByCategory(option: DropdownOption | DropdownOption[] | null) {
+    const opt = Array.isArray(option) ? option[0] : option;
+    if (!opt?.abv) {
+      this.servicesCopy.set(this.services());
+      return;
+    }
+    this.servicesCopy.set(this.services().filter(s => s.category?.categoryuuid === opt.abv));
   }
 
 }

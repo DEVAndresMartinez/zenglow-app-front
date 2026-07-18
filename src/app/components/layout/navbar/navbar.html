@@ -1,5 +1,5 @@
-<div class="w-full justify-between items-center flex py-2 md:py-4 px-8 border-b border-gray-200">
-    <div class="flex items-center gap-2">
+<div class="w-full justify-between items-center flex py-2 md:py-4 px-8 border-b border-gray-200 gap-2">
+    <div class="flex flex-1 items-center gap-2">
       @if (commerceService.me()?.commerce?.commercelogo !== null) {
         <img [src]="commerceService.me()?.commerce?.commercelogo" alt="Logo del negocio" class="w-8 h-8 md:w-10 md:h-10">
       }@else {
@@ -7,13 +7,21 @@
       }
       <div class="flex flex-col">
         <span class="text-sm font-semibold text-gray-500">{{ commerceService.me()?.commerce?.commercename }} | {{ commerceService.me()?.user?.username }} </span>
-        <span class="text-xs text-gray-400">{{ commerceService.me()?.commerce?.commercetype === 'barber' ? 'Barbería' : 'Salón' }} | {{ lastLogin() | date: 'short'}}</span>
+        <span class="text-xs text-gray-400">{{ commerceService.me()?.commerce?.commercetype === 'barber' ? 'Barbería' : 'Salón' }} | {{ lastLogin() | date: 'short' }}</span>
       </div>
     </div>
+    <button type="button" class="flex items-center gap-2 p-1 border-b border-transparent hover:border-b-body/20 rounded cursor-pointer">
+      <fa-icon [icon]="['fas', 'shopping-cart']" class="text-gray-400 hover:text-gray-600 transition-colors duration-200"></fa-icon>
+    </button>
     <div class="flex items-center gap-4">
-        <span class="text-xs text-gray-400 ">
-          {{ commerceService.me()?.user?.roles?.map(role => role.rolename)?.join(', ') }}
-        </span>
+        <div class="flex flex-col items-baseline">
+          <span class="text-xs text-gray-400 ">
+            {{ commerceService.me()?.user?.roles?.map(role => role.rolename)?.join(', ') }}
+          </span>
+          <span class="text-xs text-gray-400 ">
+            {{ commerceService.me()?.user?.branch?.branchname }}
+          </span>
+        </div>
         <button type="button" (click)="logout()" class="p-1 border-b border-transparent hover:border-b-body/20 rounded cursor-pointer">
           <fa-icon [icon]="['fas', 'arrow-right-from-bracket']" class="text-gray-400" title="Cerrar sesión"></fa-icon>
         </button>

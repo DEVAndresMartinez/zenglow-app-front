@@ -3,7 +3,7 @@ import { inject, Service } from '@angular/core';
 import { BACK_URL } from '../../../../../env';
 import { Observable } from 'rxjs';
 import { CreateUserInterface, ImageResponse, UpdateUserInterface, UsersInterface } from '../../interfaces/user.interface';
-import { ChangeStatusResponseDto } from '../../interfaces/branch.interface';
+import { ChangeStatusResponseInterface } from '../../interfaces/branch.interface';
 
 @Service()
 export class UserService {
@@ -25,8 +25,8 @@ export class UserService {
     return this.http.patch<UsersInterface>(`${this.URL}/users/v1/${useruuid}`, req)
   }
 
-  remove(useruuid: string): Observable<ChangeStatusResponseDto> {
-    return this.http.delete<ChangeStatusResponseDto>(`${this.URL}/users/v1/${useruuid}`);
+  remove(useruuid: string): Observable<ChangeStatusResponseInterface> {
+    return this.http.delete<ChangeStatusResponseInterface>(`${this.URL}/users/v1/${useruuid}`);
   }
 
   assignBranch(useruuid: string, { branchuuid }: { branchuuid: string }): Observable<UsersInterface> {

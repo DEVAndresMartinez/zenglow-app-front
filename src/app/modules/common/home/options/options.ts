@@ -42,6 +42,13 @@ export class Options {
       color: 'text-purple-700'
     },
     {
+      icon: ['fas', 'shopping-cart'],
+      title: 'Ventas',
+      description: 'Administra las ventas de tu negocio.',
+      link: '/modules/common/sales',
+      color: 'text-blue-400'
+    },
+    {
       icon: ['fas', 'plug'],
       title: 'Integraciones',
       description: 'Conecta tus herramientas favoritas.',

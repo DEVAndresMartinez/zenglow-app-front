@@ -31,8 +31,16 @@
         </button>
       </div>
 
-      <form [formGroup]="serviceForm" (ngSubmit)="submit()" class="flex flex-col gap-4">
-        <ui-dropdown-component formControlName="categoryuuid" label="Categoría" [placeholder]="loadingCategories() ? 'Cargando categorías...' : 'Selecciona una categoría'" [options]="categoryOptions()"/>
+      <form [formGroup]="serviceForm" (ngSubmit)="submit()" class="flex flex-col gap-4 overflow-sections">
+        <div class="flex items-end justify-between gap-2">
+          <ui-dropdown-component formControlName="categoryuuid" label="Categoría" [placeholder]="loadingCategories() ? 'Cargando categorías...' : 'Selecciona una categoría'" [options]="categoryOptions()" class="flex-1"/>
+          <button type="button" class="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary-dark transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer" (click)="openCategoryModal()" [disabled]="loadingCategories()" title="Agregar nueva categoría">
+            <fa-icon [icon]="['fas', 'tags']"/>
+          </button>
+          @if (showCategoryForm()) {
+            <app-category-form [isEdit]="false" (saved)="onCategorySaved($event)" (closed)="onCategoryFormClosed()"/>
+          }
+        </div>
 
         <ui-input-component formControlName="servicename" label="Nombre del servicio" placeholder="Ej. Corte clásico" [required]="true" [maxlength]="80" [error]="nameError"/>
 
@@ -65,10 +73,7 @@
             }
           </button>
         </div>
-
       </form>
-
     }
-
   </div>
 </div>

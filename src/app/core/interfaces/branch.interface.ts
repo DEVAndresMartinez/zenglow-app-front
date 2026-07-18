@@ -11,7 +11,6 @@ export interface BranchesInterface {
   }
 }
 
-
 export interface CreateBranchInterface {
   branchname: string;
   branchcity: string;
@@ -20,8 +19,12 @@ export interface CreateBranchInterface {
   branchstatus: string;
 }
 
+export interface SaleBranchInterface {
+  branchuuid: string;
+  branchname: string;
+}
 
-export interface ChangeStatusResponseDto {
+export interface ChangeStatusResponseInterface {
   branchuuid: string;
   code: string;
   message: string;

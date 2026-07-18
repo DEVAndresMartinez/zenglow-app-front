@@ -10,6 +10,10 @@
   --color-primary-subtle: #eff6ff;
   --color-primary-dark: #1d4ed8;
 
+  --color-warning: #facc15;
+  --color-warning-soft: #fef9c3;
+  --color-warning-hover: #eab308;
+
   --color-accent: #4ade80;
   --color-accent-soft: #86efac;
   --color-accent-hover: #22c55e;
