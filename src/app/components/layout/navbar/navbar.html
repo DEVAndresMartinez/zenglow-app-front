@@ -1,32 +1,29 @@
-<div class="w-full justify-between items-center flex py-2 md:py-4 px-8 border-b border-gray-200 gap-2">
-    <div class="flex flex-1 items-center gap-2">
+<div class="w-full justify-between items-center flex py-2 md:py-4 px-3 sm:px-8 border-b border-gray-200 gap-2">
+    <div class="flex flex-1 items-center gap-2 min-w-0">
       @if (commerceService.me()?.commerce?.commercelogo !== null) {
-        <img [src]="commerceService.me()?.commerce?.commercelogo" alt="Logo del negocio" class="w-8 h-8 md:w-10 md:h-10">
+        <img [src]="commerceService.me()?.commerce?.commercelogo" alt="Logo del negocio" class="w-8 h-8 md:w-10 md:h-10 shrink-0">
       }@else {
-        <fa-icon [icon]="['fas', 'cubes']" class="text-2xl text-blue-600"></fa-icon>
+        <fa-icon [icon]="['fas', 'cubes']" class="text-2xl text-blue-600 shrink-0"></fa-icon>
       }
-      <div class="flex flex-col">
-        <span class="text-sm font-semibold text-gray-500">{{ commerceService.me()?.commerce?.commercename }} | {{ commerceService.me()?.user?.username }} </span>
-        <span class="text-xs text-gray-400">{{ commerceService.me()?.commerce?.commercetype === 'barber' ? 'Barbería' : 'Salón' }} | {{ lastLogin() | date: 'short' }}</span>
+      <div class="flex flex-col min-w-0">
+        <span class="text-sm font-semibold text-gray-500 truncate">{{ commerceService.me()?.commerce?.commercename }} <span class="hidden sm:inline">| {{ commerceService.me()?.user?.username }}</span></span>
+        <span class="text-xs text-gray-400 truncate">{{ commerceService.me()?.commerce?.commercetype === 'barber' ? 'Barbería' : 'Salón' }} <span class="hidden sm:inline">| {{ lastLogin() | date: 'short' }}</span></span>
       </div>
     </div>
-    <button type="button" class="flex items-center gap-2 p-1 border-b border-transparent hover:border-b-body/20 rounded cursor-pointer">
+    <button type="button" class="shrink-0 flex items-center gap-2 p-1 border-b border-transparent hover:border-b-body/20 rounded cursor-pointer">
       <fa-icon [icon]="['fas', 'shopping-cart']" class="text-gray-400 hover:text-gray-600 transition-colors duration-200"></fa-icon>
     </button>
-    <div class="flex items-center gap-4">
-        <div class="flex flex-col items-baseline">
-          <span class="text-xs text-gray-400 ">
+    <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+        <div class="hidden sm:flex flex-col items-baseline min-w-0">
+          <span class="text-xs text-gray-400 truncate max-w-40">
             {{ commerceService.me()?.user?.roles?.map(role => role.rolename)?.join(', ') }}
           </span>
-          <span class="text-xs text-gray-400 ">
+          <span class="text-xs text-gray-400 truncate max-w-40">
             {{ commerceService.me()?.user?.branch?.branchname }}
           </span>
         </div>
         <button type="button" (click)="logout()" class="p-1 border-b border-transparent hover:border-b-body/20 rounded cursor-pointer">
           <fa-icon [icon]="['fas', 'arrow-right-from-bracket']" class="text-gray-400" title="Cerrar sesión"></fa-icon>
         </button>
-        <!-- <a routerLink="/" class="text-gray-600 hover:text-gray-800 transition-colors duration-200">Home</a>
-        <a routerLink="/about" class="text-gray-600 hover:text-gray-800 transition-colors duration-200">About</a>
-        <a routerLink="/contact" class="text-gray-600 hover:text-gray-800 transition-colors duration-200">Contact</a> -->
     </div>
 </div>
