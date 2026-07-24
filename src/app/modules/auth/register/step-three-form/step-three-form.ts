@@ -6,7 +6,8 @@ import { UIInputComponent } from '../../../../components/shared/ui/ui-input-comp
 import { UIPhoneInputComponent } from '../../../../components/shared/ui/ui-phone-input-component/ui-phone-input-component';
 import { STATUS_USER_AVAILABLE } from '../../../../core/const/register-const';
 import { Lowercase } from '../../../../core/directives/lower-case';
-import { CommerceService } from '../../../../core/services/modules/commerces/commerce.service';
+import { CommerceService } from '../../../../core/services/modules/commerce.service';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 const COMPONENTS = [UIInputComponent, UIPhoneInputComponent];
 const DIRECTIVES = [Lowercase];
@@ -14,7 +15,7 @@ const DIRECTIVES = [Lowercase];
 @Component({
   selector: 'app-step-three-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, ...COMPONENTS, ...DIRECTIVES],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, FontAwesomeModule, ...COMPONENTS, ...DIRECTIVES],
   templateUrl: './step-three-form.html',
   styleUrl: './step-three-form.scss',
 })
@@ -25,7 +26,7 @@ export class StepThreeForm implements OnInit {
 
   statusavailable = STATUS_USER_AVAILABLE;
 
-  userForm = new FormGroup({
+  userForm: FormGroup = new FormGroup({
     userfirstname: new FormControl<string>('', { validators: [Validators.required, Validators.minLength(4), Validators.maxLength(150)] }),
     userlastname: new FormControl<string>('', { validators: [Validators.required, Validators.minLength(4), Validators.maxLength(150)] }),
     userphone: new FormControl<string>('', { validators: [Validators.required, Validators.minLength(10), Validators.maxLength(13)] }),
@@ -56,12 +57,6 @@ export class StepThreeForm implements OnInit {
     });
   }
 
-  submit() {
-    if (this.userForm.valid) {
-      alert('Formulario válido. Enviando datos...');
-    }
-  }
-
   generatePassword() {
     const USERNAME = this.userForm.value?.userfirstname?.toUpperCase().slice(1, 3) ?? '';
     const LASTNAME = this.userForm.value?.userlastname?.toLowerCase().slice(1, 3) ?? '';
@@ -80,5 +75,13 @@ export class StepThreeForm implements OnInit {
     return '';
   }
 
+  useSame() {
+    const number = this.commerceService.commerceData()?.commercephone;
+    const email = this.commerceService.commerceData()?.commerceemail;
+    this.userForm.patchValue({
+      userphone: number,
+      useremail: email
+    });
+  }
 
 }

@@ -1,0 +1,140 @@
+<div class="flex flex-col gap-4">
+
+  <!-- Header: logo + nombre + badges -->
+  <div class="flex items-start sm:items-center gap-4 p-5 bg-surface rounded-2xl border border-stroke shadow-sm">
+    <div class="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden cursor-pointer group shrink-0" (click)="fileInput.click()">
+      @if (commerceService.me()?.commerce?.commercelogo) {
+        <img [src]="commerceService.me()?.commerce?.commercelogo" class="w-full h-full object-cover" alt="Logo del negocio">
+      } @else {
+        <div class="w-full h-full bg-primary-subtle border-2 border-dashed border-on-brand-muted flex items-center justify-center">
+          <fa-icon [icon]="['fas', 'building']" class="text-3xl text-on-brand-muted"></fa-icon>
+        </div>
+      }
+      <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center gap-1 p-2">
+        <fa-icon [icon]="['fas', 'camera']" class="text-surface text-lg"></fa-icon>
+        <span class="text-surface text-xs font-medium">Cambiar logo</span>
+        <span class="text-surface/70 text-[10px] text-center leading-tight">PNG, JPG · Máx. 3 MB</span>
+      </div>
+    </div>
+    <div class="flex flex-col gap-1.5">
+      <h1 class="text-lg font-bold text-heading">{{ commerceService.me()?.commerce?.commercename }}</h1>
+      <div class="flex items-center gap-2">
+        <span class="px-2 py-0.5 bg-primary/10 text-primary text-xs font-medium rounded-full border border-on-brand-muted">
+          {{ commerceService.me()?.commerce?.commercetype === 'barber' ? 'Barbería' : 'Salón' }}
+        </span>
+        <span class="px-2 py-0.5 bg-accent-hover/10 text-accent-hover text-xs font-medium rounded-full border border-accent-soft">
+          Activo
+        </span>
+      </div>
+      <span class="text-xs text-muted">{{ commerceService.me()?.commerce?.commerceslug }}</span>
+    </div>
+    <input type="file" accept="image/png,image/jpeg" (change)="onFileSelected($event)" #fileInput hidden />
+  </div>
+
+  <div class="bg-surface rounded-2xl border border-stroke shadow-sm overflow-hidden">
+    <div class="px-5 py-4 border-b border-stroke/60">
+      <h2 class="text-sm font-semibold text-muted">Información del negocio</h2>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2">
+      <div class="px-5 py-4 border-b sm:border-r border-stroke/60">
+        <p class="text-xs text-muted mb-0.5">Correo electrónico</p>
+        <p class="text-sm font-medium text-heading">{{ commerceService.me()?.commerce?.commerceemail }}</p>
+      </div>
+      <div class="px-5 py-4 border-b border-stroke/60">
+        <p class="text-xs text-muted mb-0.5">Teléfono</p>
+        <p class="text-sm font-medium text-heading">{{ commerceService.me()?.commerce?.commercephone }}</p>
+      </div>
+      <div class="px-5 py-4 border-b sm:border-b-0 sm:border-r border-stroke/60">
+        <p class="text-xs text-muted mb-0.5">Tipo de documento</p>
+        <p class="text-sm font-medium text-heading">{{ commerceService.me()?.commerce?.commercedocumenttype }}</p>
+      </div>
+      <div class="px-5 py-4">
+        <p class="text-xs text-muted mb-0.5">Número de documento</p>
+        <p class="text-sm font-medium text-heading">
+          {{ commerceService.me()?.commerce?.commercedocumentnumber }}
+          @if (commerceService.me()?.commerce?.commercedigitverification) {
+            <span class="text-muted"> – {{ commerceService.me()?.commerce?.commercedigitverification }}</span>
+          }
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+    <div class="group bg-surface rounded-2xl border border-stroke shadow-sm p-4 flex flex-col gap-3 cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-primary/40" routerLink="/modules/common/business/branches">
+      <div class="flex items-center gap-2">
+        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-primary-subtle transition-transform duration-200 group-hover:scale-110">
+          <fa-icon [icon]="['fas', 'store']" class="text-sm text-primary"></fa-icon>
+        </div>
+        <span class="text-sm font-semibold text-heading transition-colors duration-200 group-hover:text-primary">Sucursales</span>
+        <fa-icon [icon]="['fas', 'arrow-right']" class="ml-auto text-xs text-muted opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-primary transition-all duration-200"></fa-icon>
+      </div>
+      <div class="flex items-center justify-around border-t border-stroke/60 pt-3">
+        <div class="flex flex-col items-center gap-0.5">
+          <span class="text-xl font-bold text-heading">{{ commerceService.me()?.branches?.total }}</span>
+          <span class="text-[10px] text-muted uppercase tracking-wide">Total</span>
+        </div>
+        <div class="w-px h-8 bg-stroke/60"></div>
+        <div class="flex flex-col items-center gap-0.5">
+          <span class="text-xl font-bold text-accent-hover">{{ commerceService.me()?.branches?.active }}</span>
+          <span class="text-[10px] text-muted uppercase tracking-wide">Activas</span>
+        </div>
+        <div class="w-px h-8 bg-stroke/60"></div>
+        <div class="flex flex-col items-center gap-0.5">
+          <span class="text-xl font-bold text-muted">{{ commerceService.me()?.branches?.inactive }}</span>
+          <span class="text-[10px] text-muted uppercase tracking-wide">Inactivas</span>
+        </div>
+      </div>
+    </div>
+    <div class="group bg-surface rounded-2xl border border-stroke shadow-sm p-4 flex flex-col gap-3 cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-primary/40" routerLink="/modules/common/business/users">
+      <div class="flex items-center gap-2">
+        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-primary-subtle transition-transform duration-200 group-hover:scale-110">
+          <fa-icon [icon]="['fas', 'users']" class="text-sm text-primary"></fa-icon>
+        </div>
+        <span class="text-sm font-semibold text-heading transition-colors duration-200 group-hover:text-primary">Usuarios</span>
+        <fa-icon [icon]="['fas', 'arrow-right']" class="ml-auto text-xs text-muted opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-primary transition-all duration-200"></fa-icon>
+      </div>
+      <div class="flex items-center justify-around border-t border-stroke/60 pt-3">
+        <div class="flex flex-col items-center gap-0.5">
+          <span class="text-xl font-bold text-heading">{{ commerceService.me()?.users?.total }}</span>
+          <span class="text-[10px] text-muted uppercase tracking-wide">Total</span>
+        </div>
+        <div class="w-px h-8 bg-stroke/60"></div>
+        <div class="flex flex-col items-center gap-0.5">
+          <span class="text-xl font-bold text-accent-hover">{{ commerceService.me()?.users?.active }}</span>
+          <span class="text-[10px] text-muted uppercase tracking-wide">Activos</span>
+        </div>
+        <div class="w-px h-8 bg-stroke/60"></div>
+        <div class="flex flex-col items-center gap-0.5">
+          <span class="text-xl font-bold text-muted">{{ commerceService.me()?.users?.inactive }}</span>
+          <span class="text-[10px] text-muted uppercase tracking-wide">Inactivos</span>
+        </div>
+      </div>
+    </div>
+    <div class="group bg-surface rounded-2xl border border-stroke shadow-sm p-4 flex flex-col gap-3 cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-primary/40" routerLink="/modules/common/business/roles">
+      <div class="flex items-center gap-2">
+        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-primary-subtle transition-transform duration-200 group-hover:scale-110">
+          <fa-icon [icon]="['fas', 'user-tag']" class="text-sm text-primary"></fa-icon>
+        </div>
+        <span class="text-sm font-semibold text-heading transition-colors duration-200 group-hover:text-primary">Roles</span>
+        <fa-icon [icon]="['fas', 'arrow-right']" class="ml-auto text-xs text-muted opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-primary transition-all duration-200"></fa-icon>
+      </div>
+      <div class="flex items-center justify-around border-t border-stroke/60 pt-3">
+        <div class="flex flex-col items-center gap-0.5">
+          <span class="text-xl font-bold text-heading">{{ commerceService.me()?.roles?.total }}</span>
+          <span class="text-[10px] text-muted uppercase tracking-wide">Total</span>
+        </div>
+        <div class="w-px h-8 bg-stroke/60"></div>
+        <div class="flex flex-col items-center gap-0.5">
+          <span class="text-xl font-bold text-accent-hover">{{ commerceService.me()?.roles?.active }}</span>
+          <span class="text-[10px] text-muted uppercase tracking-wide">Activos</span>
+        </div>
+        <div class="w-px h-8 bg-stroke/60"></div>
+        <div class="flex flex-col items-center gap-0.5">
+          <span class="text-xl font-bold text-muted">{{ commerceService.me()?.roles?.inactive }}</span>
+          <span class="text-[10px] text-muted uppercase tracking-wide">Inactivos</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

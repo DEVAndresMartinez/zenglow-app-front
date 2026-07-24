@@ -1,0 +1,229 @@
+<div class="flex flex-col gap-4">
+  <div class="w-full flex items-center gap-2">
+    <ui-search-component placeholder="Buscar venta..." (search)="onGlobalFilter($event)" class="flex-1" />
+    <button type="button" (click)="startSale()"
+      class="shrink-0 flex items-center gap-1.5 px-4 py-2 bg-primary text-white rounded-xl text-sm font-medium shadow-sm hover:bg-primary-dark active:scale-95 transition-all duration-200 cursor-pointer">
+      <fa-icon [icon]="['fas', 'plus']" class="text-xs" />
+      <span class="hidden sm:inline">Registrar venta</span>
+    </button>
+  </div>
+  @if (loading()) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      @for (_ of [1, 2, 3]; track $index) {
+        <div class="bg-surface rounded-2xl border border-stroke p-4 flex flex-col gap-3 animate-pulse">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <div class="w-9 h-9 bg-stroke rounded-xl shrink-0"></div>
+              <div class="flex flex-col gap-1.5">
+                <div class="h-3.5 w-28 bg-stroke rounded-lg"></div>
+                <div class="h-3 w-20 bg-stroke rounded"></div>
+              </div>
+            </div>
+            <div class="h-5 w-16 bg-stroke rounded-full"></div>
+          </div>
+          <div class="flex flex-col gap-2 pt-2 border-t border-stroke/60">
+            <div class="h-3 w-full bg-stroke rounded"></div>
+            <div class="h-3 w-3/4 bg-stroke rounded"></div>
+            <div class="h-3 w-1/2 bg-stroke rounded"></div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (sales().length === 0) {
+    <div class="flex flex-col items-center justify-center gap-3 py-16 text-center">
+      <div class="flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-subtle">
+        <fa-icon [icon]="['fas', 'shopping-cart']" class="text-2xl text-on-brand-muted"></fa-icon>
+      </div>
+      <p class="text-sm font-medium text-heading">Sin ventas</p>
+      <p class="text-xs text-muted">No hay ventas registradas aún.</p>
+    </div>
+  } @else {
+    <div class="w-full grid grid-cols-1 *:sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      @for (sale of salesCopy(); track $index) {
+        <div class="bg-surface rounded-2xl border border-stroke shadow-sm p-4 flex flex-col gap-3 hover:shadow-md hover:border-primary/30 transition-all duration-200">
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex items-center gap-2 min-w-0">
+              <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-primary/10 shrink-0">
+                <fa-icon [icon]="['fas', 'shopping-cart']" class="text-sm text-primary"></fa-icon>
+              </div>
+              <div class="flex flex-col min-w-0">
+                <span class="text-sm font-semibold text-heading truncate">{{ getCustomername(sale) }}</span>
+                <span class="text-xs text-muted truncate">{{ sale.customer?.customeremail ?? 'Sin correo electrónico' }}</span>
+              </div>
+            </div>
+            <span class="shrink-0 whitespace-nowrap text-[10px] font-semibold px-2.5 py-1 rounded-full" [ngClass]="getStatusConfig(sale.salestatus).classes">
+              {{ getStatusConfig(sale.salestatus).label }}
+            </span>
+          </div>
+
+          <div class="w-full flex items-center gap-4 flex-wrap pt-2 border-t border-stroke/60">
+            <div class="flex items-center gap-2 text-xs text-muted">
+              <fa-icon [icon]="['fas', 'user']" class="w-3 shrink-0"></fa-icon>
+              <span>{{ getUserName(sale) }}</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-muted">
+              <fa-icon [icon]="['fas', 'calendar']" class="w-3 shrink-0"></fa-icon>
+              <span>{{ sale.created_at | date: 'dd/MM/yyyy' }}</span>
+            </div>
+            @if (sale.salestatus === 'pending') {
+              <div class="flex items-center gap-2 text-xs text-muted cursor-pointer" (click)="onEditSale(sale)">
+                <fa-icon [icon]="['fas', 'pen-to-square']" class="w-3 shrink-0"></fa-icon>
+                <span>Editar</span>
+              </div>
+            }
+            <div class="flex items-center gap-2 text-xs text-muted cursor-pointer" (click)="onDetailSale(sale)">
+              <fa-icon [icon]="['fas', 'eye']" class="w-3 shrink-0"></fa-icon>
+              <span>Detalle</span>
+            </div>
+            @if ((sale.salestatus === 'pending' || sale.salestatus === 'paid-partial') && sale.salependingamount !== 0) {
+              <div class="flex items-center gap-2 text-xs text-muted cursor-pointer" (click)="onPaymentSale(sale)">
+                <fa-icon [icon]="['fas', 'dollar-sign']" class="w-3 shrink-0"></fa-icon>
+                <span>Agregar pago</span>
+              </div>
+            }
+          </div>
+          <div class="flex flex-col pt-2 border-t border-stroke/60">
+            <div class="w-full flex items-center justify-between">
+              <span class="text-xs text-muted">Pendiente</span>
+              <span class="text-sm font-semibold text-muted">{{ sale.salependingamount | currency: 'USD' }}</span>
+            </div>
+            <div class="w-full flex items-center justify-between">
+              <span class="text-xs font-bold text-heading">Total</span>
+              <span class="text-sm font-semibold text-heading">{{ sale.saletotalamount | currency: 'USD' }}</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+@if (showEditSaleForm()) {
+  <app-sale-form [isEdit]="true" [saleuuid]="editSale()?.saleuuid ?? ''" [sale]="editSale()" (saved)="onSaleUpdated($event)" (closed)="onEditSaleFormClosed()"/>
+}
+
+@if (showPaymentForm()) {
+  <app-payment-sale-form [saleuuid]="addPay()?.saleuuid ?? ''" [salependingamount]="addPay()?.salependingamount ?? 0" [salesequence]="addPay()?.salesequence ?? ''" (saved)="onSaleUpdated($event)" (closed)="onPaymentSaleClosed()"/>
+}
+
+@if (showDetailSale()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    <div class="w-full max-w-2xl bg-surface rounded-2xl shadow-lg border border-stroke p-6 flex flex-col gap-6 max-h-[90vh] overflow-sections">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex flex-col gap-1">
+          <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-1">
+            <fa-icon [icon]="['fas', 'eye']" class="text-primary text-sm"/>
+          </div>
+          <h2 class="text-heading font-semibold text-lg">Detalle de venta {{ selectedSale()?.salesequence }}</h2>
+          <p class="text-muted text-sm">Información completa de la venta y sus pagos.</p>
+        </div>
+        <button type="button" (click)="onDetailSaleClosed()" class="shrink-0 flex items-center justify-center w-8 h-8 rounded-xl text-muted hover:bg-stroke/50 hover:text-heading transition-all duration-200 cursor-pointer">
+          <fa-icon [icon]="['fas', 'xmark']"/>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="flex items-center gap-2 text-sm text-muted">
+          <fa-icon [icon]="['fas', 'user']" class="w-3 shrink-0"/>
+          <span>{{ getCustomername(selectedSale()!) }}</span>
+        </div>
+        <div class="flex items-center gap-2 text-sm text-muted">
+          <fa-icon [icon]="['fas', 'user-tie']" class="w-3 shrink-0"/>
+          <span>{{ getUserName(selectedSale()!) }}</span>
+        </div>
+        <div class="flex items-center gap-2 text-sm text-muted">
+          <fa-icon [icon]="['fas', 'calendar']" class="w-3 shrink-0"/>
+          <span>{{ selectedSale()?.created_at | date: 'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="flex items-center gap-2 text-sm">
+          <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full" [ngClass]="getStatusConfig(selectedSale()!.salestatus).classes">
+            {{ getStatusConfig(selectedSale()!.salestatus).label }}
+          </span>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <h3 class="text-sm font-semibold text-heading">Servicios</h3>
+        @if (selectedSale()?.details && selectedSale()!.details!.length > 0) {
+          <div class="flex flex-col max-h-40 overflow-y-auto">
+            @for (detail of selectedSale()!.details!; track detail.saledetailuuid) {
+              <div class="flex items-center justify-between gap-2 py-2 border-b border-stroke/60 last:border-0 flex-wrap">
+                <div class="min-w-0">
+                  <span class="text-sm font-medium text-heading truncate block">{{ detail.service?.servicename ?? 'Servicio eliminado' }}</span>
+                  @if (detail.service?.category) {
+                    <span class="text-xs text-muted truncate block">{{ detail.service.category.categoryname }}</span>
+                  }
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                  @if (detail.saledetailcourtesy) {
+                    <span class="px-2 py-0.5 text-[10px] font-medium rounded-full border bg-primary/10 text-primary border-primary/30">Cortesía</span>
+                  }
+                  <span class="text-sm text-muted whitespace-nowrap">{{ detail.saledetailquantity }} × {{ detail.saledetailamount | currency: 'USD' }}</span>
+                  <span class="text-sm font-semibold text-heading whitespace-nowrap">{{ detail.saledetailtotal | currency: 'USD' }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="text-sm text-muted">Sin servicios registrados.</p>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1 pt-2 border-t border-stroke/60">
+        <div class="w-full flex items-center justify-between">
+          <span class="text-xs text-muted">Subtotal</span>
+          <span class="text-sm text-muted">{{ selectedSale()?.salesubtotal | currency: 'USD' }}</span>
+        </div>
+        @if (selectedSale()?.salependingamount) {
+          <div class="w-full flex items-center justify-between">
+            <span class="text-xs text-muted">Pendiente</span>
+            <span class="text-sm font-semibold text-muted">{{ selectedSale()?.salependingamount | currency: 'USD' }}</span>
+          </div>
+        }
+        <div class="w-full flex items-center justify-between">
+          <span class="text-xs font-bold text-heading">Total</span>
+          <span class="text-sm font-semibold text-heading">{{ selectedSale()?.saletotalamount | currency: 'USD' }}</span>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <h3 class="text-sm font-semibold text-heading">Pagos realizados</h3>
+        @if (loadingPayments()) {
+          <div class="flex flex-col gap-2">
+            @for (_ of [1, 2]; track $index) {
+              <div class="h-12 rounded-xl bg-stroke/30 animate-pulse"></div>
+            }
+          </div>
+        } @else if (payments().length === 0) {
+          <p class="text-sm text-muted">Aún no se han registrado pagos para esta venta.</p>
+        } @else {
+          <div class="flex flex-col max-h-48 overflow-y-auto">
+            @for (payment of payments(); track payment.paymentuuid) {
+              <div class="flex items-center justify-between gap-2 py-2 border-b border-stroke/60 last:border-0">
+                <div class="min-w-0">
+                  <span class="text-sm font-medium text-heading block">{{ getPaymentMethodLabel(payment.paymentmethod) }}</span>
+                  <span class="text-xs text-muted block">{{ payment.paymentreference }} · {{ payment.created_at | date: 'dd/MM/yyyy HH:mm' }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full" [ngClass]="getPaymentStatusConfig(payment.paymentstatus).classes">
+                    {{ getPaymentStatusConfig(payment.paymentstatus).label }}
+                  </span>
+                  <span class="text-sm font-semibold text-heading whitespace-nowrap">{{ payment.paymentamount | currency: 'USD' }}</span>
+                  <button type="button" title="Tirilla" class="flex items-center justify-center w-10 h-10 rounded-xl border-2 border-stroke text-muted hover:border-primary/30 hover:text-primary transition-all duration-200 cursor-pointer">
+                    <fa-icon [icon]="['fas', 'download']" class="text-sm"/>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="flex gap-2 justify-end pt-2">
+        <button type="button" (click)="onDetailSaleClosed()" class="px-5 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary-dark transition-all duration-200 cursor-pointer">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+}

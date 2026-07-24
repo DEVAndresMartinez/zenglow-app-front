@@ -10,7 +10,7 @@ import { CalcularDigitoVerificacion } from '../../../../core/functions/calculate
 import { NumbersOnlyCase } from '../../../../core/directives/numbers-onlit-case';
 import { UpperCase } from '../../../../core/directives/upper-case';
 import { Lowercase } from '../../../../core/directives/lower-case';
-import { CommerceService } from '../../../../core/services/modules/commerces/commerce.service';
+import { CommerceService } from '../../../../core/services/modules/commerce.service';
 
 const COMPONENTS = [UIInputComponent, UIDropdownComponent, UIPhoneInputComponent];
 const DIRECTIVES = [NumbersOnlyCase, UpperCase, Lowercase];
@@ -31,7 +31,7 @@ export class StepOneForm implements OnInit {
   documenttypes = DOCUMENT_TYPES;
   statusavailable = STATUS_AVAILABLE;
 
-  commerceForm = new FormGroup({
+  commerceForm: FormGroup = new FormGroup({
     commercetype: new FormControl<typeof this.commerceTypes[number]['abv']>(this.commerceTypes[0].abv, { validators: [Validators.required] }),
     commercename: new FormControl<string>('', { validators: [Validators.required, Validators.minLength(4), Validators.maxLength(150)] }),
     commerceslug: new FormControl<string>('', { validators: [Validators.required, Validators.minLength(4), Validators.maxLength(150)] }),

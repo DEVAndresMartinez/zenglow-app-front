@@ -37,3 +37,24 @@ export const STATUS_USER_AVAILABLE = [
   'pending',
   'deleted'
 ];
+
+export const STATUS_CUSTOMER_AVAILABLE = [
+  'active',
+  'inactive',
+  'blocked',
+  'deleted'
+];
+
+export const STATUS_SERVICE_AVAILABLE = [
+  'active',
+  'inactive',
+  'soon',
+  'deleted'
+];
+
+export const CUSTOMER_DOCUMENT_TYPES = [
+  { abv: 'CC', name: 'Cédula de Ciudadanía' },
+  { abv: 'CE', name: 'Cédula de Extranjería' },
+  { abv: 'NIT', name: '(NIT) Número de Identificación Tributaria' },
+  { abv: 'RUC', name: '(RUC) Registro Único de Contribuyentes' },
+];

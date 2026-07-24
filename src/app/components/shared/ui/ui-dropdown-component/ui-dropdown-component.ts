@@ -1,4 +1,4 @@
-import { Component, forwardRef, input, signal, computed, HostListener, ElementRef, ViewChild } from '@angular/core';
+import { Component, forwardRef, input, output, signal, computed, HostListener, ElementRef, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 export interface DropdownOption {
@@ -27,6 +27,8 @@ export class UIDropdownComponent implements ControlValueAccessor {
   required = input(false);
   hint = input('');
   error = input('');
+
+  selectionChange = output<DropdownOption | DropdownOption[] | null>();
 
   isOpen = signal(false);
   search = signal('');
@@ -93,11 +95,13 @@ export class UIDropdownComponent implements ControlValueAccessor {
         : [...current, opt.abv];
       this._value.set(next);
       this.onChange(next);
+      this.selectionChange.emit(this.options().filter(o => next.includes(o.abv)));
     } else {
       this._value.set(opt.abv);
       this.onChange(opt.abv);
       this.isOpen.set(false);
       this.search.set('');
+      this.selectionChange.emit(opt);
     }
     this.onTouched();
   }
@@ -141,6 +145,7 @@ export class UIDropdownComponent implements ControlValueAccessor {
     this._value.set(this.multiple() ? [] : null);
     this.onChange(this.multiple() ? [] : null);
     this.onTouched();
+    this.selectionChange.emit(this.multiple() ? [] : null);
   }
 
   onSearchInput(e: Event) {

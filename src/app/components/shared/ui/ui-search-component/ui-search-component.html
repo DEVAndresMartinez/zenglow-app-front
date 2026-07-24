@@ -1,0 +1,31 @@
+<div class="relative flex items-center w-full">
+
+  <fa-icon
+    [icon]="['fas', 'magnifying-glass']"
+    class="absolute left-3 text-muted text-sm pointer-events-none transition-colors duration-200">
+  </fa-icon>
+
+  <input
+    class="w-full pl-9 py-2 border-2 border-stroke rounded-xl text-sm text-muted bg-surface
+           focus:text-input focus:border-stroke-focus focus:outline-none
+           placeholder:text-muted/50 transition-all duration-200 roboto"
+    [class.pr-9]="hasValue()"
+    [class.pr-4]="!hasValue()"
+    [placeholder]="placeholder()"
+    [value]="value()"
+    (input)="onInput($event)"
+    type="text"
+    autocomplete="off"
+  />
+
+  @if (hasValue()) {
+    <button
+      type="button"
+      class="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-body
+             transition-colors duration-200 cursor-pointer leading-none"
+      (click)="clear()">
+      <fa-icon [icon]="['fas', 'xmark']" class="text-sm"></fa-icon>
+    </button>
+  }
+
+</div>

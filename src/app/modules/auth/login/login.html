@@ -1,1 +1,41 @@
-<p>login works!</p>
+<section class="w-full min-h-dvh flex flex-col justify-center items-center gap-6 p-6 bg-surface-page overflow-sections">
+  <div class="flex flex-col items-center gap-2">
+    <div class="w-14 h-14 rounded-full bg-surface border border-stroke shadow-sm flex items-center justify-center">
+      <img src="/favicon.png" alt="Logo Zenglow" class="w-9 h-9 object-contain" />
+    </div>
+    <div class="text-center">
+      <h1 class="text-heading font-bold text-2xl tracking-tight">Zenglow</h1>
+      <p class="text-muted text-sm mt-0.5">Gestiona tu negocio desde aquí</p>
+    </div>
+  </div>
+  <div class="w-full max-w-sm bg-surface rounded-2xl shadow-sm border border-stroke px-8 py-6 flex flex-col gap-6">
+    <div>
+      <h2 class="text-heading font-semibold text-lg">Iniciar sesión</h2>
+      <p class="text-muted text-sm mt-1">Ingresa tus credenciales para continuar.</p>
+    </div>
+    <form [formGroup]="loginForm" class="flex flex-col gap-4" (submit)="submit()">
+      <ui-input-component type="text" id="identifier" name="identifier" formControlName="identifier" label="Correo o usuario" placeholder="ej. usuario@comercio.com" [required]="true" [minlength]="4" [maxlength]="150"/>
+
+      <div class="flex flex-col gap-1">
+        <ui-input-component type="password" id="password" name="password" formControlName="password" label="Contraseña" placeholder="••••••••" [required]="true" [minlength]="6" [maxlength]="150"/>
+        <div class="flex justify-end">
+          <button type="button" routerLink="/modules/auth/forgot-password"
+            class="text-xs text-muted hover:text-primary-dark transition-colors duration-200 cursor-pointer py-0.5">
+            ¿Olvidaste tu contraseña?
+          </button>
+        </div>
+      </div>
+      <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary-dark transition-all duration-200 disabled:opacity-50 disabled:cursor-none disabled:hover:bg-primary" [disabled]="loginForm.invalid">
+        <fa-icon [icon]="['fas', 'arrow-right']" class="text-xs"/>
+        Iniciar sesión
+      </button>
+    </form>
+    <div class="flex flex-col items-center gap-3 pt-4 border-t border-stroke">
+      <p class="text-muted text-xs">¿Aún no tienes una cuenta?</p>
+      <button type="button" routerLink="/modules/auth/register" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-surface-page border border-stroke rounded-xl text-sm font-medium text-body hover:border-primary hover:text-primary-dark transition-all duration-200 cursor-pointer">
+        Crear una cuenta
+        <fa-icon [icon]="['fas', 'arrow-right']" class="text-xs text-muted"/>
+      </button>
+    </div>
+  </div>
+</section>

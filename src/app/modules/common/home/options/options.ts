@@ -17,29 +17,36 @@ export class Options {
       icon: ['fas', 'house'],
       title: 'Inicio',
       description: 'Visión general de tu cuenta y actividad reciente.',
-      link: '/home',
+      link: '/modules/common/home',
       color: 'text-blue-700'
     },
     {
       icon: ['fas', 'building'],
       title: 'Negocio',
       description: 'Gestiona tu negocio: sucursales, usuarios, roles, permisos',
-      link: '/business',
+      link: '/modules/common/business',
       color: 'text-yellow-700'
     },
     {
       icon: ['fas', 'briefcase'],
       title: 'Servicios',
       description: 'Gestiona tus servicios.',
-      link: '/services',
+      link: '/modules/common/services',
       color: 'text-green-700'
     },
     {
       icon: ['fas', 'users'],
       title: 'Clientes',
       description: 'Administra los clientes de tu negocio.',
-      link: '/users',
+      link: '/modules/common/customers',
       color: 'text-purple-700'
+    },
+    {
+      icon: ['fas', 'shopping-cart'],
+      title: 'Ventas',
+      description: 'Administra las ventas de tu negocio.',
+      link: '/modules/common/sales',
+      color: 'text-blue-400'
     },
     {
       icon: ['fas', 'plug'],

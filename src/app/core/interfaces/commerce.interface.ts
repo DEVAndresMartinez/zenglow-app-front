@@ -101,3 +101,52 @@ export interface ThreeStepInterface {
   branchuuid: string;
   userstatus: 'active' | 'inactive' | 'blocked' | 'pending' | 'deleted';
 }
+
+
+export interface CommerceMeResponse {
+  commerce: {
+    commerceuuid: string;
+    commercetype: string;
+    commercename: string;
+    commerceslug: string;
+    commerceemail: string;
+    commercephone: string;
+    commercedocumenttype: string;
+    commercedocumentnumber: string;
+    commercedigitverification: string;
+    commercelogo: string;
+    commercestatus: string;
+  },
+  user: {
+    useruuid: string,
+    userfirstname: string,
+    userlastname: string,
+    username: string,
+    useremail: string,
+    userphone: string,
+    mustchangepassword: boolean,
+    userlastlogin: Date,
+    branch: {
+      branchuuid: string;
+      branchname: string;
+    } | null;
+    roles: {
+      roleuuid: string;
+      rolename: string;
+      roleIsOwner: boolean;
+    }[];
+  },
+  branches: DetailDto;
+  roles: DetailDto;
+  users: DetailDto;
+}
+
+export interface DetailDto {
+  total: number;
+  active: number;
+  inactive: number;
+}
+
+export interface LogoResponse {
+  commercelogo: string;
+}

@@ -1,0 +1,94 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+  <div class="w-full max-w-4xl bg-surface rounded-2xl shadow-lg border border-stroke p-6 flex flex-col gap-6 max-h-[90vh] overflow-sections">
+    @if (paidSale()) {
+      <div class="flex flex-col items-center gap-3 text-center py-4">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center" [class]="saleCompleted ? 'bg-accent/10' : 'bg-primary/10'">
+          <fa-icon [icon]="['fas', saleCompleted ? 'circle-check' : 'circle-info']" class="text-lg" [class]="saleCompleted ? 'text-accent-hover' : 'text-primary'"/>
+        </div>
+        <div>
+          <h2 class="text-heading font-semibold text-lg">{{ saleCompleted ? 'Venta finalizada' : 'Pago registrado' }}</h2>
+          @if (saleCompleted) {
+            <p class="text-muted text-sm mt-1">El pago se registró correctamente y la venta quedó completamente pagada.</p>
+          } @else {
+            <p class="text-muted text-sm mt-1">El pago parcial se registró correctamente. Saldo pendiente: <span class="font-bold">{{ paidSale()?.salependingamount | currency }}</span>.</p>
+          }
+        </div>
+        <button type="button" (click)="acceptSuccess()" class="mt-2 px-5 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary-dark transition-all duration-200 cursor-pointer">
+          Aceptar
+        </button>
+      </div>
+    } @else {
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex flex-col gap-1">
+          <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-1">
+            <fa-icon [icon]="['fas', 'pen']" class="text-primary text-sm" />
+          </div>
+          <h2 class="text-heading font-semibold text-lg">Agregar pago {{ salesequence() }}</h2>
+          <p class="text-muted text-sm">Agrega un pago parcial o total a una venta.</p>
+          <p class="text-muted text-sm">Saldo pendiente <span class="font-bold">{{ salependingamount() | currency}}.</span></p>
+        </div>
+        <button type="button" (click)="close()"
+          class="shrink-0 flex items-center justify-center w-8 h-8 rounded-xl text-muted hover:bg-stroke/50 hover:text-heading transition-all duration-200 cursor-pointer">
+          <fa-icon [icon]="['fas', 'xmark']" />
+        </button>
+      </div>
+
+      <form [formGroup]="paymentForm" class="flex flex-col gap-2">
+
+        <div class="flex flex-col gap-1.5 pt-1">
+          <label class="text-sm font-medium text-heading px-1">Método de pago</label>
+          <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+            @if (!loadingMethods()) {
+              @for (method of airtableService.paymentMethods(); track method.methodslug) {
+                <button type="button" [disabled]="!isMethodAvailable(method.methodstatus)" (click)="paymentForm.get('paymentmethod')?.setValue(method.methodslug)" class="flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all duration-200" [class]="!isMethodAvailable(method.methodstatus)
+                  ? 'border-stroke opacity-50 cursor-not-allowed'
+                  : (paymentForm.get('paymentmethod')?.value === method.methodslug ? 'border-primary bg-primary/10 cursor-pointer' : 'border-stroke hover:border-primary/30 cursor-pointer')">
+                  <img [src]="method.methodicon" [alt]="method.methodname" class="w-8 h-8 object-contain"/>
+                  <span class="text-xs text-heading font-medium text-center">{{ method.methodname }}</span>
+                  @if (!isMethodAvailable(method.methodstatus)) {
+                    <span class="text-[10px] text-muted text-center leading-tight">{{ method.methodstatus }}</span>
+                  }
+                </button>
+              }
+            } @else {
+              @for (_ of [1, 2, 3, 4]; track $index) {
+                <div class="flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 border-stroke animate-pulse">
+                  <div class="w-8 h-8 rounded-lg bg-stroke"></div>
+                  <div class="h-2.5 w-10 bg-stroke rounded"></div>
+                </div>
+              }
+            }
+          </div>
+          <ui-input-component type="currency" formControlName="paymentamount" label="Precio" placeholder="Ej. 25000" [required]="true" [error]="priceError" appNumbersOnly/>
+        </div>
+
+        @if (error()) {
+          <p class="text-sm text-error px-1">{{ error() }}</p>
+        }
+      </form>
+
+      <div class="flex gap-2 justify-end pt-2">
+        <button type="button" (click)="close()" [disabled]="loading()"
+          class="px-5 py-2.5 rounded-xl bg-surface text-muted font-semibold text-sm border border-stroke hover:bg-primary-dark hover:text-white hover:border-primary-dark transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+          <fa-icon [icon]="['fas', 'xmark']" class="text-xs"/>
+          Cancelar
+        </button>
+        <button type="button" (click)="requestPay()" [disabled]="loading()"
+          class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary-dark transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+          @if (loading()) {
+            <fa-icon [icon]="['fas', 'circle-notch']" class="text-xs animate-spin"/>
+            Procesando...
+          } @else {
+            <fa-icon [icon]="['fas', 'credit-card']" class="text-xs"/>
+            Confirmar pago
+          }
+        </button>
+      </div>
+    }
+
+  </div>
+</div>
+
+@if (showConfirmPay()) {
+  <ui-confirm-modal title="Confirmar pago" [message]="confirmPayMessage" confirmText="Confirmar" cancelText="Cancelar" variant="primary" icon="credit-card" [loading]="loading()" [error]="error()" (confirmed)="confirmPay()" (cancelled)="cancelPay()"/>
+}

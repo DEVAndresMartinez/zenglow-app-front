@@ -1,15 +1,52 @@
-<div class="w-full h-full px-10 py-8 bg-slate-100">
-  <h2 class="text-slate-800 font-bold text-2xl tracking-tight">Paso 3</h2>
-  <p class="text-slate-600 text-md">Registra un usuario administrador.</p>
+<div class="w-full h-full px-4 py-6 lg:px-10 lg:py-8 bg-surface-page flex flex-col">
 
-  <form [formGroup]="userForm" class="w-full max-h-[90%] overflow-sections grid grid-cols-1 gap-4 mt-4 p-8 bg-white rounded-lg shadow z-49" (submit)="submit()">
-    <ui-input-component type="text" id="userfirstname" name="userfirstname" formControlName="userfirstname" (input)="generatePassword()" label="Nombre del Usuario" placeholder="ej. Juan" [required]="true" [minlength]="4" [maxlength]="150"/>
-    <ui-input-component type="text" id="userlastname" name="userlastname" formControlName="userlastname" (input)="generatePassword()" label="Apellidos del Usuario" placeholder="ej. Peréz" [required]="true" [minlength]="4" [maxlength]="150"/>
-    <ui-phone-input-component id="userphone" name="userphone" countryCode="+57" (input)="generatePassword()"formControlName="userphone" label="Número de Contacto" placeholder="ej. 300 000 0000" [required]="true"/>
-    <div class="w-full flex gap-2">
-      <ui-input-component type="email" id="useremail" name="useremail" formControlName="useremail" label="Correo Electrónico" placeholder="ej. usuario@examplo.com" [required]="true" [error]="setEmailError()" [minlength]="4" [maxlength]="150" appLowercase class="w-1/2"/>
-      <ui-input-component type="text" id="username" name="username" formControlName="username" label="Usuario" placeholder="ej. JUANPEREZ" (input)="userForm.value.username?.trim()" [required]="true" [minlength]="4" [maxlength]="150" appLowercase class="w-1/2"/>
+  <h2 class="text-heading font-bold text-2xl tracking-tight">Paso 3</h2>
+  <p class="text-body text-sm mt-1">Registra un usuario administrador.</p>
+
+  <button type="button" (click)="useSame()"
+    class="w-full flex items-center gap-3 px-4 py-3 mt-3
+           bg-primary-subtle border border-stroke rounded-lg
+           text-sm font-medium text-primary-dark
+           hover:border-primary transition-all duration-200 cursor-pointer group">
+    <fa-icon [icon]="['fas', 'phone']" class="text-primary text-sm shrink-0"/>
+    <span class="flex-1 text-left">Usar el teléfono y el correo del comercio</span>
+    <fa-icon [icon]="['fas', 'arrow-right']" class="text-muted text-xs group-hover:text-primary transition-all duration-200"/>
+  </button>
+  <p class="text-xs text-muted mt-1">(Recomendado usar un correo personal)</p>
+
+  <form [formGroup]="userForm"
+    class="w-full mt-4 p-5 lg:p-8 bg-surface rounded-xl shadow-sm border border-stroke
+           flex flex-col gap-4 lg:overflow-sections lg:flex-1">
+
+    <div class="flex flex-col sm:flex-row items-end gap-3">
+      <ui-input-component
+        type="text" id="userfirstname" name="userfirstname" formControlName="userfirstname"
+        (input)="generatePassword()" label="Nombre" placeholder="ej. Juan"
+        [required]="true" [minlength]="4" [maxlength]="150" class="w-full sm:w-1/2"/>
+      <ui-input-component
+        type="text" id="userlastname" name="userlastname" formControlName="userlastname"
+        (input)="generatePassword()" label="Apellidos" placeholder="ej. Pérez"
+        [required]="true" [minlength]="4" [maxlength]="150" class="w-full sm:w-1/2"/>
     </div>
-    <ui-input-component type="password" id="userpassword" name="userpassword" formControlName="userpassword" label="Contraseña inicial" placeholder="ej. JUAPER300000"  [readonly]="true" />
+
+    <ui-phone-input-component
+      id="userphone" name="userphone" countryCode="+57"
+      (input)="generatePassword()" formControlName="userphone"
+      label="Número de Contacto" placeholder="ej. 300 000 0000" [required]="true"/>
+
+    <div class="flex flex-col sm:flex-row items-end gap-3">
+      <ui-input-component
+        type="email" id="useremail" name="useremail" formControlName="useremail"
+        label="Correo Electrónico" placeholder="ej. usuario@ejemplo.com"
+        [required]="true" [error]="setEmailError()" [minlength]="4" [maxlength]="150"
+        appLowercase class="w-full sm:w-1/2"/>
+      <ui-input-component
+        type="text" id="username" name="username" formControlName="username"
+        label="Usuario" placeholder="ej. juanperez"
+        [required]="true" [minlength]="4" [maxlength]="150"
+        appLowercase class="w-full sm:w-1/2"/>
+    </div>
+
   </form>
+
 </div>

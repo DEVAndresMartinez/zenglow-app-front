@@ -1,0 +1,555 @@
+<title>Paletas Zenglow — Elige tu identidad</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0e0e0e;
+    color: #f0f0f0;
+    font-family: system-ui, -apple-system, sans-serif;
+    padding: 56px 32px 80px;
+    min-height: 100vh;
+  }
+
+  .page { max-width: 1160px; margin: 0 auto; }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid #1e1e1e;
+  }
+  .header-left {}
+  .eyebrow {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #444;
+    margin-bottom: 12px;
+  }
+  .page-title {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: #f0f0f0;
+  }
+  .header-note {
+    font-size: 12px;
+    color: #3a3a3a;
+    text-align: right;
+    line-height: 1.7;
+    max-width: 280px;
+  }
+  .header-note code {
+    font-family: 'Courier New', monospace;
+    color: #555;
+    font-size: 11px;
+  }
+
+  /* ── Grid ── */
+  .palettes {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+
+  /* ── Card ── */
+  .card { display: flex; flex-direction: column; gap: 14px; }
+
+  .card-eyebrow {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #3a3a3a;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .risk-badge {
+    font-size: 9px;
+    background: #1e1e1e;
+    border: 1px solid #2e2e2e;
+    color: #D97706;
+    padding: 1px 7px;
+    border-radius: 99px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .card-title {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    color: #f0f0f0;
+  }
+
+  .card-desc {
+    font-size: 11.5px;
+    color: #4a4a4a;
+    line-height: 1.65;
+    min-height: 48px;
+  }
+
+  /* ── Mini UI ── */
+  .mini-ui {
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    height: 270px;
+    border: 1px solid #1e1e1e;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  }
+
+  /* Sidebar */
+  .s-panel {
+    width: 37%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 14px 12px;
+  }
+
+  .s-logo { display: flex; align-items: center; gap: 7px; }
+  .s-logo-circle {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: white; display: flex; align-items: center;
+    justify-content: center; font-size: 11px; font-weight: 800;
+    color: #1e293b; flex-shrink: 0;
+  }
+  .s-logo-name { font-size: 13px; font-weight: 700; color: white; line-height: 1; }
+  .s-logo-sub  { font-size: 8px; margin-top: 2px; line-height: 1; }
+
+  .s-prog-label { font-size: 7.5px; color: rgba(255,255,255,0.45); margin-bottom: 5px; }
+  .s-prog-track { height: 3px; background: rgba(255,255,255,0.18); border-radius: 99px; }
+  .s-prog-fill  { height: 100%; width: 25%; border-radius: 99px; }
+
+  .s-steps { display: flex; flex-direction: column; gap: 5px; }
+  .s-step  { display: flex; align-items: center; gap: 5px; }
+  .s-dot {
+    width: 15px; height: 15px; border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 7px; font-weight: 700; color: white; flex-shrink: 0;
+  }
+  .s-dot.on { color: #111; }
+  .s-step-lbl { font-size: 8px; color: rgba(255,255,255,0.85); }
+
+  .s-nav { display: flex; justify-content: space-between; align-items: center; }
+  .s-back {
+    font-size: 8px; color: rgba(255,255,255,0.35);
+    background: none; border: none; font-family: system-ui;
+  }
+  .s-next {
+    border: none; padding: 5px 11px; border-radius: 5px;
+    font-size: 8px; font-weight: 700; font-family: system-ui; cursor: default;
+  }
+
+  /* Form area */
+  .f-panel {
+    width: 63%;
+    background: #f1f5f9;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow: hidden;
+  }
+
+  .f-title { font-size: 13px; font-weight: 700; color: #1e293b; }
+  .f-sub   { font-size: 9px; color: #475569; }
+
+  .f-card {
+    background: white;
+    border-radius: 8px;
+    padding: 10px;
+    flex: 1;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: 2px;
+  }
+
+  .f-field { display: flex; flex-direction: column; gap: 2px; }
+  .f-label { font-size: 7.5px; font-weight: 600; color: #475569; }
+
+  .f-input {
+    border: 2px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 8px;
+    color: #64748b;
+    background: white;
+    width: 100%;
+    font-family: system-ui;
+    outline: none;
+  }
+  .f-dropdown {
+    border: 2px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 8px;
+    color: #64748b;
+    background: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .f-phone {
+    border: 2px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: stretch;
+  }
+  .f-phone-code {
+    padding: 4px 7px;
+    background: #f1f5f9;
+    border-right: 2px solid #cbd5e1;
+    font-size: 8px;
+    color: #475569;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+  }
+  .f-phone-num {
+    padding: 4px 8px;
+    font-size: 8px;
+    color: #64748b;
+  }
+
+  /* ── Swatches ── */
+  .swatches { display: flex; gap: 4px; height: 26px; }
+  .sw {
+    flex: 1; border-radius: 4px;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: 3px;
+    overflow: hidden;
+  }
+  .sw span {
+    font-family: 'Courier New', monospace;
+    font-size: 7px;
+    color: rgba(255,255,255,0.6);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    letter-spacing: -0.02em;
+  }
+  .sw.light span { color: rgba(0,0,0,0.45); text-shadow: none; }
+
+  /* ── Code block ── */
+  .cb {
+    background: #141414;
+    border: 1px solid #1e1e1e;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    line-height: 1.85;
+    color: #3a3a3a;
+    overflow-x: auto;
+  }
+  .cn { color: inherit; }
+  .cv { }
+  .cval { color: #4ade80; }
+
+  /* ── Divider & footer ── */
+  hr { border: none; border-top: 1px solid #1a1a1a; margin: 52px 0 28px; }
+  .footer {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: #2e2e2e;
+    text-align: center;
+  }
+
+  @media (max-width: 860px) {
+    .palettes { grid-template-columns: 1fr; }
+    .header { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .header-note { text-align: left; }
+  }
+</style>
+
+<div class="page">
+
+  <div class="header">
+    <div class="header-left">
+      <div class="eyebrow">Zenglow — Identidad visual · 2026</div>
+      <h1 class="page-title">Elige tu paleta</h1>
+    </div>
+    <div class="header-note">
+      Sólo cambian 11 variables en<br>
+      <code>src/tailwind.css → @theme</code><br>
+      Superficies, texto y bordes no se tocan.
+    </div>
+  </div>
+
+  <div class="palettes">
+
+    <!-- ══════════ 01 MORADO ══════════ -->
+    <div class="card">
+      <div class="card-eyebrow">01 — Morado</div>
+      <h2 class="card-title">Premium<br>Creativo</h2>
+      <p class="card-desc">Violeta profundo con acento rosa. Distinción sin frialdad. Salones, estética, moda, industrias de imagen donde el cliente paga por experiencia.</p>
+
+      <div class="mini-ui">
+        <div class="s-panel" style="background: linear-gradient(to bottom right, #7C3AED, #5B21B6, #2E1065);">
+          <div class="s-logo">
+            <div class="s-logo-circle">Z</div>
+            <div>
+              <div class="s-logo-name">Zenglow</div>
+              <div class="s-logo-sub" style="color:#DDD6FE;">Configura tu negocio</div>
+            </div>
+          </div>
+          <div>
+            <div class="s-prog-label">1 de 4 pasos</div>
+            <div class="s-prog-track">
+              <div class="s-prog-fill" style="background: linear-gradient(to right, #FDA4AF, #F43F5E);"></div>
+            </div>
+          </div>
+          <div class="s-steps">
+            <div class="s-step"><div class="s-dot on" style="background:#F43F5E;">1</div><div class="s-step-lbl">Tu comercio</div></div>
+            <div class="s-step"><div class="s-dot">2</div><div class="s-step-lbl">Sucursal</div></div>
+            <div class="s-step"><div class="s-dot">3</div><div class="s-step-lbl">Usuario</div></div>
+            <div class="s-step"><div class="s-dot">4</div><div class="s-step-lbl">Productividad</div></div>
+          </div>
+          <div class="s-nav">
+            <button class="s-back">← Volver</button>
+            <button class="s-next" style="background:#F43F5E; color:#1e293b;">Siguiente →</button>
+          </div>
+        </div>
+        <div class="f-panel">
+          <div class="f-title">Paso 1</div>
+          <div class="f-sub">Completa la información de tu comercio.</div>
+          <div class="f-card">
+            <div class="f-field">
+              <div class="f-label">Tipo de Comercio *</div>
+              <div class="f-dropdown" style="border-color:#7C3AED; color:#334155;">
+                <span>Salón de Belleza</span>
+                <span style="color:#7C3AED; font-size:7px;">▾</span>
+              </div>
+            </div>
+            <div class="f-field">
+              <div class="f-label">Nombre del Comercio *</div>
+              <input class="f-input" value="Estilo & Color" readonly style="border-color:#cbd5e1;" />
+            </div>
+            <div class="f-field">
+              <div class="f-label">Correo Electrónico *</div>
+              <input class="f-input" value="info@estiloycolor.com" readonly style="border-color:#7C3AED; color:#334155;" />
+            </div>
+            <div class="f-field">
+              <div class="f-label">Teléfono *</div>
+              <div class="f-phone">
+                <div class="f-phone-code">+57</div>
+                <div class="f-phone-num">300 123 4567</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="swatches">
+        <div class="sw" style="background:#7C3AED"><span>#7C3AED</span></div>
+        <div class="sw" style="background:#5B21B6"><span>#5B21B6</span></div>
+        <div class="sw" style="background:#2E1065"><span>#2E1065</span></div>
+        <div class="sw" style="background:#F43F5E"><span>#F43F5E</span></div>
+      </div>
+
+      <div class="cb" style="--cv-color:#A78BFA;">
+        <span style="color:#A78BFA;">--color-brand-start</span>: <span class="cval">#7C3AED</span>;<br>
+        <span style="color:#A78BFA;">--color-brand-mid</span>:   <span class="cval">#5B21B6</span>;<br>
+        <span style="color:#A78BFA;">--color-brand-end</span>:   <span class="cval">#2E1065</span>;<br>
+        <span style="color:#A78BFA;">--color-primary</span>:        <span class="cval">#7C3AED</span>;<br>
+        <span style="color:#A78BFA;">--color-primary-subtle</span>: <span class="cval">#EDE9FE</span>;<br>
+        <span style="color:#A78BFA;">--color-primary-dark</span>:   <span class="cval">#5B21B6</span>;<br>
+        <span style="color:#A78BFA;">--color-accent</span>:      <span class="cval">#F43F5E</span>;<br>
+        <span style="color:#A78BFA;">--color-accent-soft</span>: <span class="cval">#FDA4AF</span>;<br>
+        <span style="color:#A78BFA;">--color-accent-hover</span>:<span class="cval">#E11D48</span>;<br>
+        <span style="color:#A78BFA;">--color-stroke-focus</span>: <span class="cval">#7C3AED</span>;<br>
+        <span style="color:#A78BFA;">--color-on-brand-muted</span>:<span class="cval">#DDD6FE</span>;
+      </div>
+    </div>
+
+    <!-- ══════════ 02 VERDE ══════════ -->
+    <div class="card">
+      <div class="card-eyebrow">02 — Verde</div>
+      <h2 class="card-title">Crecimiento<br>Vitalidad</h2>
+      <p class="card-desc">Verde selva con acento ámbar. Confianza y prosperidad legibles. Restaurantes, cafés, negocios de alimentos, bienestar y salud.</p>
+
+      <div class="mini-ui">
+        <div class="s-panel" style="background: linear-gradient(to bottom right, #16A34A, #166534, #14532D);">
+          <div class="s-logo">
+            <div class="s-logo-circle">Z</div>
+            <div>
+              <div class="s-logo-name">Zenglow</div>
+              <div class="s-logo-sub" style="color:#BBF7D0;">Configura tu negocio</div>
+            </div>
+          </div>
+          <div>
+            <div class="s-prog-label">1 de 4 pasos</div>
+            <div class="s-prog-track">
+              <div class="s-prog-fill" style="background: linear-gradient(to right, #FDE68A, #F59E0B);"></div>
+            </div>
+          </div>
+          <div class="s-steps">
+            <div class="s-step"><div class="s-dot on" style="background:#F59E0B;">1</div><div class="s-step-lbl">Tu comercio</div></div>
+            <div class="s-step"><div class="s-dot">2</div><div class="s-step-lbl">Sucursal</div></div>
+            <div class="s-step"><div class="s-dot">3</div><div class="s-step-lbl">Usuario</div></div>
+            <div class="s-step"><div class="s-dot">4</div><div class="s-step-lbl">Productividad</div></div>
+          </div>
+          <div class="s-nav">
+            <button class="s-back">← Volver</button>
+            <button class="s-next" style="background:#F59E0B; color:#1e293b;">Siguiente →</button>
+          </div>
+        </div>
+        <div class="f-panel">
+          <div class="f-title">Paso 1</div>
+          <div class="f-sub">Completa la información de tu comercio.</div>
+          <div class="f-card">
+            <div class="f-field">
+              <div class="f-label">Tipo de Comercio *</div>
+              <div class="f-dropdown" style="border-color:#16A34A; color:#334155;">
+                <span>Restaurante</span>
+                <span style="color:#16A34A; font-size:7px;">▾</span>
+              </div>
+            </div>
+            <div class="f-field">
+              <div class="f-label">Nombre del Comercio *</div>
+              <input class="f-input" value="La Mesa Verde" readonly style="border-color:#cbd5e1;" />
+            </div>
+            <div class="f-field">
+              <div class="f-label">Correo Electrónico *</div>
+              <input class="f-input" value="hola@lamesaverde.com" readonly style="border-color:#16A34A; color:#334155;" />
+            </div>
+            <div class="f-field">
+              <div class="f-label">Teléfono *</div>
+              <div class="f-phone">
+                <div class="f-phone-code">+57</div>
+                <div class="f-phone-num">310 987 6543</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="swatches">
+        <div class="sw" style="background:#16A34A"><span>#16A34A</span></div>
+        <div class="sw" style="background:#166534"><span>#166534</span></div>
+        <div class="sw" style="background:#14532D"><span>#14532D</span></div>
+        <div class="sw light" style="background:#F59E0B"><span>#F59E0B</span></div>
+      </div>
+
+      <div class="cb">
+        <span style="color:#4ADE80;">--color-brand-start</span>: <span class="cval">#16A34A</span>;<br>
+        <span style="color:#4ADE80;">--color-brand-mid</span>:   <span class="cval">#166534</span>;<br>
+        <span style="color:#4ADE80;">--color-brand-end</span>:   <span class="cval">#14532D</span>;<br>
+        <span style="color:#4ADE80;">--color-primary</span>:        <span class="cval">#16A34A</span>;<br>
+        <span style="color:#4ADE80;">--color-primary-subtle</span>: <span class="cval">#F0FDF4</span>;<br>
+        <span style="color:#4ADE80;">--color-primary-dark</span>:   <span class="cval">#15803D</span>;<br>
+        <span style="color:#4ADE80;">--color-accent</span>:      <span class="cval">#F59E0B</span>;<br>
+        <span style="color:#4ADE80;">--color-accent-soft</span>: <span class="cval">#FDE68A</span>;<br>
+        <span style="color:#4ADE80;">--color-accent-hover</span>:<span class="cval">#D97706</span>;<br>
+        <span style="color:#4ADE80;">--color-stroke-focus</span>: <span class="cval">#16A34A</span>;<br>
+        <span style="color:#4ADE80;">--color-on-brand-muted</span>:<span class="cval">#BBF7D0</span>;
+      </div>
+    </div>
+
+    <!-- ══════════ 03 AMARILLO ══════════ -->
+    <div class="card">
+      <div class="card-eyebrow">
+        03 — Ámbar
+        <span class="risk-badge">la apuesta</span>
+      </div>
+      <h2 class="card-title">Energía<br>Calidez</h2>
+      <p class="card-desc">El gradiente no es amarillo brillante — va de dorado a espresso oscuro. El CTA es cian frío. El contraste es inusual y es exactamente por qué funciona.</p>
+
+      <div class="mini-ui">
+        <div class="s-panel" style="background: linear-gradient(to bottom right, #D97706, #92400E, #451A03);">
+          <div class="s-logo">
+            <div class="s-logo-circle">Z</div>
+            <div>
+              <div class="s-logo-name">Zenglow</div>
+              <div class="s-logo-sub" style="color:#FEF3C7;">Configura tu negocio</div>
+            </div>
+          </div>
+          <div>
+            <div class="s-prog-label">1 de 4 pasos</div>
+            <div class="s-prog-track">
+              <div class="s-prog-fill" style="background: linear-gradient(to right, #67E8F9, #0891B2);"></div>
+            </div>
+          </div>
+          <div class="s-steps">
+            <div class="s-step"><div class="s-dot on" style="background:#0891B2; color:white;">1</div><div class="s-step-lbl">Tu comercio</div></div>
+            <div class="s-step"><div class="s-dot">2</div><div class="s-step-lbl">Sucursal</div></div>
+            <div class="s-step"><div class="s-dot">3</div><div class="s-step-lbl">Usuario</div></div>
+            <div class="s-step"><div class="s-dot">4</div><div class="s-step-lbl">Productividad</div></div>
+          </div>
+          <div class="s-nav">
+            <button class="s-back">← Volver</button>
+            <button class="s-next" style="background:#0891B2; color:white;">Siguiente →</button>
+          </div>
+        </div>
+        <div class="f-panel">
+          <div class="f-title">Paso 1</div>
+          <div class="f-sub">Completa la información de tu comercio.</div>
+          <div class="f-card">
+            <div class="f-field">
+              <div class="f-label">Tipo de Comercio *</div>
+              <div class="f-dropdown" style="border-color:#B45309; color:#334155;">
+                <span>Barbería</span>
+                <span style="color:#B45309; font-size:7px;">▾</span>
+              </div>
+            </div>
+            <div class="f-field">
+              <div class="f-label">Nombre del Comercio *</div>
+              <input class="f-input" value="Barbería El Dorado" readonly style="border-color:#cbd5e1;" />
+            </div>
+            <div class="f-field">
+              <div class="f-label">Correo Electrónico *</div>
+              <input class="f-input" value="info@eldorado.com.co" readonly style="border-color:#B45309; color:#334155;" />
+            </div>
+            <div class="f-field">
+              <div class="f-label">Teléfono *</div>
+              <div class="f-phone">
+                <div class="f-phone-code">+57</div>
+                <div class="f-phone-num">320 456 7890</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="swatches">
+        <div class="sw light" style="background:#D97706"><span>#D97706</span></div>
+        <div class="sw" style="background:#92400E"><span>#92400E</span></div>
+        <div class="sw" style="background:#451A03"><span>#451A03</span></div>
+        <div class="sw" style="background:#0891B2"><span>#0891B2</span></div>
+      </div>
+
+      <div class="cb">
+        <span style="color:#FCD34D;">--color-brand-start</span>: <span class="cval">#D97706</span>;<br>
+        <span style="color:#FCD34D;">--color-brand-mid</span>:   <span class="cval">#92400E</span>;<br>
+        <span style="color:#FCD34D;">--color-brand-end</span>:   <span class="cval">#451A03</span>;<br>
+        <span style="color:#FCD34D;">--color-primary</span>:        <span class="cval">#B45309</span>;<br>
+        <span style="color:#FCD34D;">--color-primary-subtle</span>: <span class="cval">#FFFBEB</span>;<br>
+        <span style="color:#FCD34D;">--color-primary-dark</span>:   <span class="cval">#92400E</span>;<br>
+        <span style="color:#FCD34D;">--color-accent</span>:      <span class="cval">#0891B2</span>;<br>
+        <span style="color:#FCD34D;">--color-accent-soft</span>: <span class="cval">#67E8F9</span>;<br>
+        <span style="color:#FCD34D;">--color-accent-hover</span>:<span class="cval">#0E7490</span>;<br>
+        <span style="color:#FCD34D;">--color-stroke-focus</span>: <span class="cval">#B45309</span>;<br>
+        <span style="color:#FCD34D;">--color-on-brand-muted</span>:<span class="cval">#FEF3C7</span>;
+      </div>
+    </div>
+
+  </div>
+
+  <hr />
+  <div class="footer">REEMPLAZAR LAS 11 VARIABLES EN src/tailwind.css DENTRO DEL BLOQUE @theme</div>
+
+</div>

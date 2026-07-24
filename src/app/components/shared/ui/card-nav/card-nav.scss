@@ -1,0 +1,21 @@
+@reference "../../../../../tailwind.css";
+
+a.active {
+  @apply border-primary shadow-md -translate-y-1;
+
+  > .absolute {
+    @apply opacity-100;
+  }
+
+  > div:nth-child(2) {
+    @apply bg-primary-subtle scale-105;
+  }
+
+  h3 {
+    @apply text-primary-dark;
+  }
+
+  > div:last-child {
+    @apply opacity-100 translate-x-0;
+  }
+}

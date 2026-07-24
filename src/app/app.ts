@@ -6,11 +6,13 @@ import { fab } from '@fortawesome/free-brands-svg-icons';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { filter, map, mergeMap } from 'rxjs';
+import { CommerceService } from './core/services/modules/commerce.service';
+import { ChangePasswordModalComponent } from './components/shared/ui/change-password-modal/change-password-modal';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, FontAwesomeModule],
+  imports: [RouterOutlet, FontAwesomeModule, ChangePasswordModalComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './app.html',
   styleUrl: './app.scss'
@@ -21,12 +23,12 @@ export class App {
   private activatedRoute = inject(ActivatedRoute);
   private titleService = inject(Title);
 
+  readonly commerceService = inject(CommerceService);
 
   constructor(library: FaIconLibrary) {
     this.setDynamicTitle();
     library.addIconPacks(fas, far, fab);
   }
-
 
   setDynamicTitle() {
     this.router.events.pipe(
