@@ -29,7 +29,7 @@ export class ChangePasswordModalComponent {
   error = signal('');
   success = signal(false);
 
-  form = new FormGroup({
+  form: FormGroup = new FormGroup({
     newpassword: new FormControl('', [Validators.required, Validators.minLength(8)]),
     confirmpassword: new FormControl('', [Validators.required]),
   }, { validators: passwordMatchValidator });

@@ -28,7 +28,7 @@ export class Login {
 
   constructor() { }
 
-  loginForm = new FormGroup({
+  loginForm: FormGroup = new FormGroup({
     identifier: new FormControl<string>('', { validators: [Validators.required, Validators.minLength(4), Validators.maxLength(150)] }),
     password: new FormControl<string>('', { validators: [Validators.required, Validators.minLength(6)] })
   });

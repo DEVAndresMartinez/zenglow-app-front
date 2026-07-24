@@ -31,6 +31,7 @@ export interface SaleResponseInterface {
   saledeliveryfee: number;
   saletip: number;
   saletotalamount: number;
+  salependingamount: number;
   salestatus: 'pending' | 'paid-partial' | 'paid' | 'cancelled' | 'refunded';
   details: ResponseSaleDetailInterface[] | null;
   created_at: Date;
@@ -53,9 +54,46 @@ export interface SaleRequestInterface {
   saletype: 'COMP' | 'ELECT';
 }
 
+export class UpdateSaleRequestInterface {
+  branchuuid?: string;
+  customeruuid?: string;
+  useruuid?: string;
+}
+
 export interface SaleDetailRequestInterface {
   serviceuuid: string;
   saledetailamount: number;
   saledetailquantity: number;
   saledetailcourtesy: boolean;
+}
+
+export class UpdateSaleDetailDto {
+  saledetailamount?: number;
+  saledetailquantity?: number;
+  saledetailcourtesy?: boolean;
+}
+
+export interface CreatePayment {
+  paymentprovider: 'manual' | 'wompi' | 'bold' | 'ePayco' | 'MercadoPago';
+  paymentmethod: 'efectivo' | 'llave' | 'nequi' | 'daviplata' | 'pse' | 'qr' | 'card' | 'transfer' | 'mixed';
+  paymentamount: number,
+  paymentstatus: 'pending' | 'in-progress' | 'paid' | 'rejected' | 'cancelled';
+}
+
+export interface CreatePaymentForm {
+  saleuuid: string;
+  salesequence: string;
+  salependingamount: number;
+}
+
+export interface PaymentSaleResponseInterface {
+    paymentuuid: string;
+    paymentprovider: 'manual' | 'wompi' | 'bold' | 'ePayco' | 'MercadoPago';
+    paymentmethod: 'efectivo' | 'llave' | 'nequi' | 'daviplata' | 'pse' | 'qr' | 'card' | 'transfer' | 'mixed';
+    paymentamount: number;
+    paymentstatus: 'pending' | 'in-progress' | 'paid' | 'rejected' | 'cancelled';
+    paymentreference: string;
+    // transactions?: PaymentTransaction[] | null;
+    created_at: Date;
+    updated_at: Date;
 }

@@ -11,6 +11,7 @@ import { CreateServiceInterface, ServiceInterface } from '../../../core/interfac
 import { STATUS_SERVICE_AVAILABLE } from '../../../core/const/register-const';
 import { ErrorGlobalException } from '../../../core/exceptions/error.interface';
 import { CategoryForm } from '../category-form/category-form';
+import { NumbersOnlyCase } from '../../../core/directives/numbers-onlit-case';
 
 const STATUS_LABELS: Record<string, string> = {
   active: 'Activo',
@@ -21,7 +22,7 @@ const STATUS_LABELS: Record<string, string> = {
 @Component({
   selector: 'app-service-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, FontAwesomeModule, UIInputComponent, UIDropdownComponent, CategoryForm],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, FontAwesomeModule, UIInputComponent, UIDropdownComponent, CategoryForm, NumbersOnlyCase],
   templateUrl: './service-form.html',
   styleUrl: './service-form.scss',
 })

@@ -1,1 +1,214 @@
-<p>sale-form works!</p>
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+  <div class="w-full max-w-4xl bg-surface rounded-2xl shadow-lg border border-stroke p-6 flex flex-col gap-6 max-h-[90vh] overflow-sections">
+
+    <div class="flex items-start justify-between gap-4">
+      <div class="flex flex-col gap-1">
+        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-1">
+          <fa-icon [icon]="['fas', 'pen']" class="text-primary text-sm"/>
+        </div>
+        <h2 class="text-heading font-semibold text-lg">Editar venta {{ currentSale()?.salesequence }}</h2>
+        <p class="text-muted text-sm">Asigna cliente/profesional y agrega servicios a esta venta.</p>
+      </div>
+      <button type="button" (click)="close()" class="shrink-0 flex items-center justify-center w-8 h-8 rounded-xl text-muted hover:bg-stroke/50 hover:text-heading transition-all duration-200 cursor-pointer">
+        <fa-icon [icon]="['fas', 'xmark']"/>
+      </button>
+    </div>
+
+    <form [formGroup]="saleForm" class="flex flex-col gap-2">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="flex items-end gap-2">
+          <ui-dropdown-component formControlName="customeruuid" label="Cliente" placeholder="Sin cliente asignado" [options]="customers()" class="flex-1"/>
+          <button type="button" (click)="openCreateCustomer()" title="Nuevo cliente"
+            class="shrink-0 flex items-center justify-center w-10 h-10 rounded-xl border-2 border-stroke text-muted hover:border-primary/30 hover:text-primary transition-all duration-200 cursor-pointer">
+            <fa-icon [icon]="['fas', 'user-plus']" class="text-sm"/>
+          </button>
+        </div>
+        <ui-dropdown-component formControlName="useruuid" label="Atendido por" placeholder="Sin profesional asignado" [options]="users()"/>
+      </div>
+      @if (updatingSale()) {
+        <p class="text-xs text-muted px-1 flex items-center gap-1.5">
+          <fa-icon [icon]="['fas', 'circle-notch']" class="text-[10px] animate-spin"/>
+          Guardando cambios...
+        </p>
+      }
+      @if (updateSaleError()) {
+        <p class="text-xs text-error px-1">{{ updateSaleError() }}</p>
+      }
+    </form>
+
+    <div class="flex flex-col gap-2">
+      <h3 class="text-sm font-semibold text-heading">Servicios en esta venta</h3>
+      @if (updateDetailError()) {
+        <p class="text-sm text-error px-1">{{ updateDetailError() }}</p>
+      }
+      @if (currentSale()?.details && currentSale()!.details!.length > 0) {
+        <div class="flex flex-col max-h-48 overflow-y-auto">
+          @for (detail of currentSale()!.details!; track detail.saledetailuuid) {
+            <div class="flex items-center justify-between gap-2 py-2 border-b border-stroke/60 last:border-0 flex-wrap">
+              <div class="min-w-0">
+                <span class="text-sm font-medium text-heading truncate block">{{ detail.service?.servicename ?? 'Servicio eliminado' }}</span>
+                @if (detail.service?.category) {
+                  <span class="text-xs text-muted truncate block">{{ detail.service.category.categoryname }}</span>
+                }
+              </div>
+              @if (editingDetailUuid() === detail.saledetailuuid) {
+                <form [formGroup]="editDetailForm" class="flex items-center gap-2 shrink-0 flex-wrap">
+                  <input type="number" formControlName="saledetailquantity" min="1" title="Cantidad"
+                    class="w-14 px-2 py-1 rounded-lg border text-sm text-heading focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    [class.border-error]="editDetailForm.controls.saledetailquantity.invalid && editDetailForm.controls.saledetailquantity.touched"
+                    [class.border-stroke]="!(editDetailForm.controls.saledetailquantity.invalid && editDetailForm.controls.saledetailquantity.touched)"/>
+                  <input type="number" formControlName="saledetailamount" min="0" step="0.01" title="Monto"
+                    class="w-20 px-2 py-1 rounded-lg border border-stroke text-sm text-heading focus:outline-none focus:ring-2 focus:ring-primary/30"/>
+                  <label class="flex items-center gap-1.5 text-xs text-muted">
+                    <input type="checkbox" formControlName="saledetailcourtesy"/>
+                    Cortesía
+                  </label>
+                  @if (editDetailForm.controls.saledetailquantity.invalid && editDetailForm.controls.saledetailquantity.touched) {
+                    <span class="text-[10px] text-error basis-full">La cantidad debe ser mínimo 1.</span>
+                  }
+                  <button type="button" (click)="saveEditDetail(detail)" [disabled]="savingDetail() || editDetailForm.invalid" title="Guardar"
+                    class="shrink-0 flex items-center justify-center w-7 h-7 rounded-lg text-accent-hover hover:bg-accent/10 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+                    @if (savingDetail()) {
+                      <fa-icon [icon]="['fas', 'circle-notch']" class="text-xs animate-spin"/>
+                    } @else {
+                      <fa-icon [icon]="['fas', 'check']" class="text-xs"/>
+                    }
+                  </button>
+                  <button type="button" (click)="cancelEditDetail()" [disabled]="savingDetail()" title="Cancelar"
+                    class="shrink-0 flex items-center justify-center w-7 h-7 rounded-lg text-muted hover:bg-stroke/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+                    <fa-icon [icon]="['fas', 'xmark']" class="text-xs"/>
+                  </button>
+                </form>
+              } @else {
+                <div class="flex items-center gap-2 shrink-0">
+                  @if (detail.saledetailcourtesy) {
+                    <span class="px-2 py-0.5 text-[10px] font-medium rounded-full border bg-primary/10 text-primary border-primary/30">Cortesía</span>
+                  }
+                  <span class="text-sm text-muted whitespace-nowrap">{{ detail.saledetailquantity }} × {{ detail.saledetailamount | currency: 'USD' }}</span>
+                  <span class="text-sm font-semibold text-heading whitespace-nowrap">{{ detail.saledetailtotal | currency: 'USD' }}</span>
+                  <button type="button" (click)="startEditDetail(detail)" title="Editar servicio"
+                    class="shrink-0 flex items-center justify-center w-7 h-7 rounded-lg text-muted hover:bg-primary/10 hover:text-primary transition-all duration-200 cursor-pointer">
+                    <fa-icon [icon]="['fas', 'pen']" class="text-xs"/>
+                  </button>
+                  <button type="button" (click)="openDeleteDetail(detail)" title="Quitar servicio"
+                    class="shrink-0 flex items-center justify-center w-7 h-7 rounded-lg text-muted hover:bg-error/10 hover:text-error transition-all duration-200 cursor-pointer">
+                    <fa-icon [icon]="['fas', 'trash']" class="text-xs"/>
+                  </button>
+                </div>
+              }
+            </div>
+          }
+        </div>
+        <div class="flex flex-col pt-2 border-t border-stroke/60">
+          @if (currentSale()?.salependingamount) {
+            <div class="w-full flex items-center justify-between">
+              <span class="text-xs text-muted">Pendiente</span>
+              <span class="text-sm font-semibold text-muted">{{ currentSale()?.salependingamount | currency: 'USD' }}</span>
+            </div>
+          }
+          <div class="w-full flex items-center justify-between">
+            <span class="text-xs font-bold text-heading">Total</span>
+            <span class="text-sm font-semibold text-heading">{{ currentSale()?.saletotalamount | currency: 'USD' }}</span>
+          </div>
+        </div>
+      } @else {
+        <p class="text-sm text-muted">Aún no se han agregado servicios a esta venta.</p>
+      }
+    </div>
+
+    <div class="flex flex-col gap-3">
+      <div class="flex items-center justify-between gap-2 flex-wrap">
+        <h3 class="text-sm font-semibold text-heading">Catálogo de servicios</h3>
+        <div class="flex items-center gap-2">
+          <ui-search-component placeholder="Buscar servicio..." (search)="onCatalogSearch($event)"/>
+          <button type="button" (click)="openCreateService()"
+            class="shrink-0 flex items-center gap-1.5 px-3 py-2 bg-primary text-white rounded-xl text-xs font-medium shadow-sm hover:bg-primary-dark active:scale-95 transition-all duration-200 cursor-pointer">
+            <fa-icon [icon]="['fas', 'plus']" class="text-xs"/>
+            <span class="hidden sm:inline">Nuevo servicio</span>
+          </button>
+        </div>
+      </div>
+
+      @if (addServiceError()) {
+        <p class="text-sm text-error px-1">{{ addServiceError() }}</p>
+      }
+
+      @if (loadingServices()) {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          @for (_ of [1, 2, 3]; track $index) {
+            <div class="bg-surface rounded-2xl border border-stroke p-4 flex flex-col gap-3 animate-pulse">
+              <div class="aspect-square w-full bg-stroke rounded-xl"></div>
+              <div class="h-4 w-32 bg-stroke rounded-lg"></div>
+              <div class="h-3 w-1/2 bg-stroke rounded"></div>
+            </div>
+          }
+        </div>
+      } @else if (servicesCopy().length === 0) {
+        <div class="flex flex-col items-center justify-center gap-2 py-10 text-center">
+          <div class="flex items-center justify-center w-12 h-12 rounded-2xl bg-primary-subtle">
+            <fa-icon [icon]="['fas', 'briefcase']" class="text-xl text-on-brand-muted"></fa-icon>
+          </div>
+          <p class="text-sm font-medium text-heading">Sin servicios</p>
+          <p class="text-xs text-muted">No hay servicios activos registrados aún.</p>
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          @for (service of servicesCopy(); track service.serviceuuid) {
+            <div class="bg-surface rounded-2xl border p-3 flex flex-col gap-2 transition-all duration-200"
+              [class]="isServiceAdded(service) ? 'border-primary/40 bg-primary/5' : 'border-stroke shadow-sm hover:shadow-md hover:border-primary/30'">
+              <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-primary-subtle shrink-0 h-28">
+                <app-service-image-carousel [images]="service.images" [alt]="service.servicename"/>
+              </div>
+              <div class="min-w-0">
+                <span class="text-sm font-semibold text-heading truncate block">{{ service.servicename }}</span>
+                @if (service.category) {
+                  <span class="text-xs text-muted truncate block">{{ service.category.categoryname }}</span>
+                }
+              </div>
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-sm font-medium text-heading">{{ service.serviceprice | number }}</span>
+                <button type="button" (click)="addServiceToSale(service)" [disabled]="addingServiceUuid() === service.serviceuuid || isServiceAdded(service)"
+                  class="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium shadow-sm transition-all duration-200 disabled:cursor-not-allowed cursor-pointer"
+                  [class]="isServiceAdded(service) ? 'bg-primary/10 text-primary disabled:opacity-100' : 'bg-primary text-white hover:bg-primary-dark active:scale-95 disabled:opacity-50'">
+                  @if (addingServiceUuid() === service.serviceuuid) {
+                    <fa-icon [icon]="['fas', 'circle-notch']" class="text-xs animate-spin"/>
+                  } @else if (isServiceAdded(service)) {
+                    <fa-icon [icon]="['fas', 'check']" class="text-xs"/>
+                    Agregado
+                  } @else {
+                    <fa-icon [icon]="['fas', 'cart-plus']" class="text-xs"/>
+                    Agregar
+                  }
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="flex gap-2 justify-end pt-2">
+      <button type="button" (click)="close()" class="px-5 py-2.5 rounded-xl bg-surface text-muted font-semibold text-sm border border-stroke hover:bg-primary-dark hover:text-white hover:border-primary-dark transition-all duration-200 cursor-pointer">
+        <fa-icon [icon]="['fas', 'xmark']" class="text-xs"/>
+        Cerrar
+      </button>
+      <button type="button" (click)="close()" class="px-5 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary-dark transition-all duration-200 cursor-pointer">
+        <fa-icon [icon]="['fas', 'credit-card']" class="text-xs"/>
+        Pagar
+      </button>
+    </div>
+
+  </div>
+</div>
+
+@if (showCustomerForm()) {
+  <app-customer-form [isEdit]="false" (saved)="onCustomerCreated($event)" (closed)="onCustomerFormClosed()"/>
+}
+
+@if (showServiceForm()) {
+  <app-service-form [isEdit]="false" (saved)="onServiceCreated($event)" (closed)="onServiceFormClosed()"/>
+}
+
+@if (showDeleteDetailForm()) {
+  <ui-confirm-modal title="Quitar servicio" [message]="'¿Seguro que deseas quitar ' + (deleteDetailTarget()?.service?.servicename ?? 'este servicio') + ' de la venta?'" confirmText="Quitar" cancelText="Cancelar" variant="danger" icon="trash" [loading]="deletingDetail()" [error]="removeDetailError()" (confirmed)="onDeleteDetailConfirmed()" (cancelled)="onDeleteDetailCancelled()"/>
+}

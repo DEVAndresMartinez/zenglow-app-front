@@ -48,7 +48,7 @@
 
         <div class="grid grid-cols-2 gap-3">
           <ui-input-component type="number" formControlName="serviceduration" label="Duración (min)" placeholder="Ej. 30" [min]="1" [step]="1"/>
-          <ui-input-component type="currency" formControlName="serviceprice" label="Precio" placeholder="Ej. 25000" [required]="true" [error]="priceError"/>
+          <ui-input-component type="currency" formControlName="serviceprice" label="Precio" placeholder="Ej. 25000" [required]="true" [error]="priceError" appNumbersOnly/>
         </div>
 
         @if (isEdit()) {

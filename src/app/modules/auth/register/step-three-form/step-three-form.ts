@@ -26,7 +26,7 @@ export class StepThreeForm implements OnInit {
 
   statusavailable = STATUS_USER_AVAILABLE;
 
-  userForm = new FormGroup({
+  userForm: FormGroup = new FormGroup({
     userfirstname: new FormControl<string>('', { validators: [Validators.required, Validators.minLength(4), Validators.maxLength(150)] }),
     userlastname: new FormControl<string>('', { validators: [Validators.required, Validators.minLength(4), Validators.maxLength(150)] }),
     userphone: new FormControl<string>('', { validators: [Validators.required, Validators.minLength(10), Validators.maxLength(13)] }),

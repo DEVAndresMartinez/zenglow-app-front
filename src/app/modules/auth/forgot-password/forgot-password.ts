@@ -20,7 +20,7 @@ export class ForgotPassword {
   sent = signal<boolean>(false);
   loading = signal<boolean>(false);
 
-  forgotForm = new FormGroup({
+  forgotForm: FormGroup = new FormGroup({
     useremail: new FormControl<string>('', { validators: [Validators.required, Validators.email, Validators.maxLength(150)] }),
     username: new FormControl<string>('', { validators: [Validators.required, Validators.maxLength(150)] })
   });

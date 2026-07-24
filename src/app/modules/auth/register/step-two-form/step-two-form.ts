@@ -29,7 +29,7 @@ export class StepTwoForm implements OnInit {
   citiesOptions: DropdownOption[] = CITIES.map(city => ({ abv: city, name: city }));
   statusavailable = STATUS_BRANCH_AVAILABLE;
 
-  branchForm = new FormGroup({
+  branchForm: FormGroup = new FormGroup({
     branchname: new FormControl<string>('', { validators: [Validators.required, Validators.minLength(4), Validators.maxLength(150)] }),
     branchcity: new FormControl<string>('', { validators: [Validators.required] }),
     branchaddress: new FormControl<string>('', { validators: [Validators.required, Validators.minLength(4), Validators.maxLength(150)] }),

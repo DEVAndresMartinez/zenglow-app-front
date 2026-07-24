@@ -31,7 +31,7 @@ export class StepOneForm implements OnInit {
   documenttypes = DOCUMENT_TYPES;
   statusavailable = STATUS_AVAILABLE;
 
-  commerceForm = new FormGroup({
+  commerceForm: FormGroup = new FormGroup({
     commercetype: new FormControl<typeof this.commerceTypes[number]['abv']>(this.commerceTypes[0].abv, { validators: [Validators.required] }),
     commercename: new FormControl<string>('', { validators: [Validators.required, Validators.minLength(4), Validators.maxLength(150)] }),
     commerceslug: new FormControl<string>('', { validators: [Validators.required, Validators.minLength(4), Validators.maxLength(150)] }),

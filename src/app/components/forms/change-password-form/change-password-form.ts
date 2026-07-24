@@ -36,7 +36,7 @@ export class ChangePasswordForm {
 
   private authService = inject(AuthService);
 
-  form = new FormGroup({
+  form: FormGroup = new FormGroup({
     newpassword: new FormControl('', [Validators.required, Validators.minLength(8)]),
     confirmpassword: new FormControl('', [Validators.required]),
   }, { validators: passwordMatchValidator });
