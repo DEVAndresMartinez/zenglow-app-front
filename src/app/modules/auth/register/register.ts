@@ -80,7 +80,6 @@ export class Register {
         userphone: user.userphone,
         username: user.username,
         useremail: user.useremail,
-        userpassword: user.userpassword,
         userstatus: user.userstatus,
       },
     };

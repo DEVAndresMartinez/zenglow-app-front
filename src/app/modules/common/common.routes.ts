@@ -50,6 +50,14 @@ export const commonRoutes: Routes = [
       title: 'Gestión de Ventas'
     }
   },
+  {
+    path: 'settings',
+    loadComponent: () => import('./settings/settings').then(m => m.Settings),
+    canActivate: [],
+    data: {
+      title: 'Configuraciones'
+    }
+  },
 
 
   { path: '', redirectTo: 'home', pathMatch: 'full' },

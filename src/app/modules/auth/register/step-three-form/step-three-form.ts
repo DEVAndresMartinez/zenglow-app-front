@@ -32,7 +32,6 @@ export class StepThreeForm implements OnInit {
     userphone: new FormControl<string>('', { validators: [Validators.required, Validators.minLength(10), Validators.maxLength(13)] }),
     username: new FormControl<string>('', { validators: [Validators.required, Validators.minLength(4), Validators.maxLength(150)] }),
     useremail: new FormControl<string>('', { validators: [Validators.required, Validators.email, Validators.minLength(4), Validators.maxLength(150)] }),
-    userpassword: new FormControl<string>(''),
     branchuuid: new FormControl<string>(''),
     userstatus: new FormControl<typeof this.statusavailable[number]>(this.statusavailable[0], { validators: [Validators.required] }),
   });
@@ -54,15 +53,6 @@ export class StepThreeForm implements OnInit {
     this.userForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.commerceService.userData.set(this.userForm.value as any);
       this.commerceService.stepThreeValid.set(this.userForm.valid);
-    });
-  }
-
-  generatePassword() {
-    const USERNAME = this.userForm.value?.userfirstname?.toUpperCase().slice(1, 3) ?? '';
-    const LASTNAME = this.userForm.value?.userlastname?.toLowerCase().slice(1, 3) ?? '';
-    const PHONE = this.userForm.value?.userphone?.slice(1, 5) ?? '';
-    this.userForm.patchValue({
-      userpassword: USERNAME + LASTNAME + PHONE
     });
   }
 

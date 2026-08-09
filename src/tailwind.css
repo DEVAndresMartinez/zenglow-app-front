@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
 
   --color-brand-start: #2563eb;
@@ -33,4 +35,136 @@
   --color-stroke-focus: #2563eb;
   --color-stroke-error: #f87171;
 
+}
+
+/*
+ * Modo oscuro: se activa agregando la clase `.dark` al <html> (ver ThemeService).
+ * Sólo se redefinen las variables — @theme ya generó las utilidades (bg-surface,
+ * text-heading, etc.) apuntando a var(--color-x), así que el navegador resuelve
+ * el valor correcto según el ancestro más cercano sin tocar ningún componente.
+ */
+.dark {
+  --color-primary: #3b82f6;
+  --color-primary-subtle: #1e3a5f;
+  --color-primary-dark: #60a5fa;
+
+  --color-warning: #facc15;
+  --color-warning-soft: #422e0e;
+  --color-warning-hover: #eab308;
+
+  --color-accent: #4ade80;
+  --color-accent-soft: #166534;
+  --color-accent-hover: #22c55e;
+
+  --color-surface: #1e293b;
+  --color-surface-page: #0f172a;
+  --color-surface-hover: #273449;
+
+  --color-heading: #f1f5f9;
+  --color-body: #cbd5e1;
+  --color-muted: #94a3b8;
+  --color-input: #e2e8f0;
+  --color-error: #f87171;
+  --color-on-brand-muted: #dbeafe;
+
+  --color-stroke: #334155;
+  --color-stroke-focus: #3b82f6;
+  --color-stroke-error: #f87171;
+}
+
+/*
+ * Paletas de identidad visual: se activan agregando `palette-{nombre}` al <html>
+ * junto con (opcionalmente) `.dark` — ver ThemeService. El azul es la paleta por
+ * defecto (valores en @theme arriba), así que no tiene clase propia. Sólo se
+ * redefinen las 11 variables de marca; superficies, texto y bordes los sigue
+ * controlando el bloque `.dark` de arriba, igual en cualquier paleta.
+ */
+.palette-purple {
+  --color-brand-start: #7c3aed;
+  --color-brand-mid: #5b21b6;
+  --color-brand-end: #2e1065;
+
+  --color-primary: #7c3aed;
+  --color-primary-subtle: #ede9fe;
+  --color-primary-dark: #5b21b6;
+
+  --color-accent: #f43f5e;
+  --color-accent-soft: #fda4af;
+  --color-accent-hover: #e11d48;
+
+  --color-stroke-focus: #7c3aed;
+  --color-on-brand-muted: #ddd6fe;
+}
+
+.palette-green {
+  --color-brand-start: #16a34a;
+  --color-brand-mid: #166534;
+  --color-brand-end: #14532d;
+
+  --color-primary: #16a34a;
+  --color-primary-subtle: #f0fdf4;
+  --color-primary-dark: #15803d;
+
+  --color-accent: #f59e0b;
+  --color-accent-soft: #fde68a;
+  --color-accent-hover: #d97706;
+
+  --color-stroke-focus: #16a34a;
+  --color-on-brand-muted: #bbf7d0;
+}
+
+.palette-amber {
+  --color-brand-start: #d97706;
+  --color-brand-mid: #92400e;
+  --color-brand-end: #451a03;
+
+  --color-primary: #b45309;
+  --color-primary-subtle: #fffbeb;
+  --color-primary-dark: #92400e;
+
+  --color-accent: #0891b2;
+  --color-accent-soft: #67e8f9;
+  --color-accent-hover: #0e7490;
+
+  --color-stroke-focus: #b45309;
+  --color-on-brand-muted: #fef3c7;
+}
+
+/* Variantes oscuras por paleta — mismos matices de marca, ajustados de brillo
+ * para mantener contraste sobre fondos oscuros. El gradiente de marca no
+ * cambia: el panel lateral ya es oscuro en ambos modos. */
+.dark.palette-purple {
+  --color-primary: #8b5cf6;
+  --color-primary-subtle: #2e1065;
+  --color-primary-dark: #7c3aed;
+
+  --color-accent: #f43f5e;
+  --color-accent-soft: #4c0519;
+  --color-accent-hover: #e11d48;
+
+  --color-stroke-focus: #8b5cf6;
+}
+
+.dark.palette-green {
+  --color-primary: #22c55e;
+  --color-primary-subtle: #14532d;
+  --color-primary-dark: #15803d;
+
+  --color-accent: #f59e0b;
+  --color-accent-soft: #451a03;
+  --color-accent-hover: #d97706;
+
+  --color-stroke-focus: #22c55e;
+}
+
+.dark.palette-amber {
+  --color-primary: #f59e0b;
+  --color-primary-subtle: #451a03;
+  --color-primary-dark: #b45309;
+
+  --color-accent: #22d3ee;
+  --color-accent-soft: #083344;
+  --color-accent-hover: #0e7490;
+
+  --color-stroke-focus: #f59e0b;
 }

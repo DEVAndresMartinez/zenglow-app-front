@@ -7,6 +7,7 @@ import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/ro
 import { Title } from '@angular/platform-browser';
 import { filter, map, mergeMap } from 'rxjs';
 import { CommerceService } from './core/services/modules/commerce.service';
+import { ThemeService } from './core/services/theme.service';
 import { ChangePasswordModalComponent } from './components/shared/ui/change-password-modal/change-password-modal';
 
 @Component({
@@ -24,6 +25,7 @@ export class App {
   private titleService = inject(Title);
 
   readonly commerceService = inject(CommerceService);
+  private themeService = inject(ThemeService);
 
   constructor(library: FaIconLibrary) {
     this.setDynamicTitle();

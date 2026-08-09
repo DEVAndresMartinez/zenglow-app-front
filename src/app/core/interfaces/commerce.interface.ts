@@ -28,7 +28,6 @@ export interface CreateUser {
   userphone: string;
   username: string;
   useremail: string;
-  userpassword: string;
   userstatus: 'active' | 'inactive' | 'blocked' | 'pending' | 'deleted';
 }
 
@@ -97,7 +96,6 @@ export interface ThreeStepInterface {
   userphone: string;
   username: string;
   useremail: string;
-  userpassword: string;
   branchuuid: string;
   userstatus: 'active' | 'inactive' | 'blocked' | 'pending' | 'deleted';
 }

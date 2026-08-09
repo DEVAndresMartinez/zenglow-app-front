@@ -66,7 +66,7 @@ export class Options {
       icon: ['fas', 'cogs'],
       title: 'Ajustes',
       description: 'Configura tu experiencia.',
-      link: '/settings',
+      link: '/modules/common/settings',
       color: 'text-gray-700'
     }
   ];
