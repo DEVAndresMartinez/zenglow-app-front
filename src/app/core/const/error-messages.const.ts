@@ -68,6 +68,11 @@ export const MODULE_ERROR_MESSAGES: Record<string, ErrorCodeMap> = {
     AE_USEREMAIL_CONFLICT: 'Ese correo electrónico ya está en uso.',
     CREATE_ERROR: 'No se pudo crear el comercio. Intenta nuevamente.',
   },
+  // Endpoint público consumido por la landing de comercios (app-landing).
+  'landing-commerces': {
+    NOT_FOUND_COMMERCE: 'No encontramos un comercio con ese identificador. Verifica el enlace o el slug e inténtalo de nuevo.',
+    COMMERCE_NOT_ACTIVE: 'Este comercio no está activo actualmente.',
+  },
   services: {
     NOT_FOUND_SERVICES: 'No hay servicios registrados.',
     NOT_FOUND_SERVICE: 'El servicio no existe.',

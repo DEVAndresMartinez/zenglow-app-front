@@ -1,0 +1,34 @@
+@if (visible()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    <div class="w-full max-w-sm bg-surface rounded-2xl shadow-lg border border-stroke p-8 flex flex-col gap-6">
+
+      <div class="flex flex-col gap-1">
+        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+          <fa-icon [icon]="['fas', 'store']" class="text-primary"/>
+        </div>
+        <h2 class="text-heading font-semibold text-lg">Ingresa al comercio</h2>
+        <p class="text-muted text-sm">Escribe el identificador (slug) que te compartió el comercio para ver su información.</p>
+      </div>
+
+      <form class="flex flex-col gap-4" (ngSubmit)="submit()">
+        <ui-input-component
+          type="text"
+          [formControl]="control"
+          label="Slug del comercio"
+          placeholder="ej. mi-comercio"
+          [required]="true"
+          [error]="touched() && control.invalid ? 'Ingresa un identificador válido' : ''"/>
+
+        @if (errorMessage()) {
+          <p class="text-sm text-error">{{ errorMessage() }}</p>
+        }
+
+        <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary-dark transition-all duration-200 cursor-pointer">
+          <fa-icon [icon]="['fas', 'arrow-right']" class="text-xs"/>
+          Continuar
+        </button>
+      </form>
+
+    </div>
+  </div>
+}
