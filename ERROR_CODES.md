@@ -97,6 +97,123 @@ distintos códigos.
 
 ---
 
+## Services (`services.service.ts`)
+
+| Código | HTTP | Mensaje técnico | Mensaje sugerido para el usuario |
+|---|---|---|---|
+| `NOT_FOUND_SERVICES` | 404 | Services not found | No hay servicios registrados. |
+| `NOT_FOUND_SERVICE` | 404 | Service not found / Servicio no encontrado / Categoria no encontrada | El servicio no existe. |
+| `AE_SERVICENAME_CONFLICT` | 409 | Service name already exists for this commerce | Ya existe un servicio con ese nombre. |
+| `CREATE_ERROR` | 500 | Error creating service. Please try again. | No se pudo crear el servicio. Intenta nuevamente. |
+| `UPDATE_ERROR` | 500 | Error al actualizar el servicio / Error updating service status | No se pudo actualizar el servicio. Intenta nuevamente. |
+| `MAX_IMAGES_REACHED` | 409 | El servicio solo admite 5 imágenes en total (ya tiene X, quedan Y disponibles) | Este servicio ya alcanzó el máximo de 5 imágenes. |
+| `NO_IMAGES_PROVIDED` | 400 | Debes enviar al menos una imagen | Selecciona al menos una imagen para subir. |
+| `INVALID_PRIMARY_INDEX` | 400 | primaryindex está fuera del rango de imágenes enviadas | Ocurrió un error al marcar la imagen principal. Intenta de nuevo. |
+
+---
+
+## Sales (`sales.service.ts`)
+
+| Código | HTTP | Mensaje técnico | Mensaje sugerido para el usuario |
+|---|---|---|---|
+| `NOT_FOUND_SALES` | 404 | Sales not found | No hay ventas registradas. |
+| `NOT_FOUND_SALE` | 404 | Sale not found | La venta no existe. |
+| `NOT_FOUND_SEQUENCE` | 404 | Sequence not found | No se encontró la secuencia de numeración para el comercio. |
+| `COMMERCE_UUID_REQUIRED` | 400 | Commerce uuid is required | Falta el identificador del comercio. |
+| `BRANCH_UUID_REQUIRED` | 400 | Branch uuid is required | Falta el identificador de la sucursal. |
+| `CREATE_ERROR` | 500 | Error al crear la venta | No se pudo crear la venta. Intenta nuevamente. |
+| `NOT_FOUND_SALE_DETAIL` | 404 | Sale detail not found | El detalle de la venta no existe. |
+| `CREATE_SALE_DETAIL_ERROR` | 500 | Error al agregar el detalle de la venta | No se pudo agregar el producto o servicio a la venta. |
+| `REMOVE_SALE_DETAIL_ERROR` | 500 | Error al eliminar el detalle de la venta | No se pudo eliminar el detalle de la venta. |
+| `SALE_PENDING_PROTECTED` | 409 | Solo se pueden editar ventas pendientes | Solo puedes editar ventas que estén pendientes. |
+| `UPDATE_SALE_ERROR` | 500 | Error al actualizar la venta | No se pudo actualizar la venta. Intenta nuevamente. |
+| `UPDATE_SALE_DETAIL_ERROR` | 500 | Error al actualizar el detalle de la venta | No se pudo actualizar el detalle de la venta. |
+
+> `NOT_FOUND_SEQUENCE` también puede aparecer al generar el consecutivo de pagos, ya que
+> `payments.service.ts` reutiliza `sales.service.ts` → `next()` para eso.
+
+---
+
+## Payments (`payments.service.ts`)
+
+| Código | HTTP | Mensaje técnico | Mensaje sugerido para el usuario |
+|---|---|---|---|
+| `NOT_FOUND_PAYMENT` | 404 | Payments not found / Payment not found | El pago no existe. |
+| `NOT_FOUND_SALE` | 404 | Sale not found | La venta no existe. |
+| `SALE_STATUS_ERROR` | 406 | Sale is finished | Esta venta ya está finalizada, no se pueden registrar más pagos. |
+| `PAYMENT_EXCEEDS_PENDING` | 400 | El monto del pago no puede ser mayor a la deuda pendiente | El monto ingresado supera la deuda pendiente de la venta. |
+| `CREATE_PAYMENT_ERROR` | 500 | Error al crear el pago | No se pudo registrar el pago. Intenta nuevamente. |
+| `PAYMENT_METHODS_FETCH_ERROR` | 502 / 500 | Error al obtener los metodos de pago | No se pudieron cargar los métodos de pago disponibles. |
+
+---
+
+## Schedules (`schedules.service.ts`)
+
+| Código | HTTP | Mensaje técnico | Mensaje sugerido para el usuario |
+|---|---|---|---|
+| `NOT_FOUND_SCHEDULES` | 404 | Schedules not found | No hay horarios registrados. |
+| `NOT_FOUND_SCHEDULE` | 404 | Schedule not found / Schedule not found after update / Schedule no encontrado | El horario no existe. |
+| `AE_SCHEDULE` | 409 | Schedule already exists for this user | Ya existe un horario con esos datos para este usuario. |
+| `SCHEDULE_NOT_FOUND` | 404 | Schedule not found (en `clone`) | El horario que quieres clonar no existe. |
+| `INVALID_USER` | 400 | The schedule already belongs to this user | Este horario ya pertenece a ese usuario. |
+| `CREATE_ERROR` | 500 | Error create schedule | No se pudo crear el horario. Intenta nuevamente. |
+| `UPDATE_ERROR` | 500 | Error update schedule / Error updating schedule status | No se pudo actualizar el horario. Intenta nuevamente. |
+| `CLONE_ERROR` | 500 | Error clone schedule | No se pudo clonar el horario. Intenta nuevamente. |
+
+> `clone()` usa `SCHEDULE_NOT_FOUND` para el mismo caso ("horario no encontrado") que en
+> `update()`/`changeStatus()` usa `NOT_FOUND_SCHEDULE`. Es una inconsistencia existente en el
+> código; el interceptor del front debe mapear ambos códigos al mismo mensaje hasta que se
+> unifique en el backend.
+
+---
+
+## Appointments (`appointments.service.ts`)
+
+| Código | HTTP | Mensaje técnico | Mensaje sugerido para el usuario |
+|---|---|---|---|
+| `NOT_FOUND_APPOINTMENTS` | 404 | Appointments not found | No hay citas registradas. |
+| `NOT_FOUND_APPOINTMENT` | 404 | Appointment not found | La cita no existe. |
+| `COMMERCE_UUID_REQUIRED` | 400 | Commerce uuid is required | Falta el identificador del comercio. |
+| `BRANCH_UUID_REQUIRED` | 400 | Branch uuid is required | Falta el identificador de la sucursal. |
+| `CREATE_ERROR` | 500 | Error al crear la cita | No se pudo crear la cita. Intenta nuevamente. |
+| `UPDATE_APPOINTMENT_ERROR` | 500 | Error al actualizar la cita | No se pudo actualizar la cita. Intenta nuevamente. |
+| `APPOINTMENT_COMPLETED_PROTECTED` | 409 | Completed or Cancelled appointments cannot be edited. | No puedes editar una cita completada o cancelada. |
+
+> `COMMERCE_UUID_REQUIRED` y `BRANCH_UUID_REQUIRED` son los mismos códigos que usa
+> `sales.service.ts`; comparten significado en toda la app.
+
+---
+
+## License (`license.service.ts`)
+
+| Código | HTTP | Mensaje técnico | Mensaje sugerido para el usuario |
+|---|---|---|---|
+| `NOT_FOUND_LICENSES` | 404 | Licenses not found | No hay licencias registradas. |
+| `NOT_FOUND_LICENSE` | 404 | License not found | La licencia no existe. |
+| `NOT_FOUND_USER` | 404 | Usuario no encontrado | El usuario no existe. |
+| `AE_LICENSE` | 409 | License already exists for this user | Ya existe una licencia de ese tipo y periodo para este usuario. |
+| `LICENSE_STATUS_PROTECTED` | 409 | Rejected or expired licenses cannot be edited. | No puedes editar una licencia rechazada o vencida. |
+| `INVALID_STATUS_TRANSITION` | 409 | Cannot change license status from X to Y | No se puede cambiar la licencia a ese estado desde su estado actual. |
+| `CREATE_ERROR` | 500 | Error create license | No se pudo crear la licencia. Intenta nuevamente. |
+| `UPDATE_ERROR` | 500 | Error update license / Error updating license status | No se pudo actualizar la licencia. Intenta nuevamente. |
+
+> `updateStatus()` solo permite transiciones válidas: `REQUESTED → APPROVED/REJECTED`,
+> `APPROVED → REJECTED/EXPIRED`. `REJECTED` y `EXPIRED` son estados terminales (sin transiciones
+> salientes); cualquier otro salto responde `INVALID_STATUS_TRANSITION`.
+
+---
+
+## Storage (`storage.service.ts`) — compartido por `commerces`, `users` y `services`
+
+| Código | HTTP | Mensaje técnico | Mensaje sugerido para el usuario |
+|---|---|---|---|
+| `STORAGE_UPLOAD_ERROR` | 500 | Error al subir el archivo | No se pudo subir la imagen. Intenta nuevamente. |
+
+> Este código puede aparecer en cualquier flujo que suba archivos a Cloudflare: `uploadLogo`
+> (commerces), `uploadImage` (users) y `addImages` (services).
+
+---
+
 ## Roles (`roles.service.ts`) — sin códigos propios
 
 Este módulo **no** usa `OwnException`, así que sus errores no traen un `code` identificable, solo
@@ -124,4 +241,5 @@ módulo, o bien conviene migrarlo a `OwnException` con códigos (`NF_ROLE`, `AE_
    404 → "No encontrado", 409 → "Conflicto con datos existentes", 500 → "Error del servidor").
 3. Tratar como **no error** los códigos de éxito devueltos junto con 200 (no vienen de
    `OwnException`, son parte del body normal): `RECOVER_OK`, `PASSWORD_MODIFIED`,
-   `STATUS_UPDATED`, `USER_REMOVED`, `BRANCH_REMOVED`, `STATUS_CHANGED`, `CATEGORY_REMOVED`.
+   `STATUS_UPDATED`, `USER_REMOVED`, `BRANCH_REMOVED`, `STATUS_CHANGED`, `CATEGORY_REMOVED`,
+   `SERVICE_REMOVED`.

@@ -1,0 +1,175 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+  <div class="w-full max-w-lg bg-surface rounded-2xl shadow-lg border border-stroke p-6 flex flex-col gap-5 max-h-[90vh] overflow-y-auto">
+
+    @if (view() === 'list') {
+
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex flex-col gap-1">
+          <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-1">
+            <fa-icon [icon]="['fas', 'notes-medical']" class="text-primary text-sm"/>
+          </div>
+          <h2 class="text-heading font-semibold text-lg">Licencias</h2>
+          <p class="text-muted text-sm">
+            Permisos de <strong>{{ user()?.userfirstname }} {{ user()?.userlastname }}</strong> en horario laboral.
+          </p>
+        </div>
+        <button type="button" (click)="close()" class="shrink-0 flex items-center justify-center w-8 h-8 rounded-xl text-muted hover:bg-stroke/50 hover:text-heading transition-all duration-200 cursor-pointer">
+          <fa-icon [icon]="['fas', 'xmark']"/>
+        </button>
+      </div>
+
+      <button type="button" (click)="openCreateLicense()" class="shrink-0 self-start flex items-center gap-1.5 px-4 py-2 bg-primary text-white rounded-xl text-sm font-medium shadow-sm hover:bg-primary-dark active:scale-95 transition-all duration-200 cursor-pointer">
+        <fa-icon [icon]="['fas', 'plus']" class="text-xs"/>
+        Nueva licencia
+      </button>
+
+      @if (loadingList()) {
+        <div class="flex flex-col gap-3">
+          @for (_ of [1,2]; track $index) {
+            <div class="bg-surface rounded-2xl border border-stroke p-4 flex flex-col gap-3 animate-pulse">
+              <div class="flex items-center justify-between">
+                <div class="h-4 w-32 bg-stroke rounded-lg"></div>
+                <div class="h-5 w-16 bg-stroke rounded-full"></div>
+              </div>
+              <div class="h-3 w-3/4 bg-stroke rounded"></div>
+            </div>
+          }
+        </div>
+      } @else if (listError()) {
+        <p class="text-sm text-error px-1">{{ listError() }}</p>
+      } @else if (licenses().length === 0) {
+        <div class="flex flex-col items-center justify-center gap-3 py-12 text-center">
+          <div class="flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-subtle">
+            <fa-icon [icon]="['fas', 'notes-medical']" class="text-2xl text-on-brand-muted"></fa-icon>
+          </div>
+          <p class="text-sm font-medium text-heading">Sin licencias</p>
+          <p class="text-xs text-muted">Este usuario no tiene licencias registradas aún.</p>
+        </div>
+      } @else {
+        <div class="flex flex-col gap-3">
+          @for (license of licenses(); track license.licenseuuid) {
+            <div class="bg-surface rounded-2xl border border-stroke shadow-sm p-4 flex flex-col gap-3">
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-primary-subtle shrink-0">
+                    <fa-icon [icon]="['fas', typeConfig(license.licensetype).icon]" class="text-sm text-primary"></fa-icon>
+                  </div>
+                  <span class="text-sm font-semibold text-heading truncate">{{ typeConfig(license.licensetype).label }}</span>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  @if (statusUpdatingUuid() === license.licenseuuid) {
+                    <fa-icon [icon]="['fas', 'circle-notch']" class="text-xs text-muted animate-spin"/>
+                  } @else {
+                    <span class="px-2 py-0.5 text-[10px] font-medium rounded-full border" [class]="statusConfig(license.licensestatus).classes">
+                      {{ statusConfig(license.licensestatus).label }}
+                    </span>
+                  }
+                  <ui-action-menu [items]="licenseActionItems(license)" (action)="onLicenseAction($event, license)"/>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-muted pt-2 border-t border-stroke/60">
+                <fa-icon [icon]="['fas', 'calendar-days']" class="w-3 shrink-0"></fa-icon>
+                <span class="truncate">{{ periodSummary(license) }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+    } @else {
+
+      @if (saveSuccess()) {
+        <div class="flex flex-col items-center gap-4 py-4 text-center">
+          <div class="w-12 h-12 rounded-full bg-accent/15 flex items-center justify-center">
+            <fa-icon [icon]="['fas', 'check']" class="text-accent-hover text-lg"/>
+          </div>
+          <div>
+            <h2 class="text-heading font-semibold text-lg">{{ editingLicense() ? '¡Licencia actualizada!' : '¡Licencia registrada!' }}</h2>
+            <p class="text-muted text-sm mt-1">
+              La licencia de tipo <strong>{{ typeConfig(savedLicenseType()).label }}</strong> fue {{ editingLicense() ? 'actualizada' : 'registrada' }} correctamente.
+            </p>
+          </div>
+          <button type="button" (click)="backToList()" class="flex items-center gap-2 px-5 py-2 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary-dark transition-all duration-200 cursor-pointer">
+            Aceptar
+          </button>
+        </div>
+      } @else {
+
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex flex-col gap-1">
+            <button type="button" (click)="backToList()" class="flex items-center gap-1.5 text-xs text-muted hover:text-primary transition-colors duration-200 cursor-pointer mb-1 self-start">
+              <fa-icon [icon]="['fas', 'arrow-left']"/>
+              Volver al listado
+            </button>
+            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-1">
+              <fa-icon [icon]="['fas', editingLicense() ? 'pen' : 'notes-medical']" class="text-primary text-sm"/>
+            </div>
+            <h2 class="text-heading font-semibold text-lg">{{ editingLicense() ? 'Editar licencia' : 'Nueva licencia' }}</h2>
+            <p class="text-muted text-sm">Completa los datos de la licencia para <strong>{{ user()?.userfirstname }} {{ user()?.userlastname }}</strong>.</p>
+          </div>
+          <button type="button" (click)="close()" class="shrink-0 flex items-center justify-center w-8 h-8 rounded-xl text-muted hover:bg-stroke/50 hover:text-heading transition-all duration-200 cursor-pointer">
+            <fa-icon [icon]="['fas', 'xmark']"/>
+          </button>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+          <ui-dropdown-component formControlName="licensetype" label="Tipo de licencia" placeholder="Selecciona un tipo" [options]="typeOptions" [required]="true" [error]="typeError"/>
+
+          <ui-dropdown-component formControlName="licenseperiod" label="Periodo" placeholder="Selecciona el periodo" [options]="periodOptions" [required]="true" [error]="periodError"/>
+
+          @if (selectedPeriod() === 'time') {
+            <ui-input-component type="date" formControlName="licensedate" label="Fecha" [required]="true" [error]="dateError"/>
+            <div class="grid grid-cols-2 gap-3">
+              <ui-input-component type="time" formControlName="licensestarttime" label="Hora de inicio" [required]="true" [error]="startTimeError"/>
+              <ui-input-component type="time" formControlName="licenseendtime" label="Hora de fin" [required]="true" [error]="endTimeError"/>
+            </div>
+          } @else if (selectedPeriod() === 'day') {
+            <ui-input-component type="date" formControlName="licensedate" label="Fecha" [required]="true" [error]="dateError"/>
+          } @else if (selectedPeriod() === 'period') {
+            <div class="grid grid-cols-2 gap-3">
+              <ui-input-component type="date" formControlName="licensestartdate" label="Fecha de inicio" [required]="true" [error]="startDateError"/>
+              <ui-input-component type="date" formControlName="licenseenddate" label="Fecha de fin" [required]="true" [error]="endDateError"/>
+            </div>
+          }
+
+          @if (formError()) {
+            <p class="text-sm text-error px-1">{{ formError() }}</p>
+          }
+
+          <div class="flex gap-3 pt-2">
+            <button type="button" (click)="backToList()" class="flex-1 px-4 py-2.5 rounded-xl border-2 border-stroke text-muted font-medium text-sm hover:border-primary/30 hover:text-heading transition-all duration-200 cursor-pointer">
+              Cancelar
+            </button>
+            <button type="submit" [disabled]="saving()" class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary-dark transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+              @if (saving()) {
+                <fa-icon [icon]="['fas', 'circle-notch']" class="text-sm animate-spin"/>
+                Guardando...
+              } @else {
+                <fa-icon [icon]="['fas', editingLicense() ? 'pen' : 'plus']" class="text-xs"/>
+                {{ editingLicense() ? 'Actualizar' : 'Registrar' }}
+              }
+            </button>
+          </div>
+        </form>
+
+      }
+
+    }
+
+  </div>
+</div>
+
+@if (showRejectConfirm()) {
+  <ui-confirm-modal
+    title="Rechazar licencia"
+    message="¿Seguro que deseas rechazar esta licencia? El usuario será notificado del cambio."
+    confirmText="Rechazar"
+    cancelText="Cancelar"
+    variant="danger"
+    icon="xmark"
+    [loading]="statusUpdatingUuid() === rejectingLicense()?.licenseuuid"
+    [error]="rejectError()"
+    (confirmed)="onRejectConfirmed()"
+    (cancelled)="onRejectCancelled()"
+  />
+}

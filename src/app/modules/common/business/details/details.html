@@ -258,6 +258,14 @@
   <app-assign-roles-form [useruuid]="assignRolesUser()?.useruuid ?? ''" [user]="assignRolesUser()" (saved)="onAssignRolesSaved($event)" (closed)="onAssignRolesFormClosed()"/>
 }
 
+@if (showLicensesForm()) {
+  <app-user-licenses-form [useruuid]="licensesUser()?.useruuid ?? ''" [user]="licensesUser()" (closed)="onLicensesFormClosed()"/>
+}
+
+@if (showSchedulesForm()) {
+  <app-user-schedules-form [useruuid]="schedulesUser()?.useruuid ?? ''" [user]="schedulesUser()" (closed)="onSchedulesFormClosed()"/>
+}
+
 @if (showDeleteBranchForm()) {
   <ui-confirm-modal
     title="Eliminar sucursal"

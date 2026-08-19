@@ -19,6 +19,8 @@ import { UIConfirmModalComponent } from '../../../../components/shared/ui/ui-con
 import { ActionMenuItem, UIActionMenuComponent } from '../../../../components/shared/ui/ui-action-menu/ui-action-menu';
 import { AssignBranchForm } from '../../../../components/forms/assign-branch-form/assign-branch-form';
 import { AssignRolesForm } from '../../../../components/forms/assign-roles-form/assign-roles-form';
+import { UserLicensesForm } from '../../../../components/forms/user-licenses-form/user-licenses-form';
+import { UserSchedulesForm } from '../../../../components/forms/user-schedules-form/user-schedules-form';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorGlobalException } from '../../../../core/exceptions/error.interface';
 import { compressImage } from '../../../../core/functions/compress-image';
@@ -40,7 +42,7 @@ const USER_STATUS_MAP: Record<string, { label: string; classes: string }> = {
 @Component({
   selector: 'app-details',
   standalone: true,
-  imports: [CommonModule, RouterLink, Tabs, FontAwesomeModule, UISearchComponent, BranchForm, UserForm, ChangePasswordForm, UIConfirmModalComponent, UIActionMenuComponent, AssignBranchForm, AssignRolesForm],
+  imports: [CommonModule, RouterLink, Tabs, FontAwesomeModule, UISearchComponent, BranchForm, UserForm, ChangePasswordForm, UIConfirmModalComponent, UIActionMenuComponent, AssignBranchForm, AssignRolesForm, UserLicensesForm, UserSchedulesForm],
   templateUrl: './details.html',
   styleUrl: './details.scss',
 })
@@ -86,6 +88,12 @@ export class Details {
   showAssignRolesForm = signal(false);
   assignRolesUser = signal<UsersInterface | null>(null);
 
+  showLicensesForm = signal(false);
+  licensesUser = signal<UsersInterface | null>(null);
+
+  showSchedulesForm = signal(false);
+  schedulesUser = signal<UsersInterface | null>(null);
+
   uploadingImageUuid = signal<string | null>(null);
 
   type = toSignal(
@@ -97,6 +105,8 @@ export class Details {
     { key: 'edit', label: 'Editar', icon: 'pen' },
     { key: 'password', label: 'Cambiar contraseña', icon: 'key' },
     { key: 'branch', label: 'Cambiar sucursal', icon: 'store' },
+    { key: 'schedule', label: 'Gestionar horario', icon: 'calendar' },
+    { key: 'license', label: 'Licencias', icon: 'notes-medical' },
     { key: 'role', label: 'Cambiar rol', icon: 'user-tag' },
     { key: 'delete', label: 'Eliminar', icon: 'trash', variant: 'danger' },
   ];
@@ -207,8 +217,30 @@ export class Details {
       case 'password': this.openChangePassword(user); break;
       case 'branch': this.openAssignBranch(user); break;
       case 'role': this.openAssignRoles(user); break;
+      case 'license': this.openLicenses(user); break;
+      case 'schedule': this.openSchedules(user); break;
       case 'delete': this.openDeleteUser(user); break;
     }
+  }
+
+  openLicenses(user: UsersInterface) {
+    this.licensesUser.set(user);
+    this.showLicensesForm.set(true);
+  }
+
+  onLicensesFormClosed() {
+    this.showLicensesForm.set(false);
+    this.licensesUser.set(null);
+  }
+
+  openSchedules(user: UsersInterface) {
+    this.schedulesUser.set(user);
+    this.showSchedulesForm.set(true);
+  }
+
+  onSchedulesFormClosed() {
+    this.showSchedulesForm.set(false);
+    this.schedulesUser.set(null);
   }
 
   openAssignBranch(user: UsersInterface) {

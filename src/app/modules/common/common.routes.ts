@@ -9,7 +9,14 @@ export const commonRoutes: Routes = [
       title: 'Panel de Control'
     }
   },
-
+  {
+    path: 'appointments',
+    loadComponent: () => import('./appointments/appointments').then(m => m.Appointments),
+    canActivate: [],
+    data: {
+      title: 'Gestión de citas'
+    }
+  },
   {
     path: 'business',
     loadComponent: () => import('./business/business').then(m => m.Business),

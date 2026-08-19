@@ -21,6 +21,13 @@ export class Options {
       color: 'text-blue-700'
     },
     {
+      icon: ['fas', 'calendar-plus'],
+      title: 'Citas',
+      description: 'Lleva el control de las citas de tu negocio',
+      link: '/modules/common/appointments',
+      color: 'text-yellow-500'
+    },
+    {
       icon: ['fas', 'building'],
       title: 'Negocio',
       description: 'Gestiona tu negocio: sucursales, usuarios, roles, permisos',
@@ -68,6 +75,13 @@ export class Options {
       description: 'Configura tu experiencia.',
       link: '/modules/common/settings',
       color: 'text-gray-700'
+    },
+    {
+      icon: ['fas', 'chart-line'],
+      title: 'Reportes',
+      description: 'Visualiza y analiza los reportes de tu negocio.',
+      link: '/reports',
+      color: 'text-gray-400'
     }
   ];
 
