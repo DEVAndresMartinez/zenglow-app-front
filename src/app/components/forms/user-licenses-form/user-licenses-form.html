@@ -160,16 +160,6 @@
 </div>
 
 @if (showRejectConfirm()) {
-  <ui-confirm-modal
-    title="Rechazar licencia"
-    message="¿Seguro que deseas rechazar esta licencia? El usuario será notificado del cambio."
-    confirmText="Rechazar"
-    cancelText="Cancelar"
-    variant="danger"
-    icon="xmark"
-    [loading]="statusUpdatingUuid() === rejectingLicense()?.licenseuuid"
-    [error]="rejectError()"
-    (confirmed)="onRejectConfirmed()"
-    (cancelled)="onRejectCancelled()"
+  <ui-confirm-modal title="Rechazar licencia" message="¿Seguro que deseas rechazar esta licencia? El usuario será notificado del cambio." confirmText="Rechazar" cancelText="Cancelar" variant="danger" icon="xmark" [loading]="statusUpdatingUuid() === rejectingLicense()?.licenseuuid" [error]="rejectError()" (confirmed)="onRejectConfirmed()" (cancelled)="onRejectCancelled()"
   />
 }

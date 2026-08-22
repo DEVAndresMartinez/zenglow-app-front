@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, input, output, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, input, output, signal } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -9,6 +9,7 @@ import { ActionMenuItem, UIActionMenuComponent } from '../../shared/ui/ui-action
 import { UIConfirmModalComponent } from '../../shared/ui/ui-confirm-modal/ui-confirm-modal';
 import { ScheduleService } from '../../../core/services/modules/schedule.service';
 import { CreateScheduleInterface, ResponseSchedule, UpdateScheduleInterface } from '../../../core/interfaces/schedule.interface';
+import { UserService } from '../../../core/services/modules/user.service';
 import { UsersInterface } from '../../../core/interfaces/user.interface';
 import { ErrorGlobalException } from '../../../core/exceptions/error.interface';
 
@@ -65,6 +66,18 @@ export class UserSchedulesForm implements OnInit {
   togglingSchedule = signal<ResponseSchedule | null>(null);
   toggleError = signal('');
 
+  showCloneModal = signal(false);
+  cloningSchedule = signal<ResponseSchedule | null>(null);
+  cloning = signal(false);
+  cloneError = signal('');
+  cloneSuccess = signal(false);
+
+  otherUsers = signal<UsersInterface[]>([]);
+  loadingOtherUsers = signal(false);
+  otherUserOptions = computed<DropdownOption[]>(() =>
+    this.otherUsers().filter(u => u.useruuid !== this.useruuid()).map(u => ({ abv: u.useruuid, name: `${u.userfirstname} ${u.userlastname}` }))
+  );
+
   dayOptions = DAY_OPTIONS;
 
   form: FormGroup = new FormGroup({
@@ -73,7 +86,12 @@ export class UserSchedulesForm implements OnInit {
     scheduleendtime: new FormControl<string>('', { validators: [Validators.required], nonNullable: true }),
   });
 
+  cloneForm: FormGroup = new FormGroup({
+    useruuid: new FormControl<string>('', { validators: [Validators.required], nonNullable: true }),
+  });
+
   private scheduleService = inject(ScheduleService);
+  private userService = inject(UserService);
 
   ngOnInit(): void {
     this.getSchedules();
@@ -111,6 +129,7 @@ export class UserSchedulesForm implements OnInit {
   scheduleActionItems(schedule: ResponseSchedule): ActionMenuItem[] {
     return [
       { key: 'edit', label: 'Editar', icon: 'pen' },
+      { key: 'clone', label: 'Clonar a otro usuario', icon: 'clone' },
       schedule.schedulestatus === 'active'
         ? { key: 'toggle', label: 'Desactivar', icon: 'toggle-off', variant: 'danger' }
         : { key: 'toggle', label: 'Activar', icon: 'toggle-on' },
@@ -121,7 +140,60 @@ export class UserSchedulesForm implements OnInit {
     switch (action) {
       case 'edit': this.openEditSchedule(schedule); break;
       case 'toggle': this.onToggleStatus(schedule); break;
+      case 'clone': this.openCloneSchedule(schedule); break;
     }
+  }
+
+  openCloneSchedule(schedule: ResponseSchedule) {
+    this.cloningSchedule.set(schedule);
+    this.cloneError.set('');
+    this.cloneSuccess.set(false);
+    this.cloneForm.reset({ useruuid: '' });
+    this.showCloneModal.set(true);
+
+    if (this.otherUsers().length === 0) {
+      this.loadingOtherUsers.set(true);
+      this.userService.getUsers().subscribe({
+        next: (res) => {
+          this.otherUsers.set(res);
+          this.loadingOtherUsers.set(false);
+        },
+        error: () => { this.loadingOtherUsers.set(false); },
+      });
+    }
+  }
+
+  onCloneModalClosed() {
+    this.showCloneModal.set(false);
+    this.cloningSchedule.set(null);
+  }
+
+  get cloneTargetError(): string {
+    if (this.cloneForm.get('useruuid')?.errors?.['required'] && this.cloneForm.get('useruuid')?.touched) return 'Selecciona un usuario';
+    return '';
+  }
+
+  submitClone() {
+    this.cloneForm.markAllAsTouched();
+    if (this.cloneForm.invalid) return;
+
+    const schedule = this.cloningSchedule();
+    if (!schedule) return;
+
+    this.cloning.set(true);
+    this.cloneError.set('');
+
+    this.scheduleService.clone({ scheduleuuid: schedule.scheduleuuid, useruuid: this.cloneForm.value.useruuid }).subscribe({
+      next: () => {
+        this.cloning.set(false);
+        this.cloneSuccess.set(true);
+      },
+      error: (httpErr: HttpErrorResponse) => {
+        const body = httpErr.error as ErrorGlobalException;
+        this.cloneError.set(body?.message || 'No se pudo clonar el horario. Inténtalo nuevamente.');
+        this.cloning.set(false);
+      },
+    });
   }
 
   openCreateSchedule() {

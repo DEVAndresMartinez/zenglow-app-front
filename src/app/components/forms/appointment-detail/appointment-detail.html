@@ -1,0 +1,212 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+  <div class="w-full max-w-lg bg-surface rounded-2xl shadow-lg border border-stroke p-6 flex flex-col gap-5 max-h-[90vh] overflow-y-auto">
+    <div class="flex items-start justify-between gap-4">
+      <div class="flex flex-col gap-1">
+        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-1">
+          <fa-icon [icon]="['fas', 'eye']" class="text-primary text-sm"/>
+        </div>
+        <h2 class="text-heading font-semibold text-lg">Detalle de la cita</h2>
+        <p class="text-muted text-sm">{{ currentAppointment()!.appointmentdate | date: 'dd/MM/yyyy' }} · {{ currentAppointment()!.appointmenthour }}</p>
+      </div>
+      <button type="button" (click)="close()" class="shrink-0 flex items-center justify-center w-8 h-8 rounded-xl text-muted hover:bg-stroke/50 hover:text-heading transition-all duration-200 cursor-pointer">
+        <fa-icon [icon]="['fas', 'xmark']"/>
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div class="flex items-center gap-2 text-sm text-muted">
+        <fa-icon [icon]="['fas', 'user']" class="w-3 shrink-0"/>
+        <span>{{ getCustomerName(currentAppointment()!) }}</span>
+      </div>
+      <div class="flex items-center gap-2 text-sm text-muted">
+        <fa-icon [icon]="['fas', 'user-tie']" class="w-3 shrink-0"/>
+        <span>{{ getUserName(currentAppointment()!) }}</span>
+      </div>
+      <div class="flex items-center gap-2 text-sm text-muted">
+        <fa-icon [icon]="['fas', 'store']" class="w-3 shrink-0"/>
+        <span>{{ currentAppointment()?.branch?.branchname ?? 'Sin sucursal' }}</span>
+      </div>
+      <div class="flex items-center gap-2 text-sm">
+        <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full" [ngClass]="statusConfig(currentAppointment()!.appointmentstatus).classes">
+          {{ statusConfig(currentAppointment()!.appointmentstatus).label }}
+        </span>
+      </div>
+      <div class="flex items-center gap-2 text-sm text-muted">
+        <fa-icon [icon]="['fas', currentAppointment()!.appointmentmode === 'delivered' ? 'truck' : 'store']" class="w-3 shrink-0"/>
+        <span>{{ modeLabel(currentAppointment()!.appointmentmode) }}</span>
+      </div>
+      <div class="flex items-center gap-2 text-sm text-muted">
+        <fa-icon [icon]="['fas', 'clock']" class="w-3 shrink-0"/>
+        <span>{{ currentAppointment()!.appointmentduration }} min</span>
+      </div>
+    </div>
+
+    @if (currentAppointment()!.appointmentmode === 'delivered') {
+      <div class="flex items-center gap-2 text-sm text-muted">
+        <fa-icon [icon]="['fas', 'location-dot']" class="w-3 shrink-0"/>
+        <span>{{ currentAppointment()?.appointmentaddress }}, {{ currentAppointment()?.appointmentcity }}</span>
+      </div>
+    }
+
+    <div class="flex flex-col gap-2">
+      <div class="flex items-center justify-between gap-2">
+        <h3 class="text-sm font-semibold text-heading">Servicios</h3>
+        @if (canManageDetails) {
+          <button type="button" (click)="openAddDetail()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-all duration-200 cursor-pointer">
+            <fa-icon [icon]="['fas', 'plus']" class="text-[10px]"/>
+            Agregar servicio
+          </button>
+        }
+      </div>
+
+      @if (currentAppointment()!.details && currentAppointment()!.details.length > 0) {
+        <div class="flex flex-col max-h-40 overflow-y-auto">
+          @for (detail of currentAppointment()!.details; track detail.appointmentdetailuuid) {
+            <div class="flex items-center justify-between gap-2 py-2 border-b border-stroke/60 last:border-0">
+              <span class="text-sm font-medium text-heading truncate">{{ detail.service?.servicename ?? 'Servicio eliminado' }}</span>
+              <div class="flex items-center gap-2 shrink-0">
+                <span class="text-sm text-muted whitespace-nowrap">{{ detail.appointmentdetailduration }} min · {{ detail.appointmentdetailamount | currency: 'USD' }}</span>
+                @if (canManageDetails) {
+                  <button type="button" (click)="openRemoveDetail(detail)" title="Quitar servicio"
+                    class="flex items-center justify-center w-7 h-7 rounded-lg text-muted hover:bg-error/10 hover:text-error transition-all duration-200 cursor-pointer">
+                    <fa-icon [icon]="['fas', 'trash']" class="text-xs"/>
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <p class="text-sm text-muted">Sin servicios registrados.</p>
+      }
+
+      @if (showAddDetail()) {
+        <div [formGroup]="addDetailForm" class="flex flex-col gap-3 p-3 rounded-xl border border-stroke bg-stroke/10">
+          @if (loadingServices()) {
+            <div class="h-10 rounded-xl bg-stroke/30 animate-pulse"></div>
+          } @else {
+            <ui-dropdown-component formControlName="serviceuuid" label="Servicio" placeholder="Selecciona un servicio" [options]="serviceOptions" [required]="true" (selectionChange)="onServiceSelected($event)"/>
+          }
+          <div class="grid grid-cols-2 gap-3">
+            <ui-input-component type="number" formControlName="appointmentdetailamount" label="Monto" [required]="true"/>
+            <ui-input-component type="number" formControlName="appointmentdetailduration" label="Duración (min, opcional)"/>
+          </div>
+          @if (addDetailError()) {
+            <p class="text-xs text-error">{{ addDetailError() }}</p>
+          }
+          <div class="flex gap-2 justify-end">
+            <button type="button" (click)="cancelAddDetail()" class="px-3 py-1.5 rounded-lg text-xs font-medium text-muted hover:bg-stroke/40 transition-all duration-200 cursor-pointer">
+              Cancelar
+            </button>
+            <button type="button" (click)="submitAddDetail()" [disabled]="addingDetail()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-primary text-white hover:bg-primary-dark transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+              @if (addingDetail()) {
+                <fa-icon [icon]="['fas', 'circle-notch']" class="text-[10px] animate-spin"/>
+                Agregando...
+              } @else {
+                <fa-icon [icon]="['fas', 'plus']" class="text-[10px]"/>
+                Agregar
+              }
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="flex items-center justify-between pt-2 border-t border-stroke/60">
+      <span class="text-sm font-bold text-heading">Total</span>
+      <span class="text-sm font-semibold text-heading">{{ currentAppointment()!.appointmentamount | currency: 'USD' }}</span>
+    </div>
+
+    @if (statusError()) {
+      <p class="text-sm text-error px-1">{{ statusError() }}</p>
+    }
+
+    <div class="flex flex-wrap gap-2 justify-end pt-2 border-t border-stroke/60">
+      @if (canConfirm) {
+        <button type="button" (click)="quickStatusChange('confirmed')" [disabled]="statusUpdating()"
+          class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border border-primary/30 text-primary hover:bg-primary/10 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+          <fa-icon [icon]="['fas', 'check']" class="text-[10px]"/>
+          Confirmar cita
+        </button>
+      }
+      @if (canMarkNoShow) {
+        <button type="button" (click)="quickStatusChange('no-show')" [disabled]="statusUpdating()"
+          class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border border-stroke text-muted hover:bg-stroke/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+          <fa-icon [icon]="['fas', 'user-clock']" class="text-[10px]"/>
+          No se presentó
+        </button>
+      }
+      @if (canCancel) {
+        <button type="button" (click)="openCancelAppointment()" [disabled]="statusUpdating()"
+          class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border border-error/30 text-error hover:bg-error/10 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+          <fa-icon [icon]="['fas', 'ban']" class="text-[10px]"/>
+          Cancelar cita
+        </button>
+      }
+      @if (canFinalize) {
+        <button type="button" (click)="openFinalize()" [disabled]="statusUpdating()"
+          class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-accent text-white hover:bg-accent/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+          <fa-icon [icon]="['fas', 'flag-checkered']" class="text-[10px]"/>
+          Finalizar cita
+        </button>
+      }
+      <button type="button" (click)="close()" class="px-5 py-2 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary-dark transition-all duration-200 cursor-pointer">
+        Cerrar
+      </button>
+    </div>
+  </div>
+</div>
+
+@if (showRemoveDetailConfirm()) {
+  <ui-confirm-modal
+    title="Quitar servicio"
+    [message]="'¿Seguro que deseas quitar ' + (removeDetailTarget()?.service?.servicename ?? 'este servicio') + ' de la cita?'"
+    confirmText="Quitar"
+    cancelText="Cancelar"
+    variant="danger"
+    icon="trash"
+    [loading]="removingDetail()"
+    [error]="removeDetailError()"
+    (confirmed)="onRemoveDetailConfirmed()"
+    (cancelled)="onRemoveDetailCancelled()"
+  />
+}
+
+@if (showCancelConfirm()) {
+  <ui-confirm-modal
+    title="Cancelar cita"
+    message="¿Seguro que deseas cancelar esta cita? Esta acción no se puede deshacer."
+    confirmText="Cancelar cita"
+    cancelText="Volver"
+    variant="danger"
+    icon="ban"
+    [loading]="cancellingAppointment()"
+    [error]="cancelError()"
+    (confirmed)="onCancelConfirmed()"
+    (cancelled)="onCancelDismissed()"
+  />
+}
+
+@if (showFinalizeConfirm()) {
+  <ui-confirm-modal
+    title="Finalizar cita"
+    message="La cita quedará como completada y se generará un comprobante interno sin propina. A continuación se te pedirá registrar el pago."
+    confirmText="Finalizar y pagar"
+    cancelText="Cancelar"
+    variant="primary"
+    icon="flag-checkered"
+    [loading]="finalizing()"
+    [error]="finalizeError()"
+    (confirmed)="onFinalizeConfirmed()"
+    (cancelled)="onFinalizeCancelled()"
+  />
+}
+
+@if (showPaymentForm() && finalizedSale()) {
+  <app-payment-sale-form
+    [saleuuid]="finalizedSale()!.saleuuid"
+    [salependingamount]="finalizedSale()!.salependingamount"
+    [salesequence]="finalizedSale()!.salesequence"
+    (closed)="onPaymentFormClosed()"
+  />
+}

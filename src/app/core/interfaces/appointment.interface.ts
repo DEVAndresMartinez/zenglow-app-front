@@ -91,3 +91,25 @@ export interface UpdateAppointmentInterface {
   appointmentcity?: string;
   appointmentaddress?: string;
 }
+
+export enum SaleType {
+  COMP = 'COMP',
+  ELECT = 'ELECT',
+}
+
+export interface UpdateAppointmentStatusInterface {
+  appointmentstatus?: 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'no-show';
+}
+
+export interface FinalizeAppointmentInterface {
+  saletype: SaleType;
+  saledeliveryfee?: number;
+  saletip?: number;
+}
+
+export interface ChangeStatusResponseDto {
+  appointmentuuid?: string;
+  appointmentdetailuuid?: string;
+  code: string;
+  message: string;
+}

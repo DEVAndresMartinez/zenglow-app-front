@@ -1,1 +1,100 @@
-<p>appointments works!</p>
+<div class="flex flex-col gap-4">
+  <div class="w-full flex items-center gap-2 flex-wrap">
+    <ui-search-component placeholder="Buscar cita..." (search)="onGlobalFilter($event)" class="flex-1 min-w-45"/>
+    <ui-dropdown-component placeholder="Todas las sucursales" [options]="branches()" [ngModel]="branchFilter()" (selectionChange)="onBranchFilterChange($event)" class="w-44"/>
+    <ui-dropdown-component placeholder="Todos los estados" [options]="statusOptions" [ngModel]="statusFilter()" (selectionChange)="onStatusFilterChange($event)" class="w-44"/>
+    <ui-input-component type="date" placeholder="Fecha" [ngModel]="dateFilter()" (ngModelChange)="onDateFilterChange($event)" class="w-40"/>
+    <button type="button" (click)="openCreate()"
+      class="shrink-0 flex items-center gap-1.5 px-4 py-2 bg-primary text-white rounded-xl text-sm font-medium shadow-sm hover:bg-primary-dark active:scale-95 transition-all duration-200 cursor-pointer">
+      <fa-icon [icon]="['fas', 'plus']" class="text-xs"/>
+      <span class="hidden sm:inline">Nueva cita</span>
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      @for (_ of [1, 2, 3]; track $index) {
+        <div class="bg-surface rounded-2xl border border-stroke p-4 flex flex-col gap-3 animate-pulse">
+          <div class="flex items-center justify-between gap-2">
+            <div class="h-4 w-28 bg-stroke rounded-lg"></div>
+            <div class="h-5 w-16 bg-stroke rounded-full"></div>
+          </div>
+          <div class="flex flex-col gap-2 pt-2 border-t border-stroke/60">
+            <div class="h-3 w-full bg-stroke rounded"></div>
+            <div class="h-3 w-3/4 bg-stroke rounded"></div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (appointmentsCopy().length === 0) {
+    <div class="flex flex-col items-center justify-center gap-3 py-16 text-center">
+      <div class="flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-subtle">
+        <fa-icon [icon]="['fas', 'calendar-days']" class="text-2xl text-on-brand-muted"></fa-icon>
+      </div>
+      <p class="text-sm font-medium text-heading">Sin citas</p>
+      <p class="text-xs text-muted">No hay citas registradas con estos filtros.</p>
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      @for (appointment of appointmentsCopy(); track appointment.appointmentuuid) {
+        <div class="bg-surface rounded-2xl border border-stroke shadow-sm p-4 flex flex-col gap-3 hover:shadow-md hover:border-primary/30 transition-all duration-200">
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex items-center gap-2 min-w-0">
+              <div class="flex items-center justify-center w-9 h-9 rounded-xl bg-primary/10 shrink-0">
+                <fa-icon [icon]="['fas', 'calendar-check']" class="text-sm text-primary"></fa-icon>
+              </div>
+              <div class="flex flex-col min-w-0">
+                <span class="text-sm font-semibold text-heading truncate">{{ getCustomerName(appointment) }}</span>
+                <span class="text-xs text-muted truncate">{{ appointment.appointmentdate | date: 'dd/MM/yyyy' }} · {{ appointment.appointmenthour }}</span>
+              </div>
+            </div>
+            <span class="shrink-0 whitespace-nowrap text-[10px] font-semibold px-2.5 py-1 rounded-full" [ngClass]="statusConfig(appointment.appointmentstatus).classes">
+              {{ statusConfig(appointment.appointmentstatus).label }}
+            </span>
+          </div>
+
+          <div class="w-full flex items-center gap-3 flex-wrap pt-2 border-t border-stroke/60">
+            <div class="flex items-center gap-2 text-xs text-muted">
+              <fa-icon [icon]="['fas', 'user-tie']" class="w-3 shrink-0"></fa-icon>
+              <span>{{ getUserName(appointment) }}</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-muted">
+              <fa-icon [icon]="['fas', appointment.appointmentmode === 'delivered' ? 'truck' : 'store']" class="w-3 shrink-0"></fa-icon>
+              <span>{{ modeLabel(appointment.appointmentmode) }}</span>
+            </div>
+            @if (appointment.details && appointment.details.length > 0) {
+              <div class="flex items-center gap-2 text-xs text-muted">
+                <fa-icon [icon]="['fas', 'briefcase']" class="w-3 shrink-0"></fa-icon>
+                <span>{{ appointment.details.length }} servicio(s)</span>
+              </div>
+            }
+          </div>
+
+          <div class="w-full flex items-center justify-between pt-2 border-t border-stroke/60">
+            <div class="flex items-center gap-3">
+              <button type="button" (click)="openDetail(appointment)" class="flex items-center gap-1.5 text-xs text-muted hover:text-primary transition-colors duration-200 cursor-pointer">
+                <fa-icon [icon]="['fas', 'eye']" class="w-3 shrink-0"></fa-icon>
+                Detalle
+              </button>
+              @if (canEdit(appointment)) {
+                <button type="button" (click)="openEdit(appointment)" class="flex items-center gap-1.5 text-xs text-muted hover:text-primary transition-colors duration-200 cursor-pointer">
+                  <fa-icon [icon]="['fas', 'pen-to-square']" class="w-3 shrink-0"></fa-icon>
+                  Editar
+                </button>
+              }
+            </div>
+            <span class="text-sm font-semibold text-heading">{{ appointment.appointmentamount | currency: 'USD' }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+@if (showForm()) {
+  <app-appointment-form [isEdit]="isEditForm()" [appointmentuuid]="editAppointment()?.appointmentuuid ?? ''" [appointment]="editAppointment()" (saved)="onAppointmentSaved($event)" (closed)="onFormClosed()"/>
+}
+
+@if (showDetail() && selectedAppointment()) {
+  <app-appointment-detail [appointment]="selectedAppointment()!" (updated)="onAppointmentUpdated($event)" (closed)="onDetailClosed()"/>
+}

@@ -1,29 +1,41 @@
 <div class="grid grid-cols-3 gap-2 items-center">
-    <div class="flex items-center gap-2">
-        <div class="relative flex items-center justify-center w-12 h-12 rounded-xl bg-error/10 border border-error/30 transition-all duration-300">
-            <fa-icon [icon]="['fas', 'times-circle']" class="text-error text-lg"> </fa-icon>
+    @if (loading()) {
+        @for (_ of [1, 2, 3]; track $index) {
+            <div class="flex items-center gap-2">
+                <div class="w-12 h-12 rounded-xl bg-stroke/30 animate-pulse shrink-0"></div>
+                <div class="flex flex-col gap-1.5">
+                    <div class="h-3.5 w-24 bg-stroke/30 rounded-lg animate-pulse"></div>
+                    <div class="h-3 w-32 bg-stroke/30 rounded animate-pulse"></div>
+                </div>
+            </div>
+        }
+    } @else {
+        <div class="flex items-center gap-2">
+            <div class="relative flex items-center justify-center w-12 h-12 rounded-xl bg-error/10 border border-error/30 transition-all duration-300">
+                <fa-icon [icon]="['fas', 'times-circle']" class="text-error text-lg"> </fa-icon>
+            </div>
+            <div class="flex flex-col">
+                <h2 class="text-sm font-bold text-heading">Citas canceladas</h2>
+                <p class="text-xs text-muted">Has cancelado {{ daily()?.me?.appointmentcancelled ?? 0 }} citas hoy.</p>
+            </div>
         </div>
-        <div class="flex flex-col">
-            <h2 class="text-sm font-bold text-heading">Citas canceladas</h2>
-            <p class="text-xs text-muted">Has cancelado 3 citas hoy.</p>
+        <div class="flex items-center gap-2">
+            <div class="relative flex items-center justify-center w-12 h-12 rounded-xl bg-warning/10 border border-warning/30 transition-all duration-300">
+                <fa-icon [icon]="['fas', 'clock']" class="text-warning-hover text-lg"> </fa-icon>
+            </div>
+            <div class="flex flex-col">
+                <h2 class="text-sm font-bold text-heading">Citas pendientes</h2>
+                <p class="text-xs text-muted">Tienes {{ daily()?.me?.appointmentpending ?? 0 }} citas pendientes para hoy.</p>
+            </div>
         </div>
-    </div>
-    <div class="flex items-center gap-2">
-        <div class="relative flex items-center justify-center w-12 h-12 rounded-xl bg-warning/10 border border-warning/30 transition-all duration-300">
-            <fa-icon [icon]="['fas', 'clock']" class="text-warning-hover text-lg"> </fa-icon>
+        <div class="flex items-center gap-2">
+            <div class="relative flex items-center justify-center w-12 h-12 rounded-xl bg-accent/10 border border-accent-soft transition-all duration-300">
+                <fa-icon [icon]="['fas', 'check-circle']" class="text-accent-hover text-lg"> </fa-icon>
+            </div>
+            <div class="flex flex-col">
+                <h2 class="text-sm font-bold text-heading">Citas completadas</h2>
+                <p class="text-xs text-muted">Has completado {{ daily()?.me?.appointmentcompleted ?? 0 }} citas hoy.</p>
+            </div>
         </div>
-        <div class="flex flex-col">
-            <h2 class="text-sm font-bold text-heading">Citas pendientes</h2>
-            <p class="text-xs text-muted">Tienes 5 citas pendientes para hoy.</p>
-        </div>
-    </div>
-    <div class="flex items-center gap-2">
-        <div class="relative flex items-center justify-center w-12 h-12 rounded-xl bg-accent/10 border border-accent-soft transition-all duration-300">
-            <fa-icon [icon]="['fas', 'check-circle']" class="text-accent-hover text-lg"> </fa-icon>
-        </div>
-        <div class="flex flex-col">
-            <h2 class="text-sm font-bold text-heading">Citas completadas</h2>
-            <p class="text-xs text-muted">Has completado 10 citas esta hoy.</p>
-        </div>
-    </div>
+    }
 </div>

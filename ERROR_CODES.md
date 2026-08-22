@@ -178,9 +178,25 @@ distintos códigos.
 | `CREATE_ERROR` | 500 | Error al crear la cita | No se pudo crear la cita. Intenta nuevamente. |
 | `UPDATE_APPOINTMENT_ERROR` | 500 | Error al actualizar la cita | No se pudo actualizar la cita. Intenta nuevamente. |
 | `APPOINTMENT_COMPLETED_PROTECTED` | 409 | Completed or Cancelled appointments cannot be edited. | No puedes editar una cita completada o cancelada. |
+| `APPOINTMENT_DURATION_REQUIRED` | 400 | No se pudo determinar la duración de la cita | Selecciona al menos un servicio o indica la duración de la cita. |
+| `USER_NOT_SCHEDULED` | 409 | El usuario no tiene un horario activo ese día de la semana | El profesional seleccionado no tiene un horario activo ese día. |
+| `APPOINTMENT_OUTSIDE_SCHEDULE` | 409 | El rango de la cita cae fuera del horario del usuario | La hora elegida está fuera del horario del profesional. |
+| `USER_ON_LICENSE` | 409 | El usuario tiene una licencia aprobada que cubre esa fecha/horario | El profesional tiene una licencia aprobada en esa fecha y horario. |
+| `APPOINTMENT_TIME_CONFLICT` | 409 | El usuario ya tiene otra cita en ese horario | El profesional ya tiene otra cita en ese horario. |
+| `INVALID_APPOINTMENT_STATUS_TRANSITION` | 409 | No se permite esa transición de estado para la cita | Esa cita ya no puede cambiar a ese estado. Actualiza la página e inténtalo de nuevo. |
+| `APPOINTMENT_NOT_FINALIZABLE` | 409 | La cita no se puede finalizar en su estado actual | Esta cita no se puede finalizar en su estado actual. |
+
+> `finalize()` reutiliza `NOT_FOUND_SEQUENCE` (ver sección Sales) cuando el comercio no tiene
+> configurada la numeración de ventas para el `saletype` elegido; en ese caso la UI debe indicar
+> que hable con un administrador, no invitar a reintentar.
 
 > `COMMERCE_UUID_REQUIRED` y `BRANCH_UUID_REQUIRED` son los mismos códigos que usa
 > `sales.service.ts`; comparten significado en toda la app.
+>
+> `USER_NOT_SCHEDULED`, `APPOINTMENT_OUTSIDE_SCHEDULE` y `USER_ON_LICENSE` solo aplican cuando
+> la cita tiene un `useruuid` asignado; dependen de los módulos `schedules.service.ts` y
+> `license.service.ts` (ver secciones más abajo). Si la cita no tiene profesional asignado
+> ("cita libre"), ninguna de las tres se evalúa.
 
 ---
 

@@ -38,7 +38,7 @@ export class ScheduleService {
   }
 
   clone(req: CloneScheduleInterface): Observable<ResponseSchedule> {
-    return this.http.post<ResponseSchedule>(`${this.URL}/schedules/v1/clone`, { req })
+    return this.http.post<ResponseSchedule>(`${this.URL}/schedules/v1/clone`, req )
   }
 
 }

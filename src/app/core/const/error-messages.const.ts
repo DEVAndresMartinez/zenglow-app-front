@@ -83,6 +83,23 @@ export const MODULE_ERROR_MESSAGES: Record<string, ErrorCodeMap> = {
     NO_IMAGES_PROVIDED: 'Selecciona al menos una imagen para subir.',
     INVALID_PRIMARY_INDEX: 'Ocurrió un error al marcar la imagen principal. Intenta de nuevo.',
   },
+  appointments: {
+    NOT_FOUND_APPOINTMENTS: 'No hay citas registradas.',
+    NOT_FOUND_APPOINTMENT: 'La cita no existe.',
+    COMMERCE_UUID_REQUIRED: 'Falta el identificador del comercio.',
+    BRANCH_UUID_REQUIRED: 'Falta el identificador de la sucursal.',
+    CREATE_ERROR: 'No se pudo crear la cita. Intenta nuevamente.',
+    UPDATE_APPOINTMENT_ERROR: 'No se pudo actualizar la cita. Intenta nuevamente.',
+    APPOINTMENT_COMPLETED_PROTECTED: 'No puedes editar una cita completada o cancelada.',
+    APPOINTMENT_DURATION_REQUIRED: 'Selecciona al menos un servicio o indica la duración de la cita.',
+    USER_NOT_SCHEDULED: 'El profesional seleccionado no tiene un horario activo ese día.',
+    APPOINTMENT_OUTSIDE_SCHEDULE: 'La hora elegida está fuera del horario del profesional.',
+    USER_ON_LICENSE: 'El profesional tiene una licencia aprobada en esa fecha y horario.',
+    APPOINTMENT_TIME_CONFLICT: 'El profesional ya tiene otra cita en ese horario.',
+    INVALID_APPOINTMENT_STATUS_TRANSITION: 'Esa cita ya no puede cambiar a ese estado. Actualiza la página e inténtalo de nuevo.',
+    APPOINTMENT_NOT_FINALIZABLE: 'Esta cita no se puede finalizar en su estado actual.',
+    NOT_FOUND_SEQUENCE: 'No se encontró la numeración de ventas configurada para este comercio. Habla con un administrador.',
+  },
 };
 
 /**
