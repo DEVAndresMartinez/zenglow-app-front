@@ -1,115 +1,123 @@
-export interface LandingFoundInterface {
-  commerce: ResponseLandingDto;
-  branches: BranchLandingDto[];
-  users: UserLandingDto[];
-  appointments: AppointmentLandingDto[];
-}
-
-export interface ResponseLandingDto {
+export interface PublicCommerceDto {
   commerceuuid: string;
   commercetype: string;
   commercename: string;
-  commerceemail: string;
-  commercephone: string;
   commerceslug: string;
-  commercelogo: string;
+  commercephone: string;
+  commerceemail: string;
+  commercelogo: string | null;
+  commercedescriptionshort: string | null;
+  commercedescriptionlong: string | null;
+  commercebanner: string | null;
+  commerceinstagram: string | null;
+  commercefacebook: string | null;
+  commercewhatsapp: string | null;
+  commercewebsite: string | null;
 }
 
-export interface BranchLandingDto {
+export interface PublicBranchDto {
   branchuuid: string;
   branchname: string;
   branchcity: string;
   branchaddress: string;
   branchphone: string;
+  branchlat: number | null;
+  branchlng: number | null;
 }
 
-export interface UserLandingDto {
+export interface PublicProfessionalDto {
   useruuid: string;
   userfirstname: string;
   userlastname: string;
-  username: string;
-  useremail: string;
-  userphone: string;
-  userimage: string;
-  userstatus: string;
+  userimage: string | null;
+  userspecialty: string | null;
+  serviceuuids: string[];
 }
 
-export interface AppointmentLandingDto {
-  appointmentuuid: string;
-  appointmentdate: string;
-  appointmenthour: string;
-  appointmentduration: number;
-  appointmentstatus: string;
+/** Respuesta del endpoint agregado GET /landing-commerces/v1/:slug. */
+export interface LandingFoundInterface {
+  commerce: PublicCommerceDto;
+  branches: PublicBranchDto[];
+  professionals: PublicProfessionalDto[];
 }
 
-
-export interface ServiceLandingDto {
-    serviceuuid: string;
-    category: unknown;
-    servicename: string;
-    servicedesc: string;
-    serviceduration: number;
-    serviceprice: number;
-    images: ServiceImageLandingDto[] | [];
+export interface ResponseCategoryLandingDto {
+  categoryuuid: string;
+  categoryname: string;
+  categorystatus: string;
 }
 
 export interface ServiceImageLandingDto {
-    serviceimageuuid: string;
-    serviceimageurl: string;
-    serviceimageorder: number;
-    serviceimageprimary: boolean;
+  serviceimageuuid: string;
+  serviceimageurl: string;
+  serviceimageorder: number;
+  serviceimageprimary: boolean;
 }
 
-export type LandingDocumentType = 'CC' | 'CE' | 'NIT' | 'RUC';
-
-/**
- * Resultado de la búsqueda pública de un cliente por cédula o correo.
- * Provisional: se ajusta cuando exista el endpoint real de búsqueda.
- */
-export interface LandingCustomerDto {
-  customeruuid: string;
-  customerdocumenttype: LandingDocumentType;
-  customerdocumentnumber: string;
-  customerfirstname: string;
-  customerlastname: string;
-  customerphone: string;
-  customeremail: string;
-}
-
-/**
- * Datos para registrar un nuevo cliente del comercio desde la landing
- * pública, cuando la búsqueda no encuentra coincidencia.
- * Provisional: se ajusta cuando exista el endpoint real de creación.
- */
-export interface CreateLandingCustomerDto {
-  customerdocumenttype: LandingDocumentType;
-  customerdocumentnumber: string;
-  customerfirstname: string;
-  customerlastname: string;
-  customerphone: string;
-  customeremail: string;
-}
-
-export interface CreateAppointmentDetailDto {
+export interface ServiceLandingDto {
   serviceuuid: string;
-  appointmentdetailamount: number;
-  appointmentdetailduration: number;
+  category: ResponseCategoryLandingDto | null;
+  servicename: string;
+  servicedesc: string | null;
+  serviceduration: number;
+  serviceprice: number;
+  images: ServiceImageLandingDto[];
 }
 
-/** Payload para agendar una cita desde la landing pública. */
-export interface CreateAppointmentDto {
+export interface AvailabilitySlotsDto {
+  date: string;
+  slots: string[];
+}
+
+/** Payload para reservar una cita de invitado desde la landing pública. */
+export interface CreatePublicAppointmentDetailDto {
+  serviceuuid: string;
+}
+
+export interface CreatePublicAppointmentDto {
   branchuuid: string;
-  customeruuid?: string;
   useruuid: string;
   appointmentcustomername: string;
   appointmentcustomerphone: string;
-  appointmentcustomeremail: string;
+  appointmentcustomeremail?: string;
   appointmentdate: string;
   appointmenthour: string;
-  appointmentduration: number;
-  appointmentstatus: 'pending';
-  appointmentmode: 'at_branch';
-  appointmentcity: string;
-  appointmentaddress: string;
-  details: CreateAppointmentDetailDto[];
+  appointmentmode?: 'at_branch' | 'delivered';
+  details: CreatePublicAppointmentDetailDto[];
+}
+
+export interface CreatePublicAppointmentResponseDto {
+  appointmentuuid: string;
+  appointmentconfirmationtoken: string;
+  appointmentdate: string;
+  appointmenthour: string;
+  appointmentstatus: string;
+}
+
+/** Respuesta de GET /landing-commerces/v1/appointments/token/:token. */
+export interface PublicAppointmentStatusDto {
+  appointmentdate: string;
+  appointmenthour: string;
+  appointmentstatus: string;
+  appointmentcustomername: string;
+  commerce: {
+    commercename: string;
+    commercelogo: string | null;
+    commercephone: string;
+  };
+  branch: {
+    branchname: string;
+    branchaddress: string;
+    branchcity: string;
+    branchphone: string;
+  } | null;
+  professional: {
+    userfirstname: string;
+    userlastname: string;
+    userimage: string | null;
+  } | null;
+  services: {
+    servicename: string;
+    serviceduration: number | null;
+  }[];
 }

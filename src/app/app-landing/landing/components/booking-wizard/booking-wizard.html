@@ -9,7 +9,8 @@
             <p class="text-muted text-xs">Paso {{ step() }} de {{ steps.length }}</p>
           }
         </div>
-        <button type="button" (click)="close()" class="w-8 h-8 rounded-lg flex items-center justify-center text-muted hover:bg-surface-hover cursor-pointer">
+        <button type="button" (click)="close()" aria-label="Cerrar"
+          class="w-8 h-8 rounded-lg flex items-center justify-center text-muted hover:bg-surface-hover cursor-pointer">
           <fa-icon [icon]="['fas', 'xmark']"/>
         </button>
       </div>
@@ -33,7 +34,7 @@
               </div>
               <span class="text-xs font-medium hidden sm:inline" [class.text-heading]="step() >= s.n" [class.text-muted]="step() < s.n">{{ s.label }}</span>
               @if (!$last) {
-                <div class="w-6 h-px bg-stroke mx-1"></div>
+                <div class="w-4 h-px bg-stroke mx-1"></div>
               }
             </div>
           }
@@ -42,13 +43,22 @@
 
       <div class="flex-1 overflow-y-auto px-6 py-5">
         @if (submitSuccess()) {
-          <div class="flex flex-col items-center gap-4 py-8 text-center">
+          <div class="flex flex-col items-center gap-4 py-4 text-center">
             <div class="w-14 h-14 rounded-full bg-accent/15 flex items-center justify-center">
               <fa-icon [icon]="['fas', 'check']" class="text-accent-hover text-xl"/>
             </div>
             <div>
               <h3 class="text-heading font-semibold text-lg">¡Cita agendada!</h3>
-              <p class="text-muted text-sm mt-1">Te esperamos. Pronto recibirás la confirmación.</p>
+              <p class="text-muted text-sm mt-1">Guarda este enlace para consultar el estado de tu cita cuando quieras.</p>
+            </div>
+
+            <div class="w-full flex items-center gap-2 bg-surface-page rounded-xl px-4 py-3">
+              <p class="flex-1 text-xs text-body truncate text-left">{{ confirmationLink() }}</p>
+              <button type="button" (click)="copyLink()"
+                class="shrink-0 px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-semibold hover:bg-primary-dark cursor-pointer flex items-center gap-1.5">
+                <fa-icon [icon]="['fas', copied() ? 'check' : 'copy']" class="text-[10px]"/>
+                {{ copied() ? 'Copiado' : 'Copiar' }}
+              </button>
             </div>
           </div>
         } @else {
@@ -81,7 +91,7 @@
               <div class="flex flex-col gap-3">
                 <p class="text-sm text-muted">¿Quién te va a atender?</p>
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  @for (professional of activeProfessionals(); track professional.useruuid) {
+                  @for (professional of professionals(); track professional.useruuid) {
                     <button type="button" (click)="selectProfessional(professional)"
                       class="flex flex-col items-center gap-2 p-3 rounded-xl border cursor-pointer transition-all duration-150 text-center"
                       [class.border-primary]="selectedProfessional()?.useruuid === professional.useruuid"
@@ -89,10 +99,13 @@
                       [class.border-stroke]="selectedProfessional()?.useruuid !== professional.useruuid">
                       <img [src]="professional.userimage || 'favicon.png'" [alt]="professional.userfirstname" class="w-12 h-12 rounded-full object-cover">
                       <p class="text-xs font-semibold text-heading truncate w-full">{{ professional.userfirstname }} {{ professional.userlastname }}</p>
+                      @if (professional.userspecialty) {
+                        <p class="text-[11px] text-muted truncate w-full">{{ professional.userspecialty }}</p>
+                      }
                     </button>
                   }
                 </div>
-                @if (!activeProfessionals().length) {
+                @if (!professionals().length) {
                   <p class="text-sm text-muted">Este comercio aún no tiene profesionales disponibles.</p>
                 }
               </div>
@@ -102,7 +115,7 @@
               <div class="flex flex-col gap-3">
                 <p class="text-sm text-muted">Selecciona uno o varios servicios.</p>
                 <div class="flex flex-col gap-2">
-                  @for (service of services(); track service.serviceuuid) {
+                  @for (service of servicesForSelectedProfessional(); track service.serviceuuid) {
                     <label class="flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all duration-150"
                       [class.border-primary]="selectedServiceUuids().has(service.serviceuuid)"
                       [class.bg-primary-subtle]="selectedServiceUuids().has(service.serviceuuid)"
@@ -117,8 +130,8 @@
                     </label>
                   }
                 </div>
-                @if (!services().length) {
-                  <p class="text-sm text-muted">Este comercio aún no tiene servicios registrados.</p>
+                @if (!servicesForSelectedProfessional().length) {
+                  <p class="text-sm text-muted">Este profesional aún no tiene servicios disponibles.</p>
                 }
                 @if (selectedServices().length) {
                   <div class="flex items-center justify-between text-sm bg-surface-page rounded-xl px-4 py-2 mt-1">
@@ -131,20 +144,12 @@
 
             @case (4) {
               <div class="flex flex-col gap-4">
-                <p class="text-sm text-muted">Elige la fecha y hora de tu cita.</p>
-                <div class="grid grid-cols-2 gap-4">
-                  <div class="flex flex-col gap-1">
-                    <label class="text-xs font-medium text-body">Fecha</label>
-                    <input type="date" [value]="appointmentDate()" [min]="minDate"
-                      (change)="appointmentDate.set($any($event.target).value)"
-                      class="px-3 py-2 rounded-xl border border-stroke text-sm text-input bg-surface focus:outline-none focus:border-stroke-focus">
-                  </div>
-                  <div class="flex flex-col gap-1">
-                    <label class="text-xs font-medium text-body">Hora</label>
-                    <input type="time" [value]="appointmentHour()"
-                      (change)="appointmentHour.set($any($event.target).value)"
-                      class="px-3 py-2 rounded-xl border border-stroke text-sm text-input bg-surface focus:outline-none focus:border-stroke-focus">
-                  </div>
+                <p class="text-sm text-muted">Elige la fecha de tu cita.</p>
+                <div class="flex flex-col gap-1 max-w-56">
+                  <label class="text-xs font-medium text-body">Fecha</label>
+                  <input type="date" [value]="appointmentDate()" [min]="minDate"
+                    (change)="onDateChange($any($event.target).value)"
+                    class="px-3 py-2 rounded-xl border border-stroke text-sm text-input bg-surface focus:outline-none focus:border-stroke-focus">
                 </div>
                 @if (totalDuration()) {
                   <p class="text-xs text-muted">Duración estimada: {{ totalDuration() }} min.</p>
@@ -154,78 +159,50 @@
 
             @case (5) {
               <div class="flex flex-col gap-4">
-                @if (foundCustomer(); as customer) {
-                  <div class="flex items-center justify-between gap-3 p-4 rounded-xl border border-primary bg-primary-subtle">
-                    <div>
-                      <p class="text-sm font-semibold text-heading">{{ customer.customerfirstname }} {{ customer.customerlastname }}</p>
-                      <p class="text-xs text-muted">{{ customer.customerphone }} · {{ customer.customeremail }}</p>
-                    </div>
-                    <button type="button" (click)="changeCustomer()" class="text-xs font-medium text-primary hover:underline cursor-pointer">Cambiar</button>
+                <p class="text-sm text-muted">Horarios disponibles para el {{ appointmentDate() }}.</p>
+
+                @if (availabilityLoading()) {
+                  <div class="flex items-center gap-2 text-muted text-sm py-6 justify-center">
+                    <fa-icon [icon]="['fas', 'circle-notch']" class="animate-spin"/>
+                    Buscando horarios disponibles…
                   </div>
-                } @else {
-                  <div class="flex flex-col gap-2">
-                    <label class="text-xs font-medium text-body">Cédula o correo electrónico</label>
-                    <div class="flex gap-2">
-                      <input type="text" [value]="customerSearchQuery()"
-                        (input)="customerSearchQuery.set($any($event.target).value)"
-                        placeholder="ej. 1020304050 o tucorreo@mail.com"
-                        class="flex-1 px-3 py-2 rounded-xl border border-stroke text-sm text-input bg-surface focus:outline-none focus:border-stroke-focus">
-                      <button type="button" (click)="runSearch()" [disabled]="customerSearchLoading() || !customerSearchQuery().trim()"
-                        class="px-4 py-2 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
-                        @if (customerSearchLoading()) {
-                          <fa-icon [icon]="['fas', 'circle-notch']" class="animate-spin"/>
-                        } @else {
-                          Buscar
-                        }
+                } @else if (availabilityError()) {
+                  <p class="text-sm text-error">{{ availabilityError() }}</p>
+                } @else if (availableSlots().length) {
+                  <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                    @for (slot of availableSlots(); track slot) {
+                      <button type="button" (click)="selectSlot(slot)"
+                        class="px-3 py-2 rounded-xl border text-sm font-medium cursor-pointer transition-all duration-150"
+                        [class.border-primary]="appointmentHour() === slot"
+                        [class.bg-primary]="appointmentHour() === slot"
+                        [class.text-white]="appointmentHour() === slot"
+                        [class.border-stroke]="appointmentHour() !== slot">
+                        {{ slot }}
                       </button>
-                    </div>
-                    @if (searchAttempted()) {
-                      <p class="text-xs text-muted">No encontramos ese cliente. Completa tus datos para continuar.</p>
                     }
                   </div>
-
-                  @if (searchAttempted()) {
-                    <form [formGroup]="guestForm" class="flex flex-col gap-3">
-                      <div class="grid grid-cols-2 gap-3">
-                        <ui-input-component type="text" formControlName="customerfirstname" label="Nombres" [required]="true"/>
-                        <ui-input-component type="text" formControlName="customerlastname" label="Apellidos" [required]="true"/>
-                      </div>
-                      <div class="grid grid-cols-2 gap-3">
-                        <ui-input-component type="tel" formControlName="customerphone" label="Teléfono" [required]="true"/>
-                        <ui-input-component type="email" formControlName="customeremail" label="Correo electrónico" [required]="true"/>
-                      </div>
-
-                      <label class="flex items-center gap-2 text-sm text-body cursor-pointer">
-                        <input type="checkbox" class="w-4 h-4 accent-primary"
-                          [checked]="wantsToRegister()"
-                          (change)="wantsToRegister.set($any($event.target).checked)">
-                        Quiero registrarme como cliente de este comercio
-                      </label>
-
-                      @if (wantsToRegister()) {
-                        <div class="grid grid-cols-2 gap-3">
-                          <div class="flex flex-col gap-1">
-                            <label class="text-xs font-medium text-body">Tipo de documento</label>
-                            <select formControlName="customerdocumenttype"
-                              class="px-3 py-2 rounded-xl border border-stroke text-sm text-input bg-surface focus:outline-none focus:border-stroke-focus">
-                              <option value="CC">Cédula de ciudadanía</option>
-                              <option value="CE">Cédula de extranjería</option>
-                              <option value="NIT">NIT</option>
-                              <option value="RUC">RUC</option>
-                            </select>
-                          </div>
-                          <ui-input-component type="text" formControlName="customerdocumentnumber" label="Número de documento" [required]="true"/>
-                        </div>
-                      }
-                    </form>
-                  }
+                } @else {
+                  <p class="text-sm text-muted">No hay horarios disponibles ese día para este profesional. Vuelve atrás y elige otra fecha.</p>
                 }
               </div>
             }
 
             @case (6) {
+              <div class="flex flex-col gap-4">
+                <p class="text-sm text-muted">Cuéntanos cómo contactarte para confirmar tu cita.</p>
+                <form [formGroup]="contactForm" class="flex flex-col gap-3">
+                  <ui-input-component type="text" formControlName="name" label="Nombre completo" [required]="true"/>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <ui-input-component type="tel" formControlName="phone" label="Teléfono" [required]="true"/>
+                    <ui-input-component type="email" formControlName="email" label="Correo electrónico (opcional)" hint="Te enviaremos el enlace para consultar tu cita."/>
+                  </div>
+                </form>
+              </div>
+            }
+
+            @case (7) {
               <div class="flex flex-col gap-3">
-                <p class="text-sm text-muted">Confirma los datos de tu cita.</p>
+                <p class="text-sm text-muted">Revisa los datos antes de confirmar.</p>
                 <div class="flex flex-col gap-2 bg-surface-page rounded-xl p-4 text-sm">
                   <div class="flex justify-between gap-3"><span class="text-muted shrink-0">Sucursal</span><span class="font-medium text-heading text-right">{{ selectedBranch()?.branchname }}</span></div>
                   <div class="flex justify-between gap-3"><span class="text-muted shrink-0">Profesional</span><span class="font-medium text-heading text-right">{{ selectedProfessional()?.userfirstname }} {{ selectedProfessional()?.userlastname }}</span></div>
@@ -240,7 +217,7 @@
                   <div class="flex justify-between gap-3"><span class="text-muted shrink-0">Fecha</span><span class="font-medium text-heading text-right">{{ appointmentDate() }} · {{ appointmentHour() }}</span></div>
                   <div class="flex justify-between gap-3"><span class="text-muted shrink-0">Duración</span><span class="font-medium text-heading text-right">{{ totalDuration() }} min</span></div>
                   <div class="flex justify-between gap-3"><span class="text-muted shrink-0">Total</span><span class="font-semibold text-heading text-right">{{ totalPrice() | number }}</span></div>
-                  <div class="flex justify-between gap-3"><span class="text-muted shrink-0">Contacto</span><span class="font-medium text-heading text-right">{{ contactName() }}</span></div>
+                  <div class="flex justify-between gap-3"><span class="text-muted shrink-0">Contacto</span><span class="font-medium text-heading text-right">{{ contactForm.value.name }} · {{ contactForm.value.phone }}</span></div>
                 </div>
 
                 @if (submitError()) {

@@ -72,6 +72,15 @@ export const MODULE_ERROR_MESSAGES: Record<string, ErrorCodeMap> = {
   'landing-commerces': {
     NOT_FOUND_COMMERCE: 'No encontramos un comercio con ese identificador. Verifica el enlace o el slug e inténtalo de nuevo.',
     COMMERCE_NOT_ACTIVE: 'Este comercio no está activo actualmente.',
+    NOT_FOUND_BRANCH: 'La sucursal seleccionada ya no está disponible. Elige otra.',
+    NOT_FOUND_PROFESSIONAL: 'El profesional seleccionado ya no está disponible. Elige otro.',
+    NOT_FOUND_SERVICE: 'Uno de los servicios seleccionados ya no está disponible.',
+    APPOINTMENT_TOKEN_NOT_FOUND: 'No encontramos ninguna cita con ese enlace. Verifica que sea correcto.',
+    USER_NOT_SCHEDULED: 'El profesional no tiene horario disponible ese día. Elige otra fecha.',
+    APPOINTMENT_OUTSIDE_SCHEDULE: 'Esa hora ya no está dentro del horario del profesional. Elige otra.',
+    USER_ON_LICENSE: 'El profesional no está disponible en esa fecha u horario. Elige otro momento.',
+    APPOINTMENT_TIME_CONFLICT: 'Justo se ocupó ese horario. Elige otro disponible.',
+    APPOINTMENT_DURATION_REQUIRED: 'Selecciona al menos un servicio para poder agendar la cita.',
   },
   services: {
     NOT_FOUND_SERVICES: 'No hay servicios registrados.',

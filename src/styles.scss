@@ -1,6 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 /* Los design tokens (colores) se definen en src/tailwind.css con @theme.     */
 
+@import 'leaflet/dist/leaflet.css';
+
 .overflow-sections {
   overflow-y: auto;
 }

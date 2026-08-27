@@ -1,0 +1,42 @@
+<footer class="w-full flex justify-center bg-surface border-t border-stroke px-6 md:px-10 py-8">
+  <div class="w-full max-w-360 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+    <div class="flex items-center gap-3">
+      <img [src]="commerce()?.commercelogo || 'favicon.png'" [alt]="commerce()?.commercename ?? ''" class="h-8 w-8 rounded-lg object-cover">
+      <div>
+        <p class="text-sm font-semibold text-heading">{{ commerce()?.commercename }}</p>
+        @if (commerce()?.commercephone) {
+          <p class="text-xs text-muted">{{ commerce()?.commercephone }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      @if (commerce()?.commerceinstagram) {
+        <a [href]="commerce()?.commerceinstagram" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
+          class="w-8 h-8 rounded-full bg-surface-page border border-stroke flex items-center justify-center text-muted hover:text-primary transition-colors">
+          <fa-icon [icon]="['fab', 'instagram']" />
+        </a>
+      }
+      @if (commerce()?.commercefacebook) {
+        <a [href]="commerce()?.commercefacebook" target="_blank" rel="noopener noreferrer" aria-label="Facebook"
+          class="w-8 h-8 rounded-full bg-surface-page border border-stroke flex items-center justify-center text-muted hover:text-primary transition-colors">
+          <fa-icon [icon]="['fab', 'facebook']" />
+        </a>
+      }
+      @if (commerce()?.commercewhatsapp) {
+        <a [href]="'https://wa.me/' + commerce()?.commercewhatsapp" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"
+          class="w-8 h-8 rounded-full bg-surface-page border border-stroke flex items-center justify-center text-muted hover:text-primary transition-colors">
+          <fa-icon [icon]="['fab', 'whatsapp']" />
+        </a>
+      }
+      @if (commerce()?.commercewebsite) {
+        <a [href]="commerce()?.commercewebsite" target="_blank" rel="noopener noreferrer" aria-label="Sitio web"
+          class="w-8 h-8 rounded-full bg-surface-page border border-stroke flex items-center justify-center text-muted hover:text-primary transition-colors">
+          <fa-icon [icon]="['fas', 'globe']" />
+        </a>
+      }
+    </div>
+
+    <p class="text-xs text-muted">Powered by <span class="font-semibold text-primary">Zenglow</span></p>
+  </div>
+</footer>

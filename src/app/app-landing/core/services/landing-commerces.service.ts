@@ -1,20 +1,19 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Service } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BACK_URL } from '../../../../../env';
 import { Observable } from 'rxjs';
 import {
-  CreateAppointmentDto,
-  CreateLandingCustomerDto,
-  LandingCustomerDto,
+  AvailabilitySlotsDto,
+  CreatePublicAppointmentDto,
+  CreatePublicAppointmentResponseDto,
   LandingFoundInterface,
+  PublicAppointmentStatusDto,
+  PublicProfessionalDto,
   ServiceLandingDto,
 } from '../interfaces/landing.interface';
 
-@Service()
+@Injectable({ providedIn: 'root' })
 export class LandingCommercesService {
-
-  constructor() { }
-
   private http = inject(HttpClient);
   private URL = BACK_URL;
 
@@ -22,35 +21,29 @@ export class LandingCommercesService {
     return this.http.get<LandingFoundInterface>(`${this.URL}/landing-commerces/v1/${slug}`);
   }
 
-  getServicesByCommerce(commerceuuid: string): Observable<ServiceLandingDto[]> {
-    return this.http.get<ServiceLandingDto[]>(`${this.URL}/landing-commerces/v1/${commerceuuid}/services`);
-  }
-
-  /**
-   * TODO: ruta provisional. Ajustar cuando exista el endpoint público real
-   * de búsqueda de clientes por cédula o correo (debe responder 404/null
-   * cuando no hay coincidencia, nunca listar clientes).
-   */
-  searchCustomer(commerceuuid: string, query: string): Observable<LandingCustomerDto> {
-    return this.http.get<LandingCustomerDto>(`${this.URL}/landing-commerces/v1/${commerceuuid}/customers/search`, {
-      params: { query },
+  getServicesByCommerce(commerceuuid: string, useruuid?: string): Observable<ServiceLandingDto[]> {
+    return this.http.get<ServiceLandingDto[]>(`${this.URL}/landing-commerces/v1/${commerceuuid}/services`, {
+      params: useruuid ? { useruuid } : {},
     });
   }
 
-  /**
-   * TODO: ruta provisional. Ajustar cuando exista el endpoint público real
-   * de registro de clientes desde la landing.
-   */
-  createCustomer(commerceuuid: string, dto: CreateLandingCustomerDto): Observable<LandingCustomerDto> {
-    return this.http.post<LandingCustomerDto>(`${this.URL}/landing-commerces/v1/${commerceuuid}/customers`, dto);
+  getProfessionalsByCommerce(commerceuuid: string, serviceuuid?: string): Observable<PublicProfessionalDto[]> {
+    return this.http.get<PublicProfessionalDto[]>(`${this.URL}/landing-commerces/v1/${commerceuuid}/professionals`, {
+      params: serviceuuid ? { serviceuuid } : {},
+    });
   }
 
-  /**
-   * TODO: ruta provisional. Ajustar cuando exista el endpoint público real
-   * de creación de citas desde la landing.
-   */
-  createAppointment(commerceuuid: string, dto: CreateAppointmentDto): Observable<unknown> {
-    return this.http.post<unknown>(`${this.URL}/landing-commerces/v1/${commerceuuid}/appointments`, dto);
+  getAvailability(commerceuuid: string, useruuid: string, date: string, durationminutes: number): Observable<AvailabilitySlotsDto> {
+    return this.http.get<AvailabilitySlotsDto>(`${this.URL}/landing-commerces/v1/${commerceuuid}/availability`, {
+      params: { useruuid, date, durationminutes },
+    });
   }
 
+  createAppointment(commerceuuid: string, dto: CreatePublicAppointmentDto): Observable<CreatePublicAppointmentResponseDto> {
+    return this.http.post<CreatePublicAppointmentResponseDto>(`${this.URL}/landing-commerces/v1/${commerceuuid}/appointments`, dto);
+  }
+
+  getAppointmentByToken(token: string): Observable<PublicAppointmentStatusDto> {
+    return this.http.get<PublicAppointmentStatusDto>(`${this.URL}/landing-commerces/v1/appointments/token/${token}`);
+  }
 }

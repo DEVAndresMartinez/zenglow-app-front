@@ -6,5 +6,9 @@ export const routes: Routes = [
 
 
   { path: 'landing-page', loadComponent: () => import('./app-landing/landing/landing').then(m => m.Landing) },
+  {
+    path: 'landing-page/:slug/citas/:token',
+    loadComponent: () => import('./app-landing/landing/components/appointment-status/appointment-status').then(m => m.AppointmentStatusComponent),
+  },
   { path: 'landing-page/:slug', loadComponent: () => import('./app-landing/landing/landing').then(m => m.Landing) },
 ];
