@@ -2,46 +2,23 @@
   <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
     <div class="w-full max-w-2xl max-h-[90vh] bg-surface rounded-2xl shadow-lg border border-stroke flex flex-col overflow-hidden">
 
-      <div class="flex items-center justify-between px-6 py-4 border-b border-stroke shrink-0">
-        <div>
+      <div class="flex items-start justify-between gap-4 px-6 py-4 border-b border-stroke shrink-0">
+        <div class="flex flex-col gap-1">
+          <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-1">
+            <fa-icon [icon]="['fas', 'calendar-plus']" class="text-primary text-sm"/>
+          </div>
           <h2 class="text-heading font-semibold text-lg">Agenda tu cita</h2>
           @if (!submitSuccess()) {
-            <p class="text-muted text-xs">Paso {{ step() }} de {{ steps.length }}</p>
+            <p class="text-muted text-xs">Completa cada sección y confirma al final.</p>
           }
         </div>
         <button type="button" (click)="close()" aria-label="Cerrar"
-          class="w-8 h-8 rounded-lg flex items-center justify-center text-muted hover:bg-surface-hover cursor-pointer">
+          class="shrink-0 flex items-center justify-center w-8 h-8 rounded-xl text-muted hover:bg-stroke/50 hover:text-heading transition-all duration-200 cursor-pointer">
           <fa-icon [icon]="['fas', 'xmark']"/>
         </button>
       </div>
 
-      @if (!submitSuccess()) {
-        <div class="flex items-center gap-1 px-6 py-3 border-b border-stroke overflow-x-auto shrink-0">
-          @for (s of steps; track s.n) {
-            <div class="flex items-center gap-1 shrink-0">
-              <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold border shrink-0"
-                [class.bg-primary]="step() === s.n"
-                [class.text-white]="step() === s.n"
-                [class.border-primary]="step() >= s.n"
-                [class.text-primary]="step() > s.n"
-                [class.border-stroke]="step() < s.n"
-                [class.text-muted]="step() < s.n">
-                @if (step() > s.n) {
-                  <fa-icon [icon]="['fas', 'check']" class="text-[10px]"/>
-                } @else {
-                  {{ s.n }}
-                }
-              </div>
-              <span class="text-xs font-medium hidden sm:inline" [class.text-heading]="step() >= s.n" [class.text-muted]="step() < s.n">{{ s.label }}</span>
-              @if (!$last) {
-                <div class="w-4 h-px bg-stroke mx-1"></div>
-              }
-            </div>
-          }
-        </div>
-      }
-
-      <div class="flex-1 overflow-y-auto px-6 py-5">
+      <div class="flex-1 overflow-sections px-6 py-5">
         @if (submitSuccess()) {
           <div class="flex flex-col items-center gap-4 py-4 text-center">
             <div class="w-14 h-14 rounded-full bg-accent/15 flex items-center justify-center">
@@ -62,194 +39,374 @@
             </div>
           </div>
         } @else {
-          @switch (step()) {
-            @case (1) {
-              <div class="flex flex-col gap-3">
-                <p class="text-sm text-muted">¿En qué sucursal quieres tu cita?</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  @for (branch of branches(); track branch.branchuuid) {
-                    <button type="button" (click)="selectBranch(branch)"
-                      class="text-left p-4 rounded-xl border flex items-start gap-3 cursor-pointer transition-all duration-150"
-                      [class.border-primary]="selectedBranch()?.branchuuid === branch.branchuuid"
-                      [class.bg-primary-subtle]="selectedBranch()?.branchuuid === branch.branchuuid"
-                      [class.border-stroke]="selectedBranch()?.branchuuid !== branch.branchuuid">
-                      <fa-icon [icon]="['fas', 'location-dot']" class="text-primary mt-0.5"/>
-                      <div>
-                        <p class="text-sm font-semibold text-heading">{{ branch.branchname }}</p>
-                        <p class="text-xs text-muted">{{ branch.branchaddress }}, {{ branch.branchcity }}</p>
-                      </div>
-                    </button>
-                  }
-                </div>
-                @if (!branches().length) {
-                  <p class="text-sm text-muted">Este comercio no tiene sucursales disponibles.</p>
-                }
-              </div>
-            }
+          <div class="flex flex-col gap-3">
 
-            @case (2) {
-              <div class="flex flex-col gap-3">
-                <p class="text-sm text-muted">¿Quién te va a atender?</p>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  @for (professional of professionals(); track professional.useruuid) {
-                    <button type="button" (click)="selectProfessional(professional)"
-                      class="flex flex-col items-center gap-2 p-3 rounded-xl border cursor-pointer transition-all duration-150 text-center"
-                      [class.border-primary]="selectedProfessional()?.useruuid === professional.useruuid"
-                      [class.bg-primary-subtle]="selectedProfessional()?.useruuid === professional.useruuid"
-                      [class.border-stroke]="selectedProfessional()?.useruuid !== professional.useruuid">
-                      <img [src]="professional.userimage || 'favicon.png'" [alt]="professional.userfirstname" class="w-12 h-12 rounded-full object-cover">
-                      <p class="text-xs font-semibold text-heading truncate w-full">{{ professional.userfirstname }} {{ professional.userlastname }}</p>
-                      @if (professional.userspecialty) {
-                        <p class="text-[11px] text-muted truncate w-full">{{ professional.userspecialty }}</p>
-                      }
-                    </button>
-                  }
-                </div>
-                @if (!professionals().length) {
-                  <p class="text-sm text-muted">Este comercio aún no tiene profesionales disponibles.</p>
-                }
-              </div>
-            }
+            <!-- SECCIÓN 1: Sucursal -->
+            <div class="border rounded-2xl overflow-hidden transition-all duration-150" [class]="openSection() === 'branch' ? 'border-primary/40' : 'border-stroke'">
+              <button type="button" (click)="toggleSection('branch')"
+                class="w-full flex items-center gap-3 px-4 py-3 text-left cursor-pointer transition-all duration-150"
+                [class]="openSection() === 'branch' ? 'bg-primary-subtle' : 'bg-surface hover:bg-surface-hover'">
+                <span class="shrink-0 w-6.5 h-6.5 rounded-full flex items-center justify-center text-xs font-semibold"
+                  [class]="branchComplete ? 'bg-accent/15 text-accent-hover' : 'bg-stroke/40 text-muted'">
+                  @if (branchComplete) { <fa-icon [icon]="['fas', 'check']" class="text-[10px]"/> } @else { 1 }
+                </span>
+                <span class="flex flex-col min-w-0 flex-1">
+                  <span class="text-sm font-semibold text-heading">Sucursal</span>
+                  <span class="text-xs text-muted truncate">{{ branchSummary }}</span>
+                </span>
+                <fa-icon [icon]="['fas', 'chevron-down']" class="text-muted text-xs shrink-0 transition-transform duration-150" [class.rotate-180]="openSection() === 'branch'"/>
+              </button>
 
-            @case (3) {
-              <div class="flex flex-col gap-3">
-                <p class="text-sm text-muted">Selecciona uno o varios servicios.</p>
-                <div class="flex flex-col gap-2">
-                  @for (service of servicesForSelectedProfessional(); track service.serviceuuid) {
-                    <label class="flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all duration-150"
-                      [class.border-primary]="selectedServiceUuids().has(service.serviceuuid)"
-                      [class.bg-primary-subtle]="selectedServiceUuids().has(service.serviceuuid)"
-                      [class.border-stroke]="!selectedServiceUuids().has(service.serviceuuid)">
-                      <input type="checkbox" class="w-4 h-4 accent-primary"
-                        [checked]="selectedServiceUuids().has(service.serviceuuid)"
-                        (change)="toggleService(service.serviceuuid)">
-                      <div class="flex-1 min-w-0">
-                        <p class="text-sm font-semibold text-heading truncate">{{ service.servicename }}</p>
-                        <p class="text-xs text-muted">{{ service.serviceduration }} min · {{ service.serviceprice | number }}</p>
-                      </div>
-                    </label>
-                  }
-                </div>
-                @if (!servicesForSelectedProfessional().length) {
-                  <p class="text-sm text-muted">Este profesional aún no tiene servicios disponibles.</p>
-                }
-                @if (selectedServices().length) {
-                  <div class="flex items-center justify-between text-sm bg-surface-page rounded-xl px-4 py-2 mt-1">
-                    <span class="text-muted">{{ selectedServices().length }} servicio(s) · {{ totalDuration() }} min</span>
-                    <span class="font-semibold text-heading">{{ totalPrice() | number }}</span>
-                  </div>
-                }
-              </div>
-            }
-
-            @case (4) {
-              <div class="flex flex-col gap-4">
-                <p class="text-sm text-muted">Elige la fecha de tu cita.</p>
-                <div class="flex flex-col gap-1 max-w-56">
-                  <label class="text-xs font-medium text-body">Fecha</label>
-                  <input type="date" [value]="appointmentDate()" [min]="minDate"
-                    (change)="onDateChange($any($event.target).value)"
-                    class="px-3 py-2 rounded-xl border border-stroke text-sm text-input bg-surface focus:outline-none focus:border-stroke-focus">
-                </div>
-                @if (totalDuration()) {
-                  <p class="text-xs text-muted">Duración estimada: {{ totalDuration() }} min.</p>
-                }
-              </div>
-            }
-
-            @case (5) {
-              <div class="flex flex-col gap-4">
-                <p class="text-sm text-muted">Horarios disponibles para el {{ appointmentDate() }}.</p>
-
-                @if (availabilityLoading()) {
-                  <div class="flex items-center gap-2 text-muted text-sm py-6 justify-center">
-                    <fa-icon [icon]="['fas', 'circle-notch']" class="animate-spin"/>
-                    Buscando horarios disponibles…
-                  </div>
-                } @else if (availabilityError()) {
-                  <p class="text-sm text-error">{{ availabilityError() }}</p>
-                } @else if (availableSlots().length) {
-                  <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                    @for (slot of availableSlots(); track slot) {
-                      <button type="button" (click)="selectSlot(slot)"
-                        class="px-3 py-2 rounded-xl border text-sm font-medium cursor-pointer transition-all duration-150"
-                        [class.border-primary]="appointmentHour() === slot"
-                        [class.bg-primary]="appointmentHour() === slot"
-                        [class.text-white]="appointmentHour() === slot"
-                        [class.border-stroke]="appointmentHour() !== slot">
-                        {{ slot }}
+              @if (openSection() === 'branch') {
+                <div class="flex flex-col gap-3 px-4 pt-3 pb-4 border-t border-stroke/60">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    @for (branch of branches(); track branch.branchuuid) {
+                      <button type="button" (click)="selectBranch(branch)"
+                        class="text-left p-4 rounded-xl border flex items-start gap-3 cursor-pointer transition-all duration-150"
+                        [class.border-primary]="selectedBranch()?.branchuuid === branch.branchuuid"
+                        [class.bg-primary-subtle]="selectedBranch()?.branchuuid === branch.branchuuid"
+                        [class.border-stroke]="selectedBranch()?.branchuuid !== branch.branchuuid">
+                        <fa-icon [icon]="['fas', 'location-dot']" class="text-primary mt-0.5"/>
+                        <div>
+                          <p class="text-sm font-semibold text-heading">{{ branch.branchname }}</p>
+                          <p class="text-xs text-muted">{{ branch.branchaddress }}, {{ branch.branchcity }}</p>
+                        </div>
                       </button>
                     }
                   </div>
-                } @else {
-                  <p class="text-sm text-muted">No hay horarios disponibles ese día para este profesional. Vuelve atrás y elige otra fecha.</p>
-                }
-              </div>
-            }
-
-            @case (6) {
-              <div class="flex flex-col gap-4">
-                <p class="text-sm text-muted">Cuéntanos cómo contactarte para confirmar tu cita.</p>
-                <form [formGroup]="contactForm" class="flex flex-col gap-3">
-                  <ui-input-component type="text" formControlName="name" label="Nombre completo" [required]="true"/>
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <ui-input-component type="tel" formControlName="phone" label="Teléfono" [required]="true"/>
-                    <ui-input-component type="email" formControlName="email" label="Correo electrónico (opcional)" hint="Te enviaremos el enlace para consultar tu cita."/>
-                  </div>
-                </form>
-              </div>
-            }
-
-            @case (7) {
-              <div class="flex flex-col gap-3">
-                <p class="text-sm text-muted">Revisa los datos antes de confirmar.</p>
-                <div class="flex flex-col gap-2 bg-surface-page rounded-xl p-4 text-sm">
-                  <div class="flex justify-between gap-3"><span class="text-muted shrink-0">Sucursal</span><span class="font-medium text-heading text-right">{{ selectedBranch()?.branchname }}</span></div>
-                  <div class="flex justify-between gap-3"><span class="text-muted shrink-0">Profesional</span><span class="font-medium text-heading text-right">{{ selectedProfessional()?.userfirstname }} {{ selectedProfessional()?.userlastname }}</span></div>
-                  <div class="flex justify-between gap-3 items-start">
-                    <span class="text-muted shrink-0">Servicios</span>
-                    <span class="font-medium text-heading text-right">
-                      @for (service of selectedServices(); track service.serviceuuid) {
-                        <span class="block">{{ service.servicename }}</span>
-                      }
-                    </span>
-                  </div>
-                  <div class="flex justify-between gap-3"><span class="text-muted shrink-0">Fecha</span><span class="font-medium text-heading text-right">{{ appointmentDate() }} · {{ appointmentHour() }}</span></div>
-                  <div class="flex justify-between gap-3"><span class="text-muted shrink-0">Duración</span><span class="font-medium text-heading text-right">{{ totalDuration() }} min</span></div>
-                  <div class="flex justify-between gap-3"><span class="text-muted shrink-0">Total</span><span class="font-semibold text-heading text-right">{{ totalPrice() | number }}</span></div>
-                  <div class="flex justify-between gap-3"><span class="text-muted shrink-0">Contacto</span><span class="font-medium text-heading text-right">{{ contactForm.value.name }} · {{ contactForm.value.phone }}</span></div>
+                  @if (!branches().length) {
+                    <p class="text-sm text-muted">Este comercio no tiene sucursales disponibles.</p>
+                  }
                 </div>
+              }
+            </div>
 
-                @if (submitError()) {
-                  <p class="text-sm text-error">{{ submitError() }}</p>
-                }
-              </div>
+            <!-- SECCIÓN 2: Profesional -->
+            <div class="border rounded-2xl overflow-hidden transition-all duration-150" [class]="openSection() === 'professional' ? 'border-primary/40' : 'border-stroke'">
+              <button type="button" (click)="toggleSection('professional')"
+                class="w-full flex items-center gap-3 px-4 py-3 text-left cursor-pointer transition-all duration-150"
+                [class]="openSection() === 'professional' ? 'bg-primary-subtle' : 'bg-surface hover:bg-surface-hover'">
+                <span class="shrink-0 w-6.5 h-6.5 rounded-full flex items-center justify-center text-xs font-semibold"
+                  [class]="professionalComplete ? 'bg-accent/15 text-accent-hover' : 'bg-stroke/40 text-muted'">
+                  @if (professionalComplete) { <fa-icon [icon]="['fas', 'check']" class="text-[10px]"/> } @else { 2 }
+                </span>
+                <span class="flex flex-col min-w-0 flex-1">
+                  <span class="text-sm font-semibold text-heading">Profesional</span>
+                  <span class="text-xs text-muted truncate">{{ professionalSummary }}</span>
+                </span>
+                <fa-icon [icon]="['fas', 'chevron-down']" class="text-muted text-xs shrink-0 transition-transform duration-150" [class.rotate-180]="openSection() === 'professional'"/>
+              </button>
+
+              @if (openSection() === 'professional') {
+                <div class="flex flex-col gap-3 px-4 pt-3 pb-4 border-t border-stroke/60">
+                  <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    @for (professional of professionalsForSelectedBranch(); track professional.useruuid) {
+                      <button type="button" (click)="selectProfessional(professional)"
+                        class="flex flex-col items-center gap-2 p-3 rounded-xl border cursor-pointer transition-all duration-150 text-center"
+                        [class.border-primary]="selectedProfessional()?.useruuid === professional.useruuid"
+                        [class.bg-primary-subtle]="selectedProfessional()?.useruuid === professional.useruuid"
+                        [class.border-stroke]="selectedProfessional()?.useruuid !== professional.useruuid">
+                        <img [src]="professional.userimage || 'favicon.png'" [alt]="professional.userfirstname" class="w-12 h-12 rounded-full object-cover">
+                        <p class="text-xs font-semibold text-heading truncate w-full">{{ professional.userfirstname }} {{ professional.userlastname }}</p>
+                        @if (professional.userspecialty) {
+                          <p class="text-[11px] text-muted truncate w-full">{{ professional.userspecialty }}</p>
+                        }
+                      </button>
+                    }
+                  </div>
+                  @if (!selectedBranch()) {
+                    <p class="text-sm text-muted">Selecciona primero una sucursal para ver sus profesionales.</p>
+                  } @else if (!professionalsForSelectedBranch().length) {
+                    <p class="text-sm text-muted">Esta sucursal aún no tiene profesionales asignados.</p>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- SECCIÓN 3: Servicios -->
+            <div class="border rounded-2xl overflow-hidden transition-all duration-150" [class]="openSection() === 'services' ? 'border-primary/40' : 'border-stroke'">
+              <button type="button" (click)="toggleSection('services')"
+                class="w-full flex items-center gap-3 px-4 py-3 text-left cursor-pointer transition-all duration-150"
+                [class]="openSection() === 'services' ? 'bg-primary-subtle' : 'bg-surface hover:bg-surface-hover'">
+                <span class="shrink-0 w-6.5 h-6.5 rounded-full flex items-center justify-center text-xs font-semibold"
+                  [class]="servicesComplete ? 'bg-accent/15 text-accent-hover' : 'bg-stroke/40 text-muted'">
+                  @if (servicesComplete) { <fa-icon [icon]="['fas', 'check']" class="text-[10px]"/> } @else { 3 }
+                </span>
+                <span class="flex flex-col min-w-0 flex-1">
+                  <span class="text-sm font-semibold text-heading">Servicios</span>
+                  <span class="text-xs text-muted truncate">{{ servicesSummary }}</span>
+                </span>
+                <fa-icon [icon]="['fas', 'chevron-down']" class="text-muted text-xs shrink-0 transition-transform duration-150" [class.rotate-180]="openSection() === 'services'"/>
+              </button>
+
+              @if (openSection() === 'services') {
+                <div class="flex flex-col gap-3 px-4 pt-3 pb-4 border-t border-stroke/60">
+                  <div class="flex flex-col gap-2">
+                    @for (service of servicesForSelectedProfessional(); track service.serviceuuid) {
+                      <label class="flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all duration-150"
+                        [class.border-primary]="selectedServiceUuids().has(service.serviceuuid)"
+                        [class.bg-primary-subtle]="selectedServiceUuids().has(service.serviceuuid)"
+                        [class.border-stroke]="!selectedServiceUuids().has(service.serviceuuid)">
+                        <input type="checkbox" class="w-4 h-4 accent-primary"
+                          [checked]="selectedServiceUuids().has(service.serviceuuid)"
+                          (change)="toggleService(service.serviceuuid)">
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm font-semibold text-heading truncate">{{ service.servicename }}</p>
+                          <p class="text-xs text-muted">{{ service.serviceduration }} min · {{ service.serviceprice | currency: 'USD' }}</p>
+                        </div>
+                      </label>
+                    }
+                  </div>
+                  @if (!selectedProfessional()) {
+                    <p class="text-sm text-muted">Selecciona primero un profesional para ver sus servicios.</p>
+                  } @else if (!servicesForSelectedProfessional().length) {
+                    <p class="text-sm text-muted">Este profesional aún no tiene servicios asignados. Elige otro profesional o contacta al comercio.</p>
+                  }
+                  @if (selectedServices().length) {
+                    <div class="flex items-center justify-between text-sm bg-surface-page rounded-xl px-4 py-2 mt-1">
+                      <span class="text-muted">{{ selectedServices().length }} servicio(s) · {{ totalDuration() }} min</span>
+                      <span class="font-semibold text-heading">{{ totalPrice() | currency: 'USD' }}</span>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- SECCIÓN 4: Fecha y hora -->
+            <div class="border rounded-2xl overflow-hidden transition-all duration-150" [class]="openSection() === 'schedule' ? 'border-primary/40' : 'border-stroke'">
+              <button type="button" (click)="toggleSection('schedule')"
+                class="w-full flex items-center gap-3 px-4 py-3 text-left cursor-pointer transition-all duration-150"
+                [class]="openSection() === 'schedule' ? 'bg-primary-subtle' : 'bg-surface hover:bg-surface-hover'">
+                <span class="shrink-0 w-6.5 h-6.5 rounded-full flex items-center justify-center text-xs font-semibold"
+                  [class]="scheduleComplete ? 'bg-accent/15 text-accent-hover' : 'bg-stroke/40 text-muted'">
+                  @if (scheduleComplete) { <fa-icon [icon]="['fas', 'check']" class="text-[10px]"/> } @else { 4 }
+                </span>
+                <span class="flex flex-col min-w-0 flex-1">
+                  <span class="text-sm font-semibold text-heading">Fecha y hora</span>
+                  <span class="text-xs text-muted truncate">{{ scheduleSummary }}</span>
+                </span>
+                <fa-icon [icon]="['fas', 'chevron-down']" class="text-muted text-xs shrink-0 transition-transform duration-150" [class.rotate-180]="openSection() === 'schedule'"/>
+              </button>
+
+              @if (openSection() === 'schedule') {
+                <div class="flex flex-col gap-3 px-4 pt-3 pb-4 border-t border-stroke/60">
+                  <div class="flex flex-col gap-1 max-w-56">
+                    <label class="text-xs font-medium text-body">Fecha</label>
+                    <input type="date" [value]="appointmentDate()" [min]="minDate"
+                      (change)="onDateChange($any($event.target).value)"
+                      class="px-3 py-2 rounded-xl border border-stroke text-sm text-input bg-surface focus:outline-none focus:border-stroke-focus">
+                  </div>
+
+                  @if (appointmentDate()) {
+                    @if (availabilityLoading()) {
+                      <div class="flex items-center gap-2 text-muted text-sm py-6 justify-center">
+                        <fa-icon [icon]="['fas', 'circle-notch']" class="animate-spin"/>
+                        Buscando horarios disponibles…
+                      </div>
+                    } @else if (availabilityError()) {
+                      <p class="text-sm text-error">{{ availabilityError() }}</p>
+                    } @else if (availableSlots().length) {
+                      <div class="flex flex-col gap-2">
+                        <label class="text-xs font-medium text-body">Horario</label>
+                        <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                          @for (slot of availableSlots(); track slot) {
+                            <button type="button" (click)="selectSlot(slot)"
+                              class="px-3 py-2 rounded-xl border text-sm font-medium cursor-pointer transition-all duration-150"
+                              [class.border-primary]="appointmentHour() === slot"
+                              [class.bg-primary]="appointmentHour() === slot"
+                              [class.text-white]="appointmentHour() === slot"
+                              [class.border-stroke]="appointmentHour() !== slot">
+                              {{ slot }}
+                            </button>
+                          }
+                        </div>
+                      </div>
+                    } @else {
+                      <p class="text-sm text-muted">No hay horarios disponibles ese día para este profesional. Elige otra fecha.</p>
+                    }
+                  }
+
+                  @if (totalDuration()) {
+                    <p class="text-xs text-muted">Duración estimada: {{ totalDuration() }} min.</p>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- SECCIÓN 5: Contacto -->
+            <div class="border rounded-2xl overflow-hidden transition-all duration-150" [class]="openSection() === 'contact' ? 'border-primary/40' : 'border-stroke'">
+              <button type="button" (click)="toggleSection('contact')"
+                class="w-full flex items-center gap-3 px-4 py-3 text-left cursor-pointer transition-all duration-150"
+                [class]="openSection() === 'contact' ? 'bg-primary-subtle' : 'bg-surface hover:bg-surface-hover'">
+                <span class="shrink-0 w-6.5 h-6.5 rounded-full flex items-center justify-center text-xs font-semibold"
+                  [class]="contactComplete ? 'bg-accent/15 text-accent-hover' : 'bg-stroke/40 text-muted'">
+                  @if (contactComplete) { <fa-icon [icon]="['fas', 'check']" class="text-[10px]"/> } @else { 5 }
+                </span>
+                <span class="flex flex-col min-w-0 flex-1">
+                  <span class="text-sm font-semibold text-heading">Contacto</span>
+                  <span class="text-xs text-muted truncate">{{ contactSummary }}</span>
+                </span>
+                <fa-icon [icon]="['fas', 'chevron-down']" class="text-muted text-xs shrink-0 transition-transform duration-150" [class.rotate-180]="openSection() === 'contact'"/>
+              </button>
+
+              @if (openSection() === 'contact') {
+                <div class="flex flex-col gap-3 px-4 pt-3 pb-4 border-t border-stroke/60">
+
+                  <div class="flex gap-2 p-1 rounded-xl bg-surface-page w-fit">
+                    <button type="button" (click)="setContactMode('guest')"
+                      class="px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all duration-150"
+                      [class.bg-surface]="contactMode() === 'guest'" [class.shadow-sm]="contactMode() === 'guest'"
+                      [class.text-heading]="contactMode() === 'guest'" [class.text-muted]="contactMode() !== 'guest'">
+                      Soy nuevo
+                    </button>
+                    <button type="button" (click)="setContactMode('lookup')"
+                      class="px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all duration-150"
+                      [class.bg-surface]="contactMode() === 'lookup'" [class.shadow-sm]="contactMode() === 'lookup'"
+                      [class.text-heading]="contactMode() === 'lookup'" [class.text-muted]="contactMode() !== 'lookup'">
+                      Ya soy cliente registrado
+                    </button>
+                  </div>
+
+                  @if (contactMode() === 'lookup') {
+                    @if (existingCustomer(); as customer) {
+                      <div class="flex items-center justify-between gap-3 p-4 rounded-xl border border-primary bg-primary-subtle">
+                        <div class="flex items-center gap-3 min-w-0">
+                          <div class="w-9 h-9 rounded-full bg-accent/15 flex items-center justify-center shrink-0">
+                            <fa-icon [icon]="['fas', 'check']" class="text-accent-hover text-sm"/>
+                          </div>
+                          <div class="min-w-0">
+                            <p class="text-sm font-semibold text-heading truncate">{{ customer.customerfirstname }} {{ customer.customerlastname }}</p>
+                            <p class="text-xs text-muted truncate">{{ customer.customeremailmasked }} @if (customer.customerphonemasked) { · {{ customer.customerphonemasked }} }</p>
+                          </div>
+                        </div>
+                        <button type="button" (click)="clearFoundCustomer()" class="shrink-0 text-xs font-medium text-primary hover:underline cursor-pointer">Cambiar</button>
+                      </div>
+                    } @else if (foundCustomerMatch(); as match) {
+                      <div class="flex flex-col gap-3 p-4 rounded-xl border border-stroke bg-surface-page">
+                        <p class="text-sm text-body">¿Eres tú?</p>
+                        <div class="flex items-center gap-3 min-w-0">
+                          <div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                            <fa-icon [icon]="['fas', 'user']" class="text-primary text-sm"/>
+                          </div>
+                          <div class="min-w-0">
+                            <p class="text-sm font-semibold text-heading truncate">{{ match.customerfirstname }} {{ match.customerlastname }}</p>
+                            <p class="text-xs text-muted truncate">{{ match.customeremailmasked }} @if (match.customerphonemasked) { · {{ match.customerphonemasked }} }</p>
+                          </div>
+                        </div>
+                        <div class="flex gap-2">
+                          <button type="button" (click)="confirmFoundCustomer()"
+                            class="px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-dark cursor-pointer">
+                            Sí, soy yo
+                          </button>
+                          <button type="button" (click)="clearFoundCustomer()"
+                            class="px-4 py-2 rounded-xl border border-stroke text-sm text-body hover:bg-surface-hover cursor-pointer">
+                            No soy yo
+                          </button>
+                        </div>
+                      </div>
+                    } @else {
+                      <form [formGroup]="customerSearchForm" (ngSubmit)="searchCustomer()" class="flex flex-col gap-3">
+                        <p class="text-xs text-muted">Busca tu registro con tu documento y confírmalo.</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-start">
+                          <ui-dropdown-component formControlName="documenttype" label="Tipo de documento" [options]="documentTypeOptions" [required]="true"/>
+                          <div class="flex gap-2 items-start">
+                            <ui-input-component type="text" formControlName="documentnumber" label="Número de documento" [required]="true" class="flex-1"/>
+                            <button type="submit" [disabled]="customerSearchLoading() || customerSearchForm.invalid"
+                              class="mt-6 shrink-0 px-4 py-2.5 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+                              @if (customerSearchLoading()) {
+                                <fa-icon [icon]="['fas', 'circle-notch']" class="animate-spin"/>
+                              } @else {
+                                Buscar
+                              }
+                            </button>
+                          </div>
+                        </div>
+                        @if (customerSearchError()) {
+                          <p class="text-sm text-error">{{ customerSearchError() }}</p>
+                          <button type="button" (click)="setContactMode('guest')" class="text-xs font-medium text-primary hover:underline cursor-pointer text-left w-fit">
+                            Continuar como invitado nuevo
+                          </button>
+                        }
+                      </form>
+                    }
+                  } @else {
+                    <form [formGroup]="contactForm" class="flex flex-col gap-3">
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <ui-input-component type="text" formControlName="firstname" label="Nombre" [required]="true" [error]="firstnameError"/>
+                        <ui-input-component type="text" formControlName="lastname" label="Apellido" [required]="true" [error]="lastnameError"/>
+                      </div>
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <ui-input-component type="tel" formControlName="phone" label="Teléfono" [required]="true" [error]="phoneError"/>
+                        <ui-input-component type="email" formControlName="email" label="Correo electrónico" [required]="true" [error]="emailError" hint="Aquí te enviamos el enlace para confirmar y consultar tu cita."/>
+                      </div>
+                    </form>
+
+                    <label class="flex items-start gap-2 text-sm text-body cursor-pointer pt-1">
+                      <input type="checkbox" class="w-4 h-4 mt-0.5 accent-primary"
+                        [checked]="registerAsCustomer()"
+                        (change)="toggleRegisterAsCustomer($any($event.target).checked)">
+                      <span>
+                        Quiero registrarme como cliente de este comercio
+                        <span class="block text-xs text-muted">Así no tendrás que volver a dar tus datos en tu próxima visita.</span>
+                      </span>
+                    </label>
+
+                    @if (registerAsCustomer()) {
+                      <form [formGroup]="registerCustomerForm" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pl-6">
+                        <ui-dropdown-component formControlName="documenttype" label="Tipo de documento" [options]="documentTypeOptions" [required]="true"/>
+                        <ui-input-component type="text" formControlName="documentnumber" label="Número de documento" [required]="true" [error]="documentNumberError"/>
+                      </form>
+                    }
+                  }
+
+                  <div class="flex flex-col gap-2 pt-3 border-t border-stroke/60">
+                    <p class="text-xs font-semibold text-muted uppercase tracking-wide">Resumen de tu cita</p>
+                    <div class="flex flex-col gap-2 bg-surface-page rounded-xl p-3 text-sm">
+                      <div class="flex items-center justify-between gap-3">
+                        <span class="flex items-center gap-2 text-muted"><fa-icon [icon]="['fas', 'location-dot']" class="text-[11px] w-3"/>Sucursal</span>
+                        <span class="font-medium text-heading text-right">{{ branchSummary }}</span>
+                      </div>
+                      <div class="flex items-center justify-between gap-3">
+                        <span class="flex items-center gap-2 text-muted"><fa-icon [icon]="['fas', 'user-doctor']" class="text-[11px] w-3"/>Profesional</span>
+                        <span class="font-medium text-heading text-right">{{ professionalSummary }}</span>
+                      </div>
+                      <div class="flex items-center justify-between gap-3">
+                        <span class="flex items-center gap-2 text-muted"><fa-icon [icon]="['fas', 'calendar-days']" class="text-[11px] w-3"/>Fecha y hora</span>
+                        <span class="font-medium text-heading text-right">{{ scheduleSummary }}</span>
+                      </div>
+                      <div class="flex items-center justify-between gap-3 border-t border-stroke/60 pt-2 mt-1">
+                        <span class="font-semibold text-heading">Total</span>
+                        <span class="font-bold text-primary text-base">{{ totalPrice() | currency: 'USD' }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+
+            @if (submitError()) {
+              <p class="text-sm text-error px-1">{{ submitError() }}</p>
             }
-          }
+          </div>
         }
       </div>
 
       @if (!submitSuccess()) {
-        <div class="flex items-center justify-between px-6 py-4 border-t border-stroke shrink-0">
-          <button type="button" (click)="goPrev()" [disabled]="step() === 1"
-            class="px-4 py-2 rounded-xl border border-stroke text-sm text-body hover:bg-surface-hover disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">
-            Atrás
+        <div class="flex gap-3 px-6 py-4 border-t border-stroke shrink-0">
+          <button type="button" (click)="close()"
+            class="flex-1 px-4 py-2.5 rounded-xl border-2 border-stroke text-muted font-medium text-sm hover:border-primary/30 hover:text-heading transition-all duration-200 cursor-pointer">
+            Cancelar
           </button>
-
-          @if (step() < steps.length) {
-            <button type="button" (click)="goNext()" [disabled]="!canProceed()"
-              class="px-5 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
-              Siguiente
-            </button>
-          } @else {
-            <button type="button" (click)="submit()" [disabled]="submitting()"
-              class="px-5 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2">
-              @if (submitting()) {
-                <fa-icon [icon]="['fas', 'circle-notch']" class="animate-spin text-xs"/>
-              }
+          <button type="button" (click)="submit()" [disabled]="submitting()"
+            class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary-dark transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
+            @if (submitting()) {
+              <fa-icon [icon]="['fas', 'circle-notch']" class="text-sm animate-spin"/>
+              Confirmando...
+            } @else {
+              <fa-icon [icon]="['fas', 'calendar-plus']" class="text-xs"/>
               Confirmar cita
-            </button>
-          }
+            }
+          </button>
         </div>
       }
 

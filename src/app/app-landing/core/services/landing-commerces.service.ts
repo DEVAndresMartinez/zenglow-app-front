@@ -8,6 +8,8 @@ import {
   CreatePublicAppointmentResponseDto,
   LandingFoundInterface,
   PublicAppointmentStatusDto,
+  PublicCustomerDocumentType,
+  PublicCustomerMatchDto,
   PublicProfessionalDto,
   ServiceLandingDto,
 } from '../interfaces/landing.interface';
@@ -45,5 +47,11 @@ export class LandingCommercesService {
 
   getAppointmentByToken(token: string): Observable<PublicAppointmentStatusDto> {
     return this.http.get<PublicAppointmentStatusDto>(`${this.URL}/landing-commerces/v1/appointments/token/${token}`);
+  }
+
+  searchCustomerByDocument(commerceuuid: string, customerdocumenttype: PublicCustomerDocumentType, customerdocumentnumber: string): Observable<PublicCustomerMatchDto> {
+    return this.http.get<PublicCustomerMatchDto>(`${this.URL}/landing-commerces/v1/${commerceuuid}/customers/search`, {
+      params: { customerdocumenttype, customerdocumentnumber },
+    });
   }
 }

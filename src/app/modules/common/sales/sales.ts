@@ -8,6 +8,7 @@ import { SaleService } from '../../../core/services/modules/sale.service';
 import { CreatePaymentForm, PaymentSaleResponseInterface, SaleRequestInterface, SaleResponseInterface } from '../../../core/interfaces/sale.interface';
 import { CommerceService } from '../../../core/services/modules/commerce.service';
 import { PaymentSaleForm } from '../../../components/forms/payment-sale-form/payment-sale-form';
+import { UIInputComponent } from '../../../components/shared/ui/ui-input-component/ui-input-component';
 
 const SALE_STATUS_MAP: Record<string, { label: string; classes: string }> = {
   pending: { label: 'Pendiente', classes: 'bg-warning/15 text-warning-hover border border-warning-soft shadow-sm' },
@@ -40,7 +41,7 @@ const PAYMENT_STATUS_MAP: Record<string, { label: string; classes: string }> = {
 @Component({
   selector: 'app-sales',
   standalone: true,
-  imports: [CommonModule, FontAwesomeModule, FormsModule, ReactiveFormsModule, UISearchComponent, SaleForm, PaymentSaleForm],
+  imports: [CommonModule, FontAwesomeModule, FormsModule, ReactiveFormsModule, UISearchComponent, SaleForm, PaymentSaleForm, UIInputComponent],
   templateUrl: './sales.html',
   styleUrl: './sales.scss',
 })
@@ -62,8 +63,16 @@ export class Sales {
 
   showDetailSale = signal(false);
 
+  selectedSale = signal<SaleResponseInterface | null>(null);
+  payments = signal<PaymentSaleResponseInterface[]>([]);
+  loadingPayments = signal(false);
+
+  dateFilter = signal('');
+
   constructor() {
     this.getSales();
+    const today = new Date();
+    this.dateFilter.set(today.toISOString().slice(0, 10));
   }
 
   getSales() {
@@ -72,6 +81,7 @@ export class Sales {
       next: (sales) => {
         this.sales.set(sales);
         this.salesCopy.set(sales);
+        this.onFilterSaleDate(this.dateFilter());
         this.loading.set(false);
       },
       error: (error) => {
@@ -182,10 +192,6 @@ export class Sales {
     this.showPaymentForm.set(false);
   }
 
-  selectedSale = signal<SaleResponseInterface | null>(null);
-  payments = signal<PaymentSaleResponseInterface[]>([]);
-  loadingPayments = signal(false);
-
   onDetailSale(sale: SaleResponseInterface) {
     this.selectedSale.set(sale);
     this.showDetailSale.set(true);
@@ -201,6 +207,15 @@ export class Sales {
         this.loadingPayments.set(false);
       }
     });
+  }
+
+  onFilterSaleDate(date: string) {
+    this.dateFilter.set(date);
+    this.salesCopy.set(this.sales().filter((sale) => {
+      return (
+        sale.created_at.toString().includes(date)
+      );
+    }));
   }
 
   onDetailSaleClosed() {

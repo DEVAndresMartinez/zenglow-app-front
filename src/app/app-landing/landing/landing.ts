@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, ElementRef, HostListener, inject, signal, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -27,12 +27,18 @@ import { FooterSectionComponent } from './components/footer-section/footer-secti
   templateUrl: './landing.html',
   styleUrl: './landing.scss',
 })
-export class Landing {
+export class Landing implements AfterViewInit {
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private landingCommercesService = inject(LandingCommercesService);
   private destroyRef = inject(DestroyRef);
+
+  // Referencia al hero para saber cuándo ya se hizo scroll más allá de él: mientras el hero
+  // esté a la vista, su propio botón "Reservar cita" es el único CTA visible; el del header
+  // solo aparece una vez que el usuario baja, evitando dos botones iguales compitiendo a la vez.
+  @ViewChild('heroAnchor', { read: ElementRef }) private heroAnchor?: ElementRef<HTMLElement>;
+  showHeaderCta = signal<boolean>(false);
 
   slug = signal<string | null>(null);
   loading = signal<boolean>(true);
@@ -69,6 +75,22 @@ export class Landing {
           this.showSlugModal.set(true);
         }
       });
+  }
+
+  ngAfterViewInit(): void {
+    this.updateHeaderCtaVisibility();
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    this.updateHeaderCtaVisibility();
+  }
+
+  private updateHeaderCtaVisibility(): void {
+    const heroEl = this.heroAnchor?.nativeElement;
+    if (!heroEl) return;
+    const passedHero = heroEl.getBoundingClientRect().bottom < 64; // alto del header sticky
+    if (passedHero !== this.showHeaderCta()) this.showHeaderCta.set(passedHero);
   }
 
   onSlugSubmit(slug: string): void {

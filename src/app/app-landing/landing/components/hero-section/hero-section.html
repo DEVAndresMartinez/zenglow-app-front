@@ -1,16 +1,16 @@
-<section class="w-full flex justify-center bg-stroke overflow-hidden relative">
+<section class="w-full flex justify-center bg-linear-to-b from-surface-page to-surface overflow-hidden relative border-b border-stroke/60">
   @if (commerce()?.commercebanner) {
-    <div class="absolute inset-0 bg-cover bg-center opacity-15" [style.background-image]="'url(' + commerce()?.commercebanner + ')'"></div>
+    <div class="absolute inset-0 bg-cover bg-center opacity-10" [style.background-image]="'url(' + commerce()?.commercebanner + ')'"></div>
   }
-  <div class="w-full max-w-360 flex flex-col md:flex-row items-center justify-center gap-8 px-6 md:px-20 py-10 md:py-14 relative">
-    <div class="w-full md:w-2/3 flex flex-col gap-3 text-center md:text-left">
-      <h1 class="text-2xl md:text-3xl font-bold text-heading">
+  <div class="w-full max-w-360 flex flex-col md:flex-row items-center justify-center gap-12 md:gap-14 px-6 md:px-10 py-12 md:py-16 relative">
+    <div class="w-full md:w-2/3 flex flex-col gap-4 text-center md:text-left">
+      <h1 class="text-3xl md:text-4xl font-bold text-heading leading-tight">
         Reserva tu cita en <span class="text-primary">{{ commerce()?.commercename ?? 'este comercio' }}</span> en pocos minutos
       </h1>
       @if (commerce()?.commercedescriptionshort) {
-        <p class="text-sm text-muted max-w-xl mx-auto md:mx-0">{{ commerce()?.commercedescriptionshort }}</p>
+        <p class="text-base text-muted max-w-xl mx-auto md:mx-0">{{ commerce()?.commercedescriptionshort }}</p>
       } @else {
-        <p class="text-sm text-muted max-w-xl mx-auto md:mx-0">Elige tu servicio, tu profesional y el horario que más te convenga.</p>
+        <p class="text-base text-muted max-w-xl mx-auto md:mx-0">Elige tu servicio, tu profesional y el horario que más te convenga.</p>
       }
 
       <div class="flex flex-col sm:flex-row gap-2 justify-center md:justify-start mt-2">
@@ -20,33 +20,31 @@
           Reservar cita
         </button>
         <button type="button" (click)="checkAppointmentRequested.emit()"
-          class="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-surface border border-stroke text-sm font-semibold hover:bg-surface-hover transition-all duration-200 cursor-pointer">
+          class="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-surface border border-stroke text-sm text-muted font-semibold hover:bg-surface-hover transition-all duration-200 cursor-pointer">
           <fa-icon [icon]="['fas', 'magnifying-glass']" class="text-xs" />
           Consultar mi cita
         </button>
       </div>
 
-      <div class="flex items-center gap-4 sm:gap-6 flex-wrap justify-center md:justify-start bg-primary text-white rounded-2xl px-5 py-3 mt-4">
-        <div class="flex items-center gap-2 text-sm font-semibold">
-          <fa-icon [icon]="['fas', 'user-doctor']" class="text-xs" />
-          <span>{{ professionalsCount() }} profesional{{ professionalsCount() === 1 ? '' : 'es' }}</span>
-        </div>
-        <hr class="bg-white/50 w-px h-5 border-0" />
-        <div class="flex items-center gap-2 text-sm font-semibold">
-          <fa-icon [icon]="['fas', 'location-dot']" class="text-xs" />
-          <span>{{ branchesCount() }} sucursal{{ branchesCount() === 1 ? '' : 'es' }}</span>
-        </div>
-        <hr class="bg-white/50 w-px h-5 border-0" />
-        <div class="flex items-center gap-2 text-sm font-semibold">
-          <fa-icon [icon]="['fas', 'tags']" class="text-xs" />
-          <span>{{ servicesCount() }} servicio{{ servicesCount() === 1 ? '' : 's' }}</span>
-        </div>
+      <div class="flex items-center gap-2 flex-wrap justify-center md:justify-start mt-4">
+        <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-page border border-stroke text-xs font-medium text-body">
+          <fa-icon [icon]="['fas', 'user-doctor']" class="text-[10px] text-muted" />
+          {{ professionalsCount() }} profesional{{ professionalsCount() === 1 ? '' : 'es' }}
+        </span>
+        <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-page border border-stroke text-xs font-medium text-body">
+          <fa-icon [icon]="['fas', 'location-dot']" class="text-[10px] text-muted" />
+          {{ branchesCount() }} sucursal{{ branchesCount() === 1 ? '' : 'es' }}
+        </span>
+        <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-page border border-stroke text-xs font-medium text-body">
+          <fa-icon [icon]="['fas', 'tags']" class="text-[10px] text-muted" />
+          {{ servicesCount() }} servicio{{ servicesCount() === 1 ? '' : 's' }}
+        </span>
       </div>
     </div>
 
-    <div class="w-40 h-40 md:w-56 md:h-56 shrink-0 relative flex justify-center items-center">
+    <div class="w-44 h-44 md:w-56 md:h-56 shrink-0 relative flex justify-center items-center">
       <img [src]="commerce()?.commercelogo || 'favicon.png'" [alt]="'Logo de ' + (commerce()?.commercename ?? 'comercio')"
-        class="w-full h-full object-cover rounded-2xl border border-stroke bg-surface shadow-lg">
+        class="w-full h-full object-cover rounded-[20px] border border-stroke bg-primary-subtle shadow-lg">
     </div>
   </div>
 </section>

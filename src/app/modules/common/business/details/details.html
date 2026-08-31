@@ -173,6 +173,18 @@
                   <fa-icon [icon]="['fas', 'store']" class="w-3 shrink-0"></fa-icon>
                   <span class="truncate">{{ user.branch.branchname }}</span>
                 </div>
+                @if (user.userspecialty) {
+                  <div class="flex items-center gap-2 text-xs text-muted">
+                    <fa-icon [icon]="['fas', 'id-badge']" class="w-3 shrink-0"></fa-icon>
+                    <span class="truncate">{{ user.userspecialty }}</span>
+                  </div>
+                }
+                <div class="flex items-center gap-2 text-xs text-muted">
+                  <fa-icon [icon]="['fas', 'scissors']" class="w-3 shrink-0"></fa-icon>
+                  <span class="truncate">
+                    {{ user.services.length ? user.services.length + ' servicio(s) asignado(s)' : 'Sin servicios asignados (ofrece todo el catálogo)' }}
+                  </span>
+                </div>
               </div>
 
             </div>
@@ -256,6 +268,10 @@
 
 @if (showAssignRolesForm()) {
   <app-assign-roles-form [useruuid]="assignRolesUser()?.useruuid ?? ''" [user]="assignRolesUser()" (saved)="onAssignRolesSaved($event)" (closed)="onAssignRolesFormClosed()"/>
+}
+
+@if (showAssignServicesForm()) {
+  <app-assign-services-form [useruuid]="assignServicesUser()?.useruuid ?? ''" [user]="assignServicesUser()" (saved)="onAssignServicesSaved($event)" (closed)="onAssignServicesFormClosed()"/>
 }
 
 @if (showLicensesForm()) {

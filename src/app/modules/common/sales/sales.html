@@ -1,6 +1,7 @@
 <div class="flex flex-col gap-4">
   <div class="w-full flex items-center gap-2">
     <ui-search-component placeholder="Buscar venta..." (search)="onGlobalFilter($event)" class="flex-1" />
+    <ui-input-component type="date" placeholder="Fecha" [ngModel]="dateFilter()" (ngModelChange)="onFilterSaleDate($event)" class="w-40"/>
     <button type="button" (click)="startSale()"
       class="shrink-0 flex items-center gap-1.5 px-4 py-2 bg-primary text-white rounded-xl text-sm font-medium shadow-sm hover:bg-primary-dark active:scale-95 transition-all duration-200 cursor-pointer">
       <fa-icon [icon]="['fas', 'plus']" class="text-xs" />

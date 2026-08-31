@@ -35,6 +35,8 @@ export const MODULE_ERROR_MESSAGES: Record<string, ErrorCodeMap> = {
     UPDATE_ERROR: 'No se pudo actualizar el usuario. Intenta nuevamente.',
     ASSIGN_ROLES_ERROR: 'No se pudieron asignar los roles al usuario.',
     LAST_OWNER_PROTECTED: 'No puedes eliminar o inactivar al último administrador del comercio.',
+    NOT_FOUND_SERVICE: 'Uno o más servicios seleccionados no son válidos para este comercio.',
+    ASSIGN_SERVICES_ERROR: 'No se pudieron asignar los servicios al usuario.',
   },
   branches: {
     NOT_FOUND_BRANCHES: 'No hay sucursales registradas.',
@@ -81,6 +83,9 @@ export const MODULE_ERROR_MESSAGES: Record<string, ErrorCodeMap> = {
     USER_ON_LICENSE: 'El profesional no está disponible en esa fecha u horario. Elige otro momento.',
     APPOINTMENT_TIME_CONFLICT: 'Justo se ocupó ese horario. Elige otro disponible.',
     APPOINTMENT_DURATION_REQUIRED: 'Selecciona al menos un servicio para poder agendar la cita.',
+    AE_DOCUMENT_NUMBER_CONFLICT: 'Ya existe un cliente registrado con ese número de documento en este comercio.',
+    NOT_FOUND_CUSTOMER: 'No encontramos ningún cliente con ese documento en este comercio.',
+    INVALID_CUSTOMER_SELECTION: 'No puedes seleccionar un cliente existente y registrarte como uno nuevo al mismo tiempo.',
   },
   services: {
     NOT_FOUND_SERVICES: 'No hay servicios registrados.',

@@ -7,6 +7,7 @@ export interface UsersInterface {
   userphone: string;
   userstatus: string;
   userimage?: string;
+  userspecialty: string | null;
   commerce: {
     commerceuuid: string;
     commercename: string;
@@ -21,7 +22,11 @@ export interface UsersInterface {
       rolename: string;
       roleIsOwner: boolean;
     }
-  ]
+  ],
+  services: {
+    serviceuuid: string;
+    servicename: string;
+  }[];
 }
 
 export interface CreateUserInterface {
@@ -32,6 +37,7 @@ export interface CreateUserInterface {
   useremail: string;
   branchuuid: string;
   userstatus: string;
+  userspecialty?: string;
 }
 
 export interface UpdateUserInterface {
@@ -39,6 +45,7 @@ export interface UpdateUserInterface {
   userlastname: string;
   userphone: string;
   useremail: string;
+  userspecialty?: string;
 }
 
 export interface ImageResponse {

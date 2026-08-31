@@ -104,6 +104,9 @@ export class AppointmentForm implements OnInit {
   customerMode = signal<CustomerMode>('existing');
   showCustomerForm = signal(false);
 
+  // Acordeón: solo una sección abierta a la vez, en vez de un formulario largo con scroll.
+  openSection = signal<'client' | 'schedule' | 'services' | 'details' | ''>('client');
+
   branches = signal<DropdownOption[]>([]);
   customers = signal<DropdownOption[]>([]);
   users = signal<DropdownOption[]>([]);
@@ -337,6 +340,70 @@ export class AppointmentForm implements OnInit {
     this.servicesCopy.set(this.services().filter(s => s.servicename.toLocaleLowerCase().includes(q)));
   }
 
+  toggleSection(name: 'client' | 'schedule' | 'services' | 'details') {
+    this.openSection.update(current => (current === name ? '' : name));
+  }
+
+  private optionName(options: DropdownOption[], abv: string): string {
+    return options.find(o => o.abv === abv)?.name ?? '';
+  }
+
+  get s1Complete(): boolean {
+    if (!this.form.value.branchuuid) return false;
+    if (this.customerMode() === 'manual') {
+      return !!this.form.value.appointmentcustomername && !!this.form.value.appointmentcustomerphone;
+    }
+    return true;
+  }
+
+  get s1Summary(): string {
+    const branch = this.optionName(this.branches(), this.form.value.branchuuid);
+    const customer = this.customerMode() === 'manual'
+      ? this.form.value.appointmentcustomername
+      : this.optionName(this.customers(), this.form.value.customeruuid);
+    return [branch, customer].filter(Boolean).join(' · ') || 'Selecciona sucursal y cliente';
+  }
+
+  get s2Complete(): boolean {
+    return !!this.form.value.appointmentdate && !!this.form.value.appointmenthour;
+  }
+
+  get s2Summary(): string {
+    const { appointmentdate, appointmenthour } = this.form.value;
+    const professional = this.optionName(this.users(), this.form.value.useruuid);
+    const when = appointmentdate && appointmenthour ? `${appointmentdate} · ${appointmenthour}` : '';
+    return [when, professional].filter(Boolean).join(' · ') || 'Selecciona fecha y hora';
+  }
+
+  get s3Complete(): boolean {
+    if (this.isEdit()) return !!this.form.value.appointmentduration;
+    return this.pendingDetails().length > 0 || !!this.form.value.appointmentduration;
+  }
+
+  get s3Summary(): string {
+    if (this.isEdit()) {
+      const count = this.appointment()?.details?.length ?? 0;
+      return count > 0 ? `${count} servicio${count === 1 ? '' : 's'} · ${this.form.value.appointmentduration} min` : `${this.form.value.appointmentduration ?? 0} min`;
+    }
+    if (this.pendingDetails().length > 0) {
+      return `${this.pendingDetails().length} servicio${this.pendingDetails().length === 1 ? '' : 's'} · ${this.totalDuration()} min`;
+    }
+    if (this.form.value.appointmentduration) return `${this.form.value.appointmentduration} min (manual)`;
+    return 'Sin servicios seleccionados';
+  }
+
+  get s4Complete(): boolean {
+    if (this.form.value.appointmentmode !== 'delivered') return true;
+    return !!this.form.value.appointmentcity && !!this.form.value.appointmentaddress;
+  }
+
+  get s4Summary(): string {
+    if (this.form.value.appointmentmode === 'delivered') {
+      return this.form.value.appointmentcity ? `A domicilio · ${this.form.value.appointmentcity}` : 'A domicilio';
+    }
+    return 'En sucursal';
+  }
+
   setCustomerMode(mode: CustomerMode) {
     this.customerMode.set(mode);
     if (mode === 'existing') {
@@ -442,6 +509,14 @@ export class AppointmentForm implements OnInit {
 
   submit() {
     this.sent.set(true);
+
+    // Con los campos agrupados en acordeón, un error puede quedar en una sección colapsada:
+    // se abre la primera que tenga un error para que el usuario la vea sin tener que buscarla.
+    if (this.branchError || this.customerNameError || this.customerPhoneError) this.openSection.set('client');
+    else if (this.dateError || this.hourError) this.openSection.set('schedule');
+    else if (this.durationError) this.openSection.set('services');
+    else if (this.cityError || this.addressError) this.openSection.set('details');
+
     if (this.form.get('branchuuid')?.invalid || this.form.get('appointmentdate')?.invalid || this.form.get('appointmenthour')?.invalid) return;
     if (this.hasBlockingErrors()) return;
 

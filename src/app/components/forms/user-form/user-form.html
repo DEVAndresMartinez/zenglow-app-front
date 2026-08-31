@@ -39,6 +39,7 @@
         }
         <ui-input-component formControlName="useremail" type="email" label="Correo electrónico" placeholder="Ej. carlos@email.com" [required]="true" [error]="emailError" [readonly]="isEdit()"/>
         <ui-phone-input-component formControlName="userphone" label="Teléfono"/>
+        <ui-input-component formControlName="userspecialty" label="Especialidad / cargo" placeholder="Ej. Estilista senior" hint="Se muestra en la landing pública si el usuario es profesional." [error]="specialtyError" [maxlength]="100"/>
         @if (!isEdit()) {
           @if (loadingBranches()) {
             <div class="h-14 rounded-xl bg-stroke/30 animate-pulse"></div>

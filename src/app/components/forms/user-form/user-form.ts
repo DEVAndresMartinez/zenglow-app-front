@@ -59,6 +59,7 @@ export class UserForm {
     userphone: new FormControl<string>(''),
     branchuuid: new FormControl<string>('', { validators: [Validators.required] }),
     userstatus: new FormControl<string>('active'),
+    userspecialty: new FormControl<string>('', { validators: [Validators.maxLength(100)] }),
   });
 
   private userService = inject(UserService);
@@ -77,6 +78,7 @@ export class UserForm {
         userlastname: this.user()?.userlastname,
         useremail: this.user()?.useremail,
         userphone: this.user()?.userphone,
+        userspecialty: this.user()?.userspecialty ?? '',
       });
     } else {
       this.userForm.reset({ userstatus: 'active' });
@@ -139,6 +141,13 @@ export class UserForm {
     return '';
   }
 
+  get specialtyError(): string {
+    if (!this.sent()) return '';
+    const ctrl = this.userForm.get('userspecialty');
+    if (ctrl?.errors?.['maxlength']) return 'Máximo 100 caracteres';
+    return '';
+  }
+
   close() {
     this.closed.emit();
   }
@@ -156,6 +165,7 @@ export class UserForm {
           userphone: this.userForm.value.userphone,
           branchuuid: this.userForm.value.branchuuid,
           userstatus: this.userForm.value.userstatus,
+          userspecialty: this.userForm.value.userspecialty || undefined,
         };
         this.userService.create(dto).subscribe({
           next: (response: UsersInterface) => {
@@ -175,6 +185,7 @@ export class UserForm {
           userlastname: this.userForm.value.userlastname,
           useremail: this.userForm.value.useremail,
           userphone: this.userForm.value.userphone,
+          userspecialty: this.userForm.value.userspecialty || undefined,
         };
         this.userService.update(this.useruuid(), dto).subscribe({
           next: (response: UsersInterface) => {

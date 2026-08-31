@@ -19,6 +19,7 @@ import { UIConfirmModalComponent } from '../../../../components/shared/ui/ui-con
 import { ActionMenuItem, UIActionMenuComponent } from '../../../../components/shared/ui/ui-action-menu/ui-action-menu';
 import { AssignBranchForm } from '../../../../components/forms/assign-branch-form/assign-branch-form';
 import { AssignRolesForm } from '../../../../components/forms/assign-roles-form/assign-roles-form';
+import { AssignServicesForm } from '../../../../components/forms/assign-services-form/assign-services-form';
 import { UserLicensesForm } from '../../../../components/forms/user-licenses-form/user-licenses-form';
 import { UserSchedulesForm } from '../../../../components/forms/user-schedules-form/user-schedules-form';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -42,7 +43,7 @@ const USER_STATUS_MAP: Record<string, { label: string; classes: string }> = {
 @Component({
   selector: 'app-details',
   standalone: true,
-  imports: [CommonModule, RouterLink, Tabs, FontAwesomeModule, UISearchComponent, BranchForm, UserForm, ChangePasswordForm, UIConfirmModalComponent, UIActionMenuComponent, AssignBranchForm, AssignRolesForm, UserLicensesForm, UserSchedulesForm],
+  imports: [CommonModule, RouterLink, Tabs, FontAwesomeModule, UISearchComponent, BranchForm, UserForm, ChangePasswordForm, UIConfirmModalComponent, UIActionMenuComponent, AssignBranchForm, AssignRolesForm, AssignServicesForm, UserLicensesForm, UserSchedulesForm],
   templateUrl: './details.html',
   styleUrl: './details.scss',
 })
@@ -88,6 +89,9 @@ export class Details {
   showAssignRolesForm = signal(false);
   assignRolesUser = signal<UsersInterface | null>(null);
 
+  showAssignServicesForm = signal(false);
+  assignServicesUser = signal<UsersInterface | null>(null);
+
   showLicensesForm = signal(false);
   licensesUser = signal<UsersInterface | null>(null);
 
@@ -108,6 +112,7 @@ export class Details {
     { key: 'schedule', label: 'Gestionar horario', icon: 'calendar' },
     { key: 'license', label: 'Licencias', icon: 'notes-medical' },
     { key: 'role', label: 'Cambiar rol', icon: 'user-tag' },
+    { key: 'services', label: 'Asignar servicios', icon: 'scissors' },
     { key: 'delete', label: 'Eliminar', icon: 'trash', variant: 'danger' },
   ];
 
@@ -217,6 +222,7 @@ export class Details {
       case 'password': this.openChangePassword(user); break;
       case 'branch': this.openAssignBranch(user); break;
       case 'role': this.openAssignRoles(user); break;
+      case 'services': this.openAssignServices(user); break;
       case 'license': this.openLicenses(user); break;
       case 'schedule': this.openSchedules(user); break;
       case 'delete': this.openDeleteUser(user); break;
@@ -271,6 +277,21 @@ export class Details {
   onAssignRolesFormClosed() {
     this.showAssignRolesForm.set(false);
     this.assignRolesUser.set(null);
+  }
+
+  openAssignServices(user: UsersInterface) {
+    this.assignServicesUser.set(user);
+    this.showAssignServicesForm.set(true);
+  }
+
+  onAssignServicesSaved(user: UsersInterface) {
+    this.users.update(us => us.map(u => u.useruuid === user.useruuid ? user : u));
+    this.usersCopy.update(us => us.map(u => u.useruuid === user.useruuid ? user : u));
+  }
+
+  onAssignServicesFormClosed() {
+    this.showAssignServicesForm.set(false);
+    this.assignServicesUser.set(null);
   }
 
   onGlobalFilter(value: any) {

@@ -37,6 +37,10 @@ export class UserService {
     return this.http.put<UsersInterface>(`${this.URL}/users/v1/${useruuid}/roles`, { roleuuids });
   }
 
+  assignServices(useruuid: string, { serviceuuids }: { serviceuuids: string[] }): Observable<UsersInterface> {
+    return this.http.put<UsersInterface>(`${this.URL}/users/v1/${useruuid}/services`, { serviceuuids });
+  }
+
 
   uploadImage(useruuid: string, image: File): Observable<ImageResponse> {
     const formData = new FormData();
